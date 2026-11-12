@@ -25,7 +25,7 @@
 
 ## 技术栈
 
-- uni-app 3 + Vue 3 `<script setup>` + Vite 5；`utils` 中的部分模块使用 TypeScript
+- uni-app 3 + Vue 3 `<script setup>` + Vite 5
 - 目标平台：微信小程序（`mp-weixin`）
 - 微信云开发：云数据库、云存储、云函数（`wx-server-sdk`）、订阅消息
 
@@ -41,17 +41,15 @@
 ├── pages/                  # 各功能页面
 ├── components/page-bg/     # 页面背景组件（全局共享背景）
 │                           # 页面私有子组件放在各页面目录的 components/ 下（menu / gallery / period）
-├── tests/                  # 单元测试（Vitest）
 ├── utils/
 │   ├── cloud.js            # 云开发封装：云函数调用(超时+重试)、上传、临时 URL、缓存、全局背景
-│   ├── constants.ts        # 常量：心情、状态映射、配色、订阅模板 ID
+│   ├── constants.js        # 常量：心情、状态映射、配色、订阅模板 ID
 │   ├── interactions.js     # 点赞 / 评论数据层
 │   ├── useInteractions.js  # 点赞 / 评论 composable
-│   ├── contentActions.ts   # 删除确认、上首页、加载失败提示
-│   ├── useDragSort.ts      # 列表 / 网格拖拽排序
-│   ├── usePeriodData.ts    # 经期记录与设置的加载、保存，日期工具
-│   ├── usePeriodStats.ts   # 经期统计与预测
-│   ├── types.ts            # 共享类型定义
+│   ├── contentActions.js   # 删除确认、上首页、加载失败提示
+│   ├── useDragSort.js      # 列表 / 网格拖拽排序
+│   ├── usePeriodData.js    # 经期记录与设置的加载、保存，日期工具
+│   ├── usePeriodStats.js   # 经期统计与预测
 │   └── useSubscription.js  # 订阅通知偏好
 ├── data/quotes.js          # 首页情话语录
 ├── static/tabbar/          # tabBar 图标
@@ -88,26 +86,6 @@ npm run build
 ```
 
 `npm run dev` 是开发模式，带监听，输出到 `dist/dev/mp-weixin`；`npm run build` 是生产构建，输出到 `dist/build/mp-weixin`。这两个脚本使用 macOS / Linux 的环境变量写法，Windows 用户请用 HBuilderX 的「运行到小程序模拟器」。
-
-### 代码检查与测试
-
-```bash
-npm run lint
-```
-
-```bash
-npm run typecheck
-```
-
-```bash
-npm test
-```
-
-```bash
-npm run format
-```
-
-GitHub Actions 会在每次推送时自动运行 Lint、格式检查、类型检查、单元测试、构建和云函数语法检查。
 
 ### 3. 用微信开发者工具打开
 

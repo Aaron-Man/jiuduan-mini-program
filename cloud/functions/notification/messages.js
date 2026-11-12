@@ -1,5 +1,5 @@
 /**
- * 订阅消息内容构造（纯逻辑，不依赖 wx-server-sdk，便于单元测试）
+ * 订阅消息内容构造
  */
 
 const STATUS_LABELS = {

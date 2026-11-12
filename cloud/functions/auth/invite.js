@@ -1,5 +1,5 @@
 /**
- * 邀请码与订阅类型的纯逻辑（不依赖 wx-server-sdk，便于单元测试）
+ * 邀请码与订阅类型的纯逻辑
  */
 const crypto = require('crypto')
 
@@ -10,7 +10,7 @@ const DEFAULT_INVITE_MAX_USES = 10
 const MAX_INVITE_USES = 50
 const INVITE_TTL_MS = 7 * 86400000
 
-// 允许订阅的通知类型（与 notification/templates.json 的键一致，单元测试会校验）
+// 允许订阅的通知类型（与 notification/templates.json 的键一致）
 const VALID_NOTIFY_TYPES = ['order_update', 'travel_remind', 'content_update', 'new_photo', 'period_remind']
 
 /**

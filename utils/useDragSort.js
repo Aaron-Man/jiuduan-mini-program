@@ -2,36 +2,16 @@
  * 列表/网格拖拽排序 composable
  * 使用页面：status / journal / travel / memo / menu(菜品+分类) / gallery
  */
-import { ref, type Ref } from 'vue'
+import { ref } from 'vue'
 import { dbBatchUpdate } from './cloud'
-import type { DragTouchEvent } from './types'
 
-/** 可排序的列表项（排序字段名可配置，所以用索引签名） */
-export type SortableItem = { _id?: string; createTime?: string | number | Date; [key: string]: any }
-/** 列表来源：普通数组、ref 或 computed */
-export type ListSource = SortableItem[] | Readonly<Ref<SortableItem[]>>
-
-export interface ListDragOptions {
-    collection?: string
-    onDrop?: (list: SortableItem[]) => unknown
-    backingRef?: Ref<SortableItem[]>
-    orderField?: string
-}
-
-export interface GridDragOptions {
-    collection?: string
-    onDrop?: (list: SortableItem[]) => unknown
-    backingRef?: Ref<SortableItem[]>
-    extendList?: (list: SortableItem[]) => SortableItem[]
-}
-
-const resolveList = (source: ListSource): SortableItem[] => (Array.isArray(source) ? source : source.value)
+const resolveList = source => (Array.isArray(source) ? source : source.value)
 
 /**
  * 只把排序字段发生变化的项写回数据库，并同步更新本地值
  */
-async function persistOrder(collection: string | undefined, list: SortableItem[], field = 'sort_order') {
-    const changed: SortableItem[] = []
+async function persistOrder(collection, list, field = 'sort_order') {
+    const changed = []
     list.forEach((item, i) => {
         if (item && item._id && item[field] !== i) {
             item[field] = i
@@ -42,7 +22,7 @@ async function persistOrder(collection: string | undefined, list: SortableItem[]
     try {
         await dbBatchUpdate(
             collection,
-            changed.map(item => ({ id: item._id as string, data: { [field]: item[field] } }))
+            changed.map(item => ({ id: item._id, data: { [field]: item[field] } }))
         )
     } catch (e) {
         console.error('[拖拽排序] 保存失败:', e)
@@ -55,8 +35,8 @@ async function persistOrder(collection: string | undefined, list: SortableItem[]
  * - 没有 manual_order 的记录（新建的、或从未拖拽过的）排在最前，按创建时间倒序
  * 因此从未拖拽过的列表为「最新在前」，拖拽后的顺序会被保留
  */
-export function sortByManualOrder<T extends SortableItem>(list: T[], field = 'manual_order'): T[] {
-    const has = (v: unknown): v is number => typeof v === 'number'
+export function sortByManualOrder(list, field = 'manual_order') {
+    const has = v => typeof v === 'number'
     return list.sort((a, b) => {
         const ha = has(a[field]),
             hb = has(b[field])
@@ -67,7 +47,7 @@ export function sortByManualOrder<T extends SortableItem>(list: T[], field = 'ma
 }
 
 /** 交换可见列表中的 a、b 两项；有 backingRef（完整列表）时在完整列表中交换 */
-function swapItems(list: SortableItem[], a: number, b: number, backingRef?: Ref<SortableItem[]>): boolean {
+function swapItems(list, a, b, backingRef) {
     if (backingRef) {
         const full = backingRef.value
         const ia = full.indexOf(list[a])
@@ -88,19 +68,15 @@ function swapItems(list: SortableItem[], a: number, b: number, backingRef?: Ref<
  * 列表拖拽排序
  * listRef 是筛选后的视图（computed）时，传入 backingRef（完整列表）：交换作用到完整列表，排序也按完整列表写回
  */
-export function useListDrag(
-    listRef: ListSource,
-    { collection, onDrop, backingRef, orderField = 'sort_order' }: ListDragOptions = {}
-) {
+export function useListDrag(listRef, { collection, onDrop, backingRef, orderField = 'sort_order' } = {}) {
     const getList = () => resolveList(listRef)
     const dragging = ref(false)
     const dragIndex = ref(-1)
     const dragOffset = ref(0)
     let _startY = 0
-    let _timer: ReturnType<typeof setTimeout> | undefined
+    let _timer
     let _itemH = 0
-
-    function onDragStart(e: DragTouchEvent, idx: number) {
+    function onDragStart(e, idx) {
         _startY = e.touches[0].clientY
         _timer = setTimeout(() => {
             dragging.value = true
@@ -110,8 +86,7 @@ export function useListDrag(
             uni.vibrateShort({ type: 'medium' })
         }, 350)
     }
-
-    function onDragMove(e: DragTouchEvent) {
+    function onDragMove(e) {
         if (!dragging.value) {
             clearTimeout(_timer)
             return
@@ -130,7 +105,6 @@ export function useListDrag(
             }
         }
     }
-
     async function onDragEnd() {
         clearTimeout(_timer)
         if (!dragging.value) return
@@ -141,7 +115,6 @@ export function useListDrag(
         await persistOrder(collection, finalList, orderField)
         if (onDrop) onDrop(finalList)
     }
-
     return {
         dragging,
         dragIndex,
@@ -156,7 +129,7 @@ export function useListDrag(
  * 网格拖拽排序 composable（2 列网格，用于相册）
  * extendList：分页场景下把未加载的记录接在后面一起写回顺序，避免已加载部分重新编号后与未加载部分的 sort_order 重复
  */
-export function useGridDrag(listRef: ListSource, { collection, onDrop, backingRef, extendList }: GridDragOptions = {}) {
+export function useGridDrag(listRef, { collection, onDrop, backingRef, extendList } = {}) {
     const getList = () => resolveList(listRef)
     const dragging = ref(false)
     const dragFromIdx = ref(-1)
@@ -167,11 +140,10 @@ export function useGridDrag(listRef: ListSource, { collection, onDrop, backingRe
     const COLS = 2
     let _startX = 0
     let _startY = 0
-    let _timer: ReturnType<typeof setTimeout> | undefined
+    let _timer
     let _itemW = 0
     let _itemH = 0
-
-    function onDragStart(e: DragTouchEvent, idx: number) {
+    function onDragStart(e, idx) {
         _startX = e.touches[0].clientX
         _startY = e.touches[0].clientY
         _timer = setTimeout(() => {
@@ -186,8 +158,7 @@ export function useGridDrag(listRef: ListSource, { collection, onDrop, backingRe
             uni.vibrateShort({ type: 'medium' })
         }, 350)
     }
-
-    function onDragMove(e: DragTouchEvent) {
+    function onDragMove(e) {
         if (!dragging.value) {
             clearTimeout(_timer)
             return
@@ -198,19 +169,16 @@ export function useGridDrag(listRef: ListSource, { collection, onDrop, backingRe
         const dy = touch.clientY - _startY
         dragDx.value = dx
         dragDy.value = dy
-
         // 计算目标网格位置
         const colShift = Math.round(dx / _itemW)
         const rowShift = Math.round(dy / _itemH)
         if (colShift === 0 && rowShift === 0) return
-
         const curIdx = dragFromIdx.value
         const curCol = curIdx % COLS
         const curRow = Math.floor(curIdx / COLS)
         const targetCol = curCol + colShift
         const targetRow = curRow + rowShift
         if (targetCol < 0 || targetCol >= COLS || targetRow < 0) return
-
         const targetIdx = targetRow * COLS + targetCol
         if (
             targetIdx >= 0 &&
@@ -228,7 +196,6 @@ export function useGridDrag(listRef: ListSource, { collection, onDrop, backingRe
             uni.vibrateShort({ type: 'light' })
         }
     }
-
     async function onDragEnd() {
         clearTimeout(_timer)
         if (!dragging.value) return
@@ -242,7 +209,6 @@ export function useGridDrag(listRef: ListSource, { collection, onDrop, backingRe
         await persistOrder(collection, finalList)
         if (onDrop) onDrop(finalList)
     }
-
     return {
         dragging,
         dragFromIdx,

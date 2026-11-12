@@ -1,13 +1,10 @@
 import TEMPLATE_IDS from '../cloud/functions/notification/templates.json'
 
-/** 订阅通知类型（templates.json 的键） */
-export type NotifyType = keyof typeof TEMPLATE_IDS
-
-// tabBar 页面路径：必须与 pages.json 中的 tabBar.list 一致（tests/constants.test.js 会校验）
+// tabBar 页面路径：必须与 pages.json 中的 tabBar.list 一致
 export const TAB_PAGES = ['/pages/home/home', '/pages/menu/menu', '/pages/orders/orders', '/pages/settings/settings']
 
 /** 跳转页面：tab 页用 switchTab，其他用 navigateTo */
-export function navigateToPage(url: string): void {
+export function navigateToPage(url) {
     const path = url.split('?')[0]
     if (TAB_PAGES.includes(path)) uni.switchTab({ url: path })
     else uni.navigateTo({ url })
@@ -63,7 +60,7 @@ export const FUNC_CARD_GRADIENTS = {
 }
 
 // 难度标签
-export const DIFFICULTY_LABELS: Record<number, string> = {
+export const DIFFICULTY_LABELS = {
     1: '简单',
     2: '较易',
     3: '中等',
@@ -92,7 +89,7 @@ export const CATEGORY_EMOJIS = [
 ]
 
 // 背景颜色预设映射（预设名称 -> CSS 颜色）
-export const BG_COLOR_MAP: Record<string, string> = {
+export const BG_COLOR_MAP = {
     warm_white: '#faf6f1',
     apricot: '#f5e6da',
     misty_blue: '#dce8f0',
@@ -104,7 +101,7 @@ export const BG_COLOR_MAP: Record<string, string> = {
 }
 
 // 背景预设（设置页、背景页共用）；style 来自 BG_COLOR_MAP
-const BG_PRESET_NAMES: Record<string, string> = {
+const BG_PRESET_NAMES = {
     warm_white: '暖白',
     apricot: '杏粉',
     misty_blue: '雾蓝',
@@ -114,6 +111,7 @@ const BG_PRESET_NAMES: Record<string, string> = {
     sakura: '樱粉',
     cream: '奶油',
 }
+
 export const BG_PRESETS = [
     { name: '默认', value: 'none', style: '#f2f2f7' },
     ...Object.keys(BG_PRESET_NAMES).map(value => ({ name: BG_PRESET_NAMES[value], value, style: BG_COLOR_MAP[value] })),
@@ -121,10 +119,10 @@ export const BG_PRESETS = [
 
 // 订阅消息模板 ID（在微信公众平台创建模板后填入）
 // 唯一数据源：cloud/functions/notification/templates.json（云函数与客户端共用，修改一处即可）
-export const NOTIFY_TEMPLATES: Record<NotifyType, string> = TEMPLATE_IDS
+export const NOTIFY_TEMPLATES = TEMPLATE_IDS
 
 // 各场景请求订阅的模板（wx.requestSubscribeMessage 单次最多 3 个，第一个为本场景最相关的类型）
-export const SUBSCRIBE_SCENES: Record<string, NotifyType[]> = {
+export const SUBSCRIBE_SCENES = {
     content: ['content_update', 'new_photo', 'order_update'],
     photo: ['new_photo', 'content_update', 'order_update'],
     order: ['order_update', 'content_update', 'new_photo'],

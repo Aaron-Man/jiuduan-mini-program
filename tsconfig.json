@@ -1,23 +1,16 @@
 {
     "compilerOptions": {
-        "target": "es2020",
+        "target": "esnext",
         "module": "esnext",
-        "moduleResolution": "bundler",
-        "strict": true,
-        "noEmit": true,
+        "moduleResolution": "node",
         "allowJs": true,
-        "checkJs": false,
-        "resolveJsonModule": true,
-        "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true,
         "skipLibCheck": true,
-        "isolatedModules": true,
-        "types": ["@dcloudio/types", "miniprogram-api-typings"],
+        "types": ["@dcloudio/types"],
         "paths": {
             "@/*": ["./*"]
         },
-        "lib": ["es2020", "dom"]
+        "lib": ["esnext", "dom"]
     },
-    "include": ["utils/**/*.ts", "utils/**/*.d.ts"],
+    "include": ["**/*.js", "**/*.vue"],
     "exclude": ["node_modules", "unpackage", "dist"]
 }
