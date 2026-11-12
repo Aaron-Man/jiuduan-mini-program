@@ -1,0 +1,23 @@
+{
+    "name": "zhuzhu",
+    "appid": "wx3aef57432e836558",
+    "description": "猪猪 - 微信小程序",
+    "versionName": "1.0.0",
+    "versionCode": "100",
+    "transformPx": false,
+    "mp-weixin": {
+        "appid": "wx3aef57432e836558",
+        "setting": {
+            "urlCheck": false,
+            "minified": true,
+            "es6": true,
+            "postcss": true
+        },
+        "usingComponents": true,
+        "cloud": true
+    },
+    "uniStatistics": {
+        "enable": false
+    },
+    "vueVersion": "3"
+}

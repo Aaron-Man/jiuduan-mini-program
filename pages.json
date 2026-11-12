@@ -1,0 +1,172 @@
+{
+    "pages": [
+        {
+            "path": "pages/home/home",
+            "style": {
+                "navigationBarTitleText": "首页",
+                "navigationStyle": "custom"
+            }
+        },
+        {
+            "path": "pages/login/login",
+            "style": {
+                "navigationBarTitleText": "猪猪",
+                "navigationStyle": "custom"
+            }
+        },
+        {
+            "path": "pages/menu/menu",
+            "style": {
+                "navigationBarTitleText": "菜谱"
+            }
+        },
+        {
+            "path": "pages/orders/orders",
+            "style": {
+                "navigationBarTitleText": "点菜记录"
+            }
+        },
+        {
+            "path": "pages/settings/settings",
+            "style": {
+                "navigationBarTitleText": "设置"
+            }
+        },
+        {
+            "path": "pages/settings/background",
+            "style": {
+                "navigationBarTitleText": "背景设置",
+                "navigationStyle": "custom"
+            }
+        }
+    ],
+    "subPackages": [
+        {
+            "root": "pages/status",
+            "pages": [
+                {
+                    "path": "status",
+                    "style": {
+                        "navigationBarTitleText": "心情"
+                    }
+                }
+            ]
+        },
+        {
+            "root": "pages/journal",
+            "pages": [
+                {
+                    "path": "journal",
+                    "style": {
+                        "navigationBarTitleText": "日志"
+                    }
+                },
+                {
+                    "path": "detail",
+                    "style": {
+                        "navigationBarTitleText": "日志详情"
+                    }
+                }
+            ]
+        },
+        {
+            "root": "pages/travel",
+            "pages": [
+                {
+                    "path": "travel",
+                    "style": {
+                        "navigationBarTitleText": "旅行计划"
+                    }
+                }
+            ]
+        },
+        {
+            "root": "pages/memo",
+            "pages": [
+                {
+                    "path": "memo",
+                    "style": {
+                        "navigationBarTitleText": "备忘录"
+                    }
+                }
+            ]
+        },
+        {
+            "root": "pages/gallery",
+            "pages": [
+                {
+                    "path": "gallery",
+                    "style": {
+                        "navigationBarTitleText": "相册"
+                    }
+                }
+            ]
+        },
+        {
+            "root": "pages/period",
+            "pages": [
+                {
+                    "path": "period",
+                    "style": {
+                        "navigationBarTitleText": "经期管理"
+                    }
+                },
+                {
+                    "path": "period-history",
+                    "style": {
+                        "navigationBarTitleText": "历史记录"
+                    }
+                }
+            ]
+        },
+        {
+            "root": "pages/members",
+            "pages": [
+                {
+                    "path": "members",
+                    "style": {
+                        "navigationBarTitleText": "成员管理"
+                    }
+                }
+            ]
+        }
+    ],
+    "globalStyle": {
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "猪猪",
+        "navigationBarBackgroundColor": "#ffffff",
+        "backgroundColor": "#f5f5f5"
+    },
+    "tabBar": {
+        "color": "#c4a882",
+        "selectedColor": "#5c3d2e",
+        "borderStyle": "white",
+        "backgroundColor": "#faf6f1",
+        "list": [
+            {
+                "pagePath": "pages/home/home",
+                "text": "首页",
+                "iconPath": "static/tabbar/home.png",
+                "selectedIconPath": "static/tabbar/home-active.png"
+            },
+            {
+                "pagePath": "pages/menu/menu",
+                "text": "菜谱",
+                "iconPath": "static/tabbar/menu.png",
+                "selectedIconPath": "static/tabbar/menu-active.png"
+            },
+            {
+                "pagePath": "pages/orders/orders",
+                "text": "点菜",
+                "iconPath": "static/tabbar/order.png",
+                "selectedIconPath": "static/tabbar/order-active.png"
+            },
+            {
+                "pagePath": "pages/settings/settings",
+                "text": "设置",
+                "iconPath": "static/tabbar/settings.png",
+                "selectedIconPath": "static/tabbar/settings-active.png"
+            }
+        ]
+    }
+}
