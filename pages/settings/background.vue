@@ -1,19 +1,26 @@
 <template>
     <!-- 页面背景跟随当前设置 -->
-    <page-bg :image="bgImage" overlay="strong" />
+    <page-bg :image="bgImage" overlay="strong" tone="sunset" />
 
     <scroll-view scroll-y class="page-scroll">
         <!-- 自定义导航栏 -->
         <view class="nav-bar" :style="{ paddingTop: navTop + 'px' }">
-            <view class="nav-back" @tap="goBack">
+            <view class="nav-back ui-press" @tap="goBack">
                 <text class="nav-back-icon">‹</text>
             </view>
             <text class="nav-title">背景设置</text>
             <view class="nav-placeholder"></view>
         </view>
 
+        <!-- 杂志式标题区 -->
+        <view class="mast ui-fade-up">
+            <text class="ui-eyebrow">BACKDROP</text>
+            <text class="ui-title mast-title">换一种心情</text>
+            <text class="ui-sub mast-sub">为每个页面挑一块喜欢的底色</text>
+        </view>
+
         <!-- 当前背景预览 -->
-        <view class="preview-card">
+        <view class="preview-card ui-fade-up ui-d1">
             <view
                 class="preview-card-bg"
                 v-if="bgImage && !isPresetBg"
@@ -21,16 +28,20 @@
             ></view>
             <view class="preview-card-bg" v-else-if="isPresetBg" :style="{ background: bgPresetStyle }"></view>
             <view class="preview-card-content">
+                <text class="preview-eyebrow">NOW SHOWING</text>
                 <text class="preview-card-label">{{ previewLabel }}</text>
-                <view class="preview-card-action" v-if="bgImage" @tap="handleRemoveBg">
+                <view class="preview-card-action ui-press" v-if="bgImage" @tap="handleRemoveBg">
                     <text class="preview-card-action-text">恢复默认</text>
                 </view>
             </view>
         </view>
 
         <!-- 选择颜色 -->
-        <view class="panel">
-            <text class="panel-title">选择颜色</text>
+        <view class="panel ui-fade-up ui-d2">
+            <view class="panel-head">
+                <text class="ui-eyebrow">PALETTE</text>
+                <text class="panel-title">选择颜色</text>
+            </view>
             <scroll-view scroll-x class="color-scroll" show-scrollbar="false">
                 <view class="color-row">
                     <view
@@ -40,7 +51,9 @@
                         :class="{ active: selectedPreset === p.value }"
                         @tap="selectPreset(p)"
                     >
-                        <view class="chip-dot" :style="{ background: p.style }"></view>
+                        <view class="chip-ring">
+                            <view class="chip-dot" :style="{ background: p.style }"></view>
+                        </view>
                         <text class="chip-name" :class="{ 'chip-name-active': selectedPreset === p.value }">{{
                             p.name
                         }}</text>
@@ -50,14 +63,23 @@
         </view>
 
         <!-- 自定义图片 -->
-        <view class="panel">
-            <text class="panel-title">自定义图片</text>
+        <view class="panel ui-fade-up ui-d3">
+            <view class="panel-head">
+                <text class="ui-eyebrow">GALLERY</text>
+                <text class="panel-title">自定义图片</text>
+            </view>
             <view class="img-grid">
-                <view class="img-add" @tap="chooseBgImage">
-                    <text class="img-add-icon">+</text>
+                <view class="img-add ui-press" @tap="chooseBgImage">
+                    <view class="img-add-bubble"><text class="img-add-icon">+</text></view>
                     <text class="img-add-text">上传图片</text>
                 </view>
-                <view class="img-item" v-for="(img, idx) in bgImages" :key="img" @tap="selectSavedImage(img)">
+                <view
+                    class="img-item ui-press"
+                    v-for="(img, idx) in bgImages"
+                    :key="img"
+                    :class="{ current: currentBgFileId === img }"
+                    @tap="selectSavedImage(img)"
+                >
                     <image :src="resolvedBgMap[img] || ''" class="img-thumb" mode="aspectFill" lazy-load />
                     <view v-if="currentBgFileId === img" class="img-badge">
                         <text class="img-badge-icon">✓</text>
@@ -268,7 +290,7 @@ const goBack = () => {
 <style scoped>
 .page-scroll {
     height: 100vh;
-    background: #f5f0eb;
+    background: transparent;
 }
 
 /* ===== Nav Bar ===== */
@@ -276,42 +298,62 @@ const goBack = () => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 30px 32rpx 24rpx;
+    padding: 30px 32rpx 16rpx;
 }
 .nav-back {
-    width: 64rpx;
-    height: 64rpx;
-    border-radius: 32rpx;
-    background: rgba(255, 255, 255, 0.5);
+    width: 72rpx;
+    height: 72rpx;
+    border-radius: 50%;
+    background: var(--card);
+    border: 1rpx solid var(--card-border);
+    box-shadow: var(--shadow-soft);
     display: flex;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
 }
 .nav-back-icon {
-    font-size: 40rpx;
-    color: #3c2413;
+    font-size: 44rpx;
+    color: var(--ink);
     font-weight: 300;
     margin-left: -4rpx;
+    line-height: 1;
 }
 .nav-title {
-    font-size: 32rpx;
+    font-size: 26rpx;
     font-weight: 600;
-    color: #3c2413;
-    letter-spacing: 1rpx;
+    color: var(--ink-2);
+    letter-spacing: 0.2em;
 }
 .nav-placeholder {
-    width: 64rpx;
+    width: 72rpx;
+}
+
+/* ===== 标题区 ===== */
+.mast {
+    padding: 24rpx 44rpx 8rpx;
+    display: flex;
+    flex-direction: column;
+}
+.mast-title {
+    margin-top: 12rpx;
+}
+.mast-sub {
+    margin-top: 10rpx;
+    letter-spacing: 0.04em;
 }
 
 /* ===== Preview Card ===== */
 .preview-card {
     position: relative;
-    height: 300rpx;
-    margin: 16rpx 32rpx 24rpx;
-    border-radius: 24rpx;
+    height: 380rpx;
+    margin: 36rpx 32rpx 32rpx;
+    border-radius: var(--r-xl);
     overflow: hidden;
-    box-shadow: 0 8rpx 32rpx rgba(60, 36, 19, 0.1);
+    background: var(--grad-sunset);
+    border: 8rpx solid rgba(255, 255, 255, 0.9);
+    box-shadow: var(--shadow);
 }
 .preview-card-bg {
     position: absolute;
@@ -330,46 +372,64 @@ const goBack = () => {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(2px);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.28) 100%);
+}
+.preview-eyebrow {
+    font-size: 18rpx;
+    letter-spacing: 0.4em;
+    color: var(--ink-2);
+    font-weight: 600;
+    padding: 6rpx 20rpx;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 999rpx;
 }
 .preview-card-label {
-    font-size: 30rpx;
-    font-weight: 600;
-    color: #3c2413;
-    letter-spacing: 2rpx;
-    text-shadow: 0 1rpx 4rpx rgba(255, 255, 255, 0.5);
+    font-family: var(--font-serif);
+    font-size: 52rpx;
+    font-weight: 700;
+    color: var(--ink);
+    margin-top: 18rpx;
+    text-shadow: 0 2rpx 12rpx rgba(255, 255, 255, 0.6);
 }
 .preview-card-action {
-    margin-top: 20rpx;
-    padding: 10rpx 36rpx;
-    background: rgba(60, 36, 19, 0.12);
-    border-radius: 28rpx;
-    backdrop-filter: blur(4px);
-}
-.preview-card-action:active {
-    background: rgba(60, 36, 19, 0.2);
+    margin-top: 24rpx;
+    height: 64rpx;
+    padding: 0 36rpx;
+    display: flex;
+    align-items: center;
+    background: var(--ink);
+    border-radius: 999rpx;
+    box-shadow: 0 16rpx 32rpx -16rpx rgba(30, 26, 23, 0.6);
 }
 .preview-card-action-text {
     font-size: 24rpx;
-    color: #3c2413;
-    letter-spacing: 1rpx;
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.1em;
 }
 
 /* ===== Panel (shared card section) ===== */
 .panel {
-    background: rgba(255, 255, 255, 0.7);
-    margin: 0 32rpx 24rpx;
-    border-radius: 24rpx;
-    padding: 28rpx;
-    box-shadow: 0 2rpx 12rpx rgba(60, 36, 19, 0.04);
+    background: var(--card);
+    border: 1rpx solid var(--card-border);
+    margin: 0 32rpx 28rpx;
+    border-radius: var(--r-xl);
+    padding: 36rpx 32rpx;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+.panel-head {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 28rpx;
 }
 .panel-title {
-    font-size: 28rpx;
-    font-weight: 600;
-    color: #3c2413;
-    letter-spacing: 1rpx;
-    margin-bottom: 24rpx;
+    font-family: var(--font-serif);
+    font-size: 38rpx;
+    font-weight: 700;
+    color: var(--ink);
+    margin-top: 6rpx;
     display: block;
 }
 
@@ -380,84 +440,105 @@ const goBack = () => {
 }
 .color-row {
     display: inline-flex;
-    gap: 16rpx;
-    padding: 0 8rpx;
+    gap: 12rpx;
+    padding: 0 8rpx 8rpx;
 }
 .color-chip {
     display: inline-flex;
     flex-direction: column;
     align-items: center;
-    gap: 10rpx;
-    width: 108rpx;
-    padding: 14rpx 0 12rpx;
-    border-radius: 16rpx;
-    background: transparent;
-    border: 2rpx solid transparent;
-    transition: all 0.2s ease;
+    gap: 12rpx;
+    width: 112rpx;
+    padding: 4rpx 0;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .color-chip:active {
-    transform: scale(0.95);
+    transform: scale(0.94);
 }
-.color-chip.active {
-    background: rgba(198, 139, 89, 0.08);
-    border-color: #c68b59;
+.chip-ring {
+    width: 92rpx;
+    height: 92rpx;
+    border-radius: 50%;
+    border: 3rpx solid transparent;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: border-color 0.2s ease;
+}
+.color-chip.active .chip-ring {
+    border-color: var(--ink);
 }
 .chip-dot {
-    width: 64rpx;
-    height: 64rpx;
-    border-radius: 32rpx;
-    border: 2rpx solid rgba(60, 36, 19, 0.08);
-    box-shadow: 0 2rpx 8rpx rgba(60, 36, 19, 0.06);
+    width: 72rpx;
+    height: 72rpx;
+    border-radius: 50%;
+    border: 2rpx solid rgba(30, 26, 23, 0.06);
+    box-shadow: 0 10rpx 20rpx -10rpx rgba(80, 56, 36, 0.35);
     box-sizing: border-box;
 }
 .chip-name {
     font-size: 20rpx;
-    color: #8b6f47;
-    letter-spacing: 0.5rpx;
+    color: var(--muted);
+    letter-spacing: 0.04em;
 }
 .chip-name-active {
-    color: #c68b59;
-    font-weight: 500;
+    color: var(--ink);
+    font-weight: 600;
 }
 
 /* ===== Image Grid ===== */
 .img-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 16rpx;
+    gap: 20rpx;
 }
 .img-add {
-    width: calc(50% - 8rpx);
-    height: 180rpx;
-    border-radius: 16rpx;
-    border: 2rpx dashed rgba(196, 168, 130, 0.5);
+    width: calc(50% - 10rpx);
+    height: 220rpx;
+    border-radius: var(--r-l);
+    border: 2rpx dashed var(--faint);
     background: rgba(255, 255, 255, 0.5);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 8rpx;
-    transition: background 0.2s;
+    gap: 14rpx;
+    box-sizing: border-box;
 }
-.img-add:active {
-    background: rgba(255, 255, 255, 0.8);
+.img-add-bubble {
+    width: 72rpx;
+    height: 72rpx;
+    border-radius: 50%;
+    background: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 16rpx 32rpx -16rpx rgba(30, 26, 23, 0.6);
 }
 .img-add-icon {
-    font-size: 48rpx;
-    color: #c4a882;
+    font-size: 44rpx;
+    color: #fff;
+    font-weight: 300;
     line-height: 1;
 }
 .img-add-text {
-    font-size: 24rpx;
-    color: #8b6f47;
+    font-size: 22rpx;
+    color: var(--ink-2);
+    letter-spacing: 0.1em;
 }
 .img-item {
     position: relative;
-    width: calc(50% - 8rpx);
-    height: 180rpx;
-    border-radius: 16rpx;
+    width: calc(50% - 10rpx);
+    height: 220rpx;
+    border-radius: var(--r-l);
     overflow: hidden;
-    border: 2rpx solid rgba(60, 36, 19, 0.06);
+    border: 4rpx solid rgba(255, 255, 255, 0.9);
+    box-shadow: var(--shadow-soft);
+    box-sizing: border-box;
+}
+.img-item.current {
+    border-color: var(--ink);
 }
 .img-thumb {
     width: 100%;
@@ -465,17 +546,15 @@ const goBack = () => {
 }
 .img-badge {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 44rpx;
-    height: 44rpx;
-    border-radius: 22rpx;
-    background: rgba(198, 139, 89, 0.75);
+    left: 14rpx;
+    bottom: 14rpx;
+    width: 48rpx;
+    height: 48rpx;
+    border-radius: 50%;
+    background: var(--ink);
     display: flex;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(4px);
 }
 .img-badge-icon {
     color: #fff;
@@ -484,34 +563,35 @@ const goBack = () => {
 }
 .img-del {
     position: absolute;
-    top: 8rpx;
-    right: 8rpx;
-    width: 36rpx;
-    height: 36rpx;
-    border-radius: 18rpx;
-    background: rgba(0, 0, 0, 0.3);
+    top: 12rpx;
+    right: 12rpx;
+    width: 44rpx;
+    height: 44rpx;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.85);
     display: flex;
     align-items: center;
     justify-content: center;
-    backdrop-filter: blur(4px);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
 }
 .img-del-icon {
-    color: #fff;
-    font-size: 24rpx;
-    font-weight: 700;
+    color: var(--coral);
+    font-size: 28rpx;
+    font-weight: 600;
     line-height: 1;
 }
 
 /* ===== Footer ===== */
 .footer-hint {
     font-size: 22rpx;
-    color: #8b6f47;
+    color: var(--muted);
     display: block;
     text-align: center;
-    padding: 16rpx 32rpx 0;
-    letter-spacing: 0.5rpx;
+    padding: 16rpx 48rpx 0;
+    letter-spacing: 0.04em;
 }
 .bottom-space {
-    height: 80rpx;
+    height: calc(80rpx + env(safe-area-inset-bottom));
 }
 </style>

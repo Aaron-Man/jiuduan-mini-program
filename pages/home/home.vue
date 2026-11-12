@@ -1,83 +1,176 @@
 <template>
-    <page-bg />
+    <page-bg tone="sunset" />
     <scroll-view
         scroll-y
-        class="page-scroll"
-        :class="{ 'page-scroll--transparent': bgImage }"
+        class="page"
         refresher-enabled
         refresher-default-style="black"
+        refresher-background="transparent"
         :refresher-triggered="refreshing"
         @refresherrefresh="onRefresh"
     >
-        <!-- ===== 标题区 ===== -->
-        <view class="hero">
-            <!-- 装饰元素 -->
-            <view class="hero-deco hero-deco--bean1">🐷</view>
-            <view class="hero-deco hero-deco--bean2">&#10047;</view>
-            <view class="hero-deco hero-deco--ring"></view>
-            <!-- 标题 -->
-            <view class="hero-badge">
-                <text class="hero-badge-icon">🐷</text>
-            </view>
-            <text class="hero-title">{{ spaceName }}</text>
-            <view class="hero-sub">
-                <text class="hero-greeting" v-if="greeting.text">{{ greeting.emoji }} {{ greeting.text }}</text>
-                <text class="hero-dot" v-if="greeting.text">·</text>
-                <text class="hero-date">{{ todayStr }}</text>
-                <text class="hero-dot" v-if="daysTogether > 0">·</text>
-                <text class="hero-love" v-if="daysTogether > 0">&#10084; {{ daysTogether }} 天</text>
-            </view>
-        </view>
+        <view class="status-gap" :style="{ height: topGap + 'px' }"></view>
 
-        <!-- ===== 聚光灯区 ===== -->
-        <view class="section" v-if="spotlightItems.length > 0">
-            <view class="section-header">
-                <view class="section-title-line"></view>
-                <text class="section-title">置顶</text>
-                <view class="section-title-line"></view>
+        <!-- ===== 顶部：日期 / 问候 / 家人头像 ===== -->
+        <view class="top ui-fade-up">
+            <view class="top-left">
+                <text class="ui-eyebrow">{{ dateEyebrow }}</text>
+                <text class="greet ui-serif">{{ greeting.text }}{{ myName ? '，' + myName : '' }}</text>
             </view>
-            <swiper
-                class="spotlight-swiper"
-                :circular="true"
-                :autoplay="false"
-                :indicator-dots="spotlightItems.length > 1"
-                indicator-color="rgba(196,168,130,0.25)"
-                indicator-active-color="#c68b59"
-            >
-                <swiper-item v-for="(item, idx) in spotlightItems" :key="idx" @tap="goTo(item.path)">
-                    <view class="spotlight-card">
-                        <!-- 左侧装饰条 -->
-                        <view class="spotlight-bar"></view>
-                        <view class="spotlight-content">
-                            <view class="spotlight-header">
-                                <view class="spotlight-source">
-                                    <view class="spotlight-source-badge">{{ item.sourceIcon }}</view>
-                                    <text class="spotlight-source-name">{{ item.sourceName }}</text>
-                                </view>
-                                <view class="spotlight-arrow">&#8250;</view>
-                            </view>
-                            <text class="spotlight-text">{{ item.text }}</text>
-                            <text class="spotlight-sub" v-if="item.sub">{{ item.sub }}</text>
-                        </view>
-                    </view>
-                </swiper-item>
-            </swiper>
-        </view>
-
-        <!-- ===== 功能入口区 ===== -->
-        <view class="section">
-            <view class="section-header">
-                <view class="section-title-line"></view>
-                <text class="section-title">功能</text>
-                <view class="section-title-line"></view>
-            </view>
-            <view class="nav-grid">
-                <view class="nav-item" v-for="(func, idx) in navItems" :key="func.key" @tap="goTo(func.path)">
-                    <view class="nav-icon" :class="'nav-icon--' + (idx % 6)">
-                        <text class="nav-icon-text">{{ func.icon }}</text>
-                    </view>
-                    <text class="nav-name">{{ func.name }}</text>
+            <view class="avatars ui-press" @tap="goTo('/pages/members/members')">
+                <view v-for="(m, i) in members.slice(0, 4)" :key="m._id" class="avatar" :style="{ zIndex: 10 - i }">
+                    <image v-if="m.avatarSrc" :src="m.avatarSrc" class="avatar-img" mode="aspectFill" />
+                    <text v-else class="avatar-text">{{ (m.nickname || '家')[0] }}</text>
                 </view>
+                <view v-if="members.length > 4" class="avatar avatar--more"><text>+{{ members.length - 4 }}</text></view>
+            </view>
+        </view>
+
+        <!-- ===== 主卡片：在一起的天数 ===== -->
+        <view class="love ui-fade-up ui-d1 ui-press" @tap="goTo(daysTogether > 0 ? '/pages/anniversary/anniversary' : '/pages/settings/settings')">
+            <view class="love-orb love-orb--1"></view>
+            <view class="love-orb love-orb--2"></view>
+            <text class="love-heart love-heart--1">♥</text>
+            <text class="love-heart love-heart--2">♥</text>
+            <text class="love-heart love-heart--3">✦</text>
+            <text class="ui-eyebrow love-eyebrow">{{ spaceName }}</text>
+            <template v-if="daysTogether > 0">
+                <view class="love-count">
+                    <text class="love-num ui-serif">{{ daysTogether }}</text>
+                    <text class="love-unit">days</text>
+                </view>
+                <text class="love-caption">在一起的第 {{ daysTogether }} 天</text>
+                <view class="love-chip">
+                    <text>距第 {{ milestone.target }} 天还有 {{ milestone.remain }} 天</text>
+                </view>
+            </template>
+            <template v-else>
+                <text class="love-empty ui-serif">从哪一天开始，我们成了一家人？</text>
+                <view class="love-chip"><text>去设置纪念日 ›</text></view>
+            </template>
+        </view>
+
+        <!-- ===== 每日一句 ===== -->
+        <view class="quote ui-card ui-fade-up ui-d2 ui-press" @tap="nextQuote">
+            <text class="quote-mark ui-serif">“</text>
+            <text class="quote-text ui-serif">{{ quote.text }}</text>
+            <view class="quote-foot">
+                <text class="quote-origin">— {{ quote.author ? quote.author + ' · ' : '' }}{{ quote.origin }}</text>
+                <text class="quote-shuffle">换一句 ↻</text>
+            </view>
+        </view>
+
+        <!-- ===== 即将到来 ===== -->
+        <view class="block ui-fade-up ui-d3" v-if="upcoming.length">
+            <view class="block-head">
+                <text class="block-title ui-serif">即将到来</text>
+                <text class="block-more" @tap="goTo('/pages/anniversary/anniversary')">全部 ›</text>
+            </view>
+            <scroll-view scroll-x class="hscroll" :show-scrollbar="false">
+                <view
+                    v-for="u in upcoming"
+                    :key="u.key"
+                    class="soon ui-press"
+                    :style="{ background: u.grad }"
+                    @tap="goTo(u.path)"
+                >
+                    <text class="soon-emoji">{{ u.emoji }}</text>
+                    <view class="soon-count">
+                        <text class="soon-num ui-serif" v-if="u.days > 0">{{ u.days }}</text>
+                        <text class="soon-today ui-serif" v-else>今天</text>
+                        <text class="soon-unit" v-if="u.days > 0">天后</text>
+                    </view>
+                    <text class="soon-title">{{ u.title }}</text>
+                </view>
+            </scroll-view>
+        </view>
+
+        <!-- ===== 便当格：相册 / 心愿 / 胶囊 ===== -->
+        <view class="bento ui-fade-up ui-d4">
+            <view class="tile tile--photo ui-press" @tap="goTo('/pages/gallery/gallery')">
+                <image v-if="coverPhoto" :src="coverPhoto" class="tile-photo" mode="aspectFill" />
+                <view v-else class="tile-photo tile-photo--empty"><text>📷</text></view>
+                <view class="tile-shade"></view>
+                <view class="tile-photo-text">
+                    <text class="tile-eyebrow tile-eyebrow--light">Moments</text>
+                    <text class="tile-big ui-serif tile-big--light">{{ counts.photos }}</text>
+                    <text class="tile-label tile-label--light">张家庭照片</text>
+                </view>
+            </view>
+            <view class="bento-col">
+                <view class="tile tile--wish ui-press" @tap="goTo('/pages/wish/wish')">
+                    <text class="tile-eyebrow">Wishes</text>
+                    <view class="tile-row">
+                        <text class="tile-big ui-serif">{{ wishPercent }}<text class="tile-pct">%</text></text>
+                        <text class="tile-emoji">🌠</text>
+                    </view>
+                    <view class="mini-bar"><view class="mini-bar-fill" :style="{ width: wishPercent + '%' }"></view></view>
+                    <text class="tile-label">心愿已实现 {{ counts.wishDone }}/{{ counts.wishes }}</text>
+                </view>
+                <view class="tile tile--capsule ui-press" @tap="goTo('/pages/capsule/capsule')">
+                    <text class="tile-eyebrow">Capsule</text>
+                    <view class="tile-row">
+                        <text class="tile-big ui-serif">{{ counts.capsules }}</text>
+                        <text class="tile-emoji">💌</text>
+                    </view>
+                    <text class="tile-label">封写给未来的信</text>
+                </view>
+            </view>
+        </view>
+
+        <!-- ===== 功能入口 ===== -->
+        <view class="apps ui-fade-up ui-d5">
+            <view v-for="a in apps" :key="a.key" class="app ui-press" @tap="goTo(a.path)">
+                <view class="ui-bubble" :class="'ui-bubble--' + a.color"><text>{{ a.icon }}</text></view>
+                <text class="app-name">{{ a.name }}</text>
+            </view>
+        </view>
+
+        <!-- ===== 置顶 ===== -->
+        <view class="block ui-fade-up ui-d5" v-if="spotlightItems.length">
+            <view class="block-head">
+                <text class="block-title ui-serif">置顶</text>
+                <text class="block-sub">{{ spotlightItems.length }} 条</text>
+            </view>
+            <scroll-view scroll-x class="hscroll" :show-scrollbar="false">
+                <view v-for="item in spotlightItems" :key="item.type + item.id" class="pin ui-card ui-press" @tap="goTo(item.path)">
+                    <view class="pin-head">
+                        <text class="pin-badge">{{ item.sourceIcon }} {{ item.sourceName }}</text>
+                        <text class="pin-flag" v-if="item.isPinned">📌</text>
+                    </view>
+                    <text class="pin-text">{{ item.text }}</text>
+                    <text class="pin-sub" v-if="item.sub">{{ item.sub }}</text>
+                </view>
+            </scroll-view>
+        </view>
+
+        <!-- ===== 家人动态 ===== -->
+        <view class="block ui-fade-up ui-d6">
+            <view class="block-head">
+                <text class="block-title ui-serif">家人动态</text>
+                <text class="block-more" @tap="goTo('/pages/status/status')">发心情 ›</text>
+            </view>
+            <view v-if="feed.length" class="feed">
+                <view v-for="f in feed" :key="f.key" class="post ui-card ui-press" @tap="goTo(f.path)">
+                    <view class="post-head">
+                        <view class="post-avatar">
+                            <image v-if="f.avatar" :src="f.avatar" class="avatar-img" mode="aspectFill" />
+                            <text v-else>{{ f.icon }}</text>
+                        </view>
+                        <view class="post-who">
+                            <text class="post-name">{{ f.name }}</text>
+                            <text class="post-meta">{{ f.kind }} · {{ f.time }}</text>
+                        </view>
+                        <text class="post-mood" v-if="f.mood">{{ f.mood }}</text>
+                    </view>
+                    <text class="post-title ui-serif" v-if="f.title">{{ f.title }}</text>
+                    <text class="post-text" v-if="f.text">{{ f.text }}</text>
+                    <image v-if="f.image" :src="f.image" class="post-image" mode="aspectFill" lazy-load />
+                </view>
+            </view>
+            <view v-else class="feed-empty ui-card">
+                <text class="feed-empty-emoji">🌿</text>
+                <text class="feed-empty-text">今天还很安静，发一条心情打个招呼吧</text>
             </view>
         </view>
 
@@ -87,7 +180,7 @@
 
 <script setup>
 import PageBg from '../../components/page-bg/page-bg.vue'
-import { navigateToPage } from '../../utils/constants'
+import { navigateToPage, MOOD_OPTIONS, themeOf } from '../../utils/constants'
 import { ref, computed, onMounted } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import {
@@ -95,446 +188,827 @@ import {
     getGreeting,
     formatRelativeTime,
     getProfile,
+    getTempFileURL,
+    resolveFileUrls,
     setPCache,
     getPCache,
     clearPCache,
-    useSharedBg,
 } from '../../utils/cloud'
+import { describeAnniversary, nextMilestone, parseDate, diffDays } from '../../utils/anniversary'
+import { quotes } from '../../data/quotes'
 
-// 背景从全局共享状态读取，App 启动时已加载，无需每次进入页面重新加载
-const { bgImage } = useSharedBg()
+// 自定义导航：顶部留出状态栏 / 胶囊按钮的高度
+const topGap = (() => {
+    try {
+        const rect = uni.getMenuButtonBoundingClientRect()
+        if (rect && rect.bottom) return rect.bottom + 4
+    } catch (e) {}
+    try {
+        return (uni.getSystemInfoSync().statusBarHeight || 20) + 12
+    } catch (e) {
+        return 32
+    }
+})()
 
-const greeting = ref({ text: '', emoji: '' })
+const greeting = ref(getGreeting())
 const refreshing = ref(false)
-const spotlightItems = ref([])
+const myName = ref((uni.getStorageSync('auth_user') || {}).nickname || '')
 
 const coupleName = ref('')
 const anniversaryDate = ref('')
+const members = ref([])
+const anniversaries = ref([])
+const travels = ref([])
+const spotlightItems = ref([])
+const feed = ref([])
+const coverPhoto = ref('')
+const counts = ref({ photos: 0, wishes: 0, wishDone: 0, capsules: 0 })
+
+const spaceName = computed(() => coupleName.value || 'Our little home')
 const daysTogether = computed(() => {
     if (!anniversaryDate.value) return 0
-    return Math.floor((Date.now() - new Date(anniversaryDate.value).getTime()) / 86400000)
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    return Math.max(diffDays(parseDate(anniversaryDate.value), today) + 1, 0)
 })
-const spaceName = computed(() => coupleName.value || '猪猪')
+const milestone = computed(() => nextMilestone(daysTogether.value))
+const wishPercent = computed(() => (counts.value.wishes ? Math.round((counts.value.wishDone / counts.value.wishes) * 100) : 0))
 
-const navItems = [
-    { key: 'status', icon: '🐷', name: '心情', path: '/pages/status/status' },
-    { key: 'journal', icon: '📖', name: '日志', path: '/pages/journal/journal' },
-    { key: 'period', icon: '🌸', name: '经期', path: '/pages/period/period' },
-    { key: 'travel', icon: '🧋', name: '旅行', path: '/pages/travel/travel' },
-    { key: 'memo', icon: '🍩', name: '备忘', path: '/pages/memo/memo' },
-    { key: 'gallery', icon: '📸', name: '相册', path: '/pages/gallery/gallery' },
+const dateEyebrow = computed(() => {
+    const d = new Date()
+    const w = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()]
+    const m = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][d.getMonth()]
+    return `${w} · ${m} ${d.getDate()}`
+})
+
+// 每日一句：按日期固定，点击可以换一句
+const dayIndex = Math.floor(Date.now() / 86400000)
+const quoteIdx = ref(dayIndex % quotes.length)
+const quote = computed(() => quotes[quoteIdx.value] || { text: '', origin: '' })
+const nextQuote = () => {
+    quoteIdx.value = (quoteIdx.value + 1 + Math.floor(Math.random() * 7)) % quotes.length
+}
+
+const apps = [
+    { key: 'status', icon: '🫧', name: '心情', color: 'peach', path: '/pages/status/status' },
+    { key: 'journal', icon: '📖', name: '日志', color: 'lilac', path: '/pages/journal/journal' },
+    { key: 'travel', icon: '✈️', name: '旅行', color: 'sky', path: '/pages/travel/travel' },
+    { key: 'memo', icon: '📝', name: '备忘', color: 'butter', path: '/pages/memo/memo' },
+    { key: 'anniversary', icon: '🗓️', name: '纪念日', color: 'rose', path: '/pages/anniversary/anniversary' },
+    { key: 'period', icon: '🌸', name: '经期', color: 'rose', path: '/pages/period/period' },
+    { key: 'menu', icon: '🍳', name: '菜谱', color: 'peach', path: '/pages/menu/menu' },
+    { key: 'members', icon: '👨‍👩‍👧', name: '家人', color: 'sage', path: '/pages/members/members' },
 ]
 
-const todayStr = computed(() => {
-    const d = new Date()
-    const weekdays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
-    return `${d.getMonth() + 1}月${d.getDate()}日 ${weekdays[d.getDay()]}`
+// 即将到来：纪念日（倒数 / 每年）+ 计划中的旅行，60 天以内
+const upcoming = computed(() => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const list = []
+    anniversaries.value.forEach(a => {
+        if (a.type !== 'countdown' && a.type !== 'yearly') return
+        const info = describeAnniversary(a, today)
+        if (info.prefix === '已经过去' || info.num > 60) return
+        list.push({ key: 'a' + a._id, emoji: a.emoji || '🗓️', title: a.title, days: info.num, grad: themeOf(a.color).grad, path: '/pages/anniversary/anniversary' })
+    })
+    travels.value.forEach(t => {
+        if (!t.start_date || t.status === 'completed') return
+        const days = diffDays(today, parseDate(t.start_date))
+        if (days < 0 || days > 60) return
+        list.push({ key: 't' + t._id, emoji: '✈️', title: t.title || t.destination, days, grad: themeOf('sky').grad, path: '/pages/travel/travel' })
+    })
+    return list.sort((a, b) => a.days - b.days)
 })
 
-let hasLoadedOnce = false
+const moodEmoji = label => (MOOD_OPTIONS.find(m => m.label === label) || {}).emoji || ''
 
-onMounted(() => {
-    greeting.value = getGreeting()
-    // 首次加载：先显示缓存，再并行拉取新数据
-    loadCachedData()
-    refreshAll()
-    hasLoadedOnce = true
-})
+// ===== 数据加载 =====
+const query = (collection, extra = {}) =>
+    callFunction('db', { action: 'query', collection, withCount: false, ...extra }).then(r => (Array.isArray(r?.data) ? r.data : []))
 
-onShow(() => {
-    // 非首次进入时：清除置顶缓存，强制拉取最新数据
-    // 确保在其他页面修改置顶/首页标记后，回到首页立即生效
-    if (hasLoadedOnce) {
-        clearPCache('_homeSpotlight')
-        fetchSpotlight()
-    }
-})
-
-// 从持久化缓存快速恢复数据
-const loadCachedData = () => {
-    const cachedProfile = getPCache('_homeProfile')
-    if (cachedProfile) {
-        coupleName.value = cachedProfile.coupleName || ''
-        anniversaryDate.value = cachedProfile.anniversaryDate || ''
-    }
-    const cachedSpotlight = getPCache('_homeSpotlight')
-    if (cachedSpotlight) {
-        spotlightItems.value = cachedSpotlight
+const loadProfile = async () => {
+    const p = await getProfile()
+    if (p) {
+        coupleName.value = p.couple_name || ''
+        anniversaryDate.value = p.anniversary_date || ''
     }
 }
 
-const fetchCoupleProfile = async () => {
-    try {
-        const p = await getProfile()
-        if (p) {
-            coupleName.value = p.couple_name || ''
-            anniversaryDate.value = p.anniversary_date || ''
-            // 缓存到持久化存储
-            setPCache('_homeProfile', { coupleName: coupleName.value, anniversaryDate: anniversaryDate.value })
-        }
-    } catch (e) {
-        console.warn('加载空间信息失败:', e)
+const loadMembers = async () => {
+    const res = await callFunction('auth', { action: 'listMembers' })
+    const list = res?.success ? res.members || [] : []
+    const ids = list.map(m => m.avatar_url).filter(u => u && u.startsWith('cloud://'))
+    const urls = ids.length ? await getTempFileURL(ids) : []
+    const map = {}
+    urls.forEach(u => {
+        if (u.tempFileURL) map[u.fileID] = u.tempFileURL
+    })
+    members.value = list.map(m => ({ ...m, avatarSrc: map[m.avatar_url] || (m.avatar_url && !m.avatar_url.startsWith('cloud://') ? m.avatar_url : '') }))
+}
+
+const loadCounters = async () => {
+    const [annis, trips, wishes, capsules, photos] = await Promise.all([
+        query('anniversaries', { limit: 100 }),
+        query('travels', { orderBy: 'start_date', orderType: 'asc', limit: 30 }),
+        query('wishes', { limit: 100 }),
+        callFunction('db', { action: 'batchCount', collections: ['capsules', 'gallery_photos'] }),
+        query('gallery_photos', { orderBy: 'createTime', orderType: 'desc', limit: 1 }),
+    ])
+    anniversaries.value = annis
+    travels.value = trips
+    const c = capsules?.data || {}
+    counts.value = {
+        photos: c.gallery_photos || 0,
+        capsules: c.capsules || 0,
+        wishes: wishes.length,
+        wishDone: wishes.filter(w => w.done).length,
+    }
+    if (photos[0]) {
+        await resolveFileUrls(photos, 'fileID', 'displayUrl')
+        const f = photos[0].fileID || ''
+        coverPhoto.value = photos[0].displayUrl || (f.startsWith('cloud://') ? '' : f)
     }
 }
 
-// 并行拉取所有数据（背景由全局共享状态提供，无需在此加载）
-const refreshAll = async () => {
-    await Promise.all([fetchCoupleProfile(), fetchSpotlight()])
-}
-
-const onRefresh = async () => {
-    refreshing.value = true
-    await refreshAll()
-    refreshing.value = false
+const loadFeed = async () => {
+    const [statuses, journals] = await Promise.all([
+        query('statuses', { orderBy: 'createTime', orderType: 'desc', limit: 5 }),
+        query('journals', { orderBy: 'createTime', orderType: 'desc', limit: 3 }),
+    ])
+    await resolveFileUrls(statuses, 'imageUrl', 'displayImageUrl')
+    const who = openid => members.value.find(m => m.openid && m.openid === openid)
+    const items = [
+        ...statuses.map(s => ({
+            key: 's' + s._id,
+            ts: new Date(s.createTime).getTime() || 0,
+            kind: '心情',
+            icon: '🫧',
+            text: s.content,
+            mood: moodEmoji(s.mood),
+            image: s.displayImageUrl || (s.imageUrl && !s.imageUrl.startsWith('cloud://') ? s.imageUrl : ''),
+            path: '/pages/status/status',
+            owner: s.owner_openid,
+        })),
+        ...journals.map(j => ({
+            key: 'j' + j._id,
+            ts: new Date(j.createTime).getTime() || 0,
+            kind: '日志',
+            icon: '📖',
+            title: j.title,
+            text: (j.content || '').slice(0, 60),
+            mood: j.mood || '',
+            path: '/pages/journal/journal',
+            owner: j.owner_openid,
+        })),
+    ]
+    feed.value = items
+        .sort((a, b) => b.ts - a.ts)
+        .slice(0, 5)
+        .map(f => {
+            const m = who(f.owner)
+            return { ...f, name: m ? m.nickname : '家人', avatar: m ? m.avatarSrc : '', time: formatRelativeTime(f.ts) }
+        })
 }
 
 const fetchSpotlight = async () => {
-    try {
-        const res = await callFunction('db', {
-            action: 'batchQueryMarked',
-            collections: ['memos', 'statuses', 'journals', 'travels'],
-        })
-        const data = res?.data || {}
-        const memos = data.memos || []
-        const statuses = data.statuses || []
-        const journals = data.journals || []
-        const travels = data.travels || []
-        const items = []
-        // 备忘：置顶(isPinned) 和 首页显示(showOnHome) 都展示在聚光灯区
-        memos.forEach(m => {
-            const isPinned = m.isPinned === true
-            items.push({
-                type: 'memo',
-                id: m._id,
-                text: m.content,
-                sub: isPinned ? '📌 置顶' : formatRelativeTime(m.createTime),
-                sourceIcon: '📝',
-                sourceName: '备忘',
-                path: '/pages/memo/memo',
-                isPinned,
-            })
-        })
-        statuses.forEach(s => {
-            items.push({
-                type: 'status',
-                id: s._id,
-                text: s.content,
-                sub: s.mood ? `${s.mood} · ${formatRelativeTime(s.createTime)}` : formatRelativeTime(s.createTime),
-                sourceIcon: '🐷',
-                sourceName: '心情',
-                path: '/pages/status/status',
-            })
-        })
-        journals.forEach(j => {
-            items.push({
-                type: 'journal',
-                id: j._id,
-                text: j.title,
-                sub: j.content?.slice(0, 40) || '',
-                sourceIcon: '📖',
-                sourceName: '日志',
-                path: '/pages/journal/journal',
-            })
-        })
-        travels.forEach(t => {
-            const dateRange = t.start_date || t.end_date ? `${t.start_date || '?'} ~ ${t.end_date || '?'}` : ''
-            items.push({
-                type: 'travel',
-                id: t._id,
-                text: `${t.title}`,
-                sub: `📍 ${t.destination}${dateRange ? ' · ' + dateRange : ''}`,
-                sourceIcon: '🌍',
-                sourceName: '旅行',
-                path: '/pages/travel/travel',
-            })
-        })
-        spotlightItems.value = items
-        // 缓存聚光灯数据（短 TTL，仅用于首次快速渲染）
-        setPCache('_homeSpotlight', items, 60000)
-    } catch (e) {
-        console.error('首页置顶加载失败:', e)
-        // 加载失败时清空置顶区，避免展示过期数据
-        spotlightItems.value = []
-    }
+    const res = await callFunction('db', { action: 'batchQueryMarked', collections: ['memos', 'statuses', 'journals', 'travels'] })
+    const data = res?.data || {}
+    const items = []
+    ;(data.memos || []).forEach(m =>
+        items.push({ type: 'memo', id: m._id, text: m.content, sub: formatRelativeTime(m.createTime), sourceIcon: '📝', sourceName: '备忘', path: '/pages/memo/memo', isPinned: m.isPinned === true })
+    )
+    ;(data.statuses || []).forEach(s =>
+        items.push({ type: 'status', id: s._id, text: s.content, sub: formatRelativeTime(s.createTime), sourceIcon: '🫧', sourceName: '心情', path: '/pages/status/status' })
+    )
+    ;(data.journals || []).forEach(j =>
+        items.push({ type: 'journal', id: j._id, text: j.title, sub: (j.content || '').slice(0, 40), sourceIcon: '📖', sourceName: '日志', path: '/pages/journal/journal' })
+    )
+    ;(data.travels || []).forEach(t =>
+        items.push({ type: 'travel', id: t._id, text: t.title, sub: `📍 ${t.destination || ''}`, sourceIcon: '✈️', sourceName: '旅行', path: '/pages/travel/travel' })
+    )
+    spotlightItems.value = items
+}
+
+const CACHE_KEY = '_home'
+const saveCache = () =>
+    setPCache(CACHE_KEY, {
+        coupleName: coupleName.value,
+        anniversaryDate: anniversaryDate.value,
+        members: members.value,
+        anniversaries: anniversaries.value,
+        travels: travels.value,
+        spotlightItems: spotlightItems.value,
+        feed: feed.value,
+        coverPhoto: coverPhoto.value,
+        counts: counts.value,
+    })
+
+const restoreCache = () => {
+    const c = getPCache(CACHE_KEY)
+    if (!c) return
+    coupleName.value = c.coupleName || ''
+    anniversaryDate.value = c.anniversaryDate || ''
+    members.value = c.members || []
+    anniversaries.value = c.anniversaries || []
+    travels.value = c.travels || []
+    spotlightItems.value = c.spotlightItems || []
+    feed.value = c.feed || []
+    coverPhoto.value = c.coverPhoto || ''
+    counts.value = c.counts || counts.value
+}
+
+const refreshAll = async () => {
+    // 各模块互不依赖，单个失败不影响其他模块
+    const safe = p => p.catch(e => console.warn('[首页] 加载失败:', e))
+    await Promise.all([safe(loadProfile()), safe(loadMembers()), safe(loadCounters()), safe(fetchSpotlight())])
+    // 动态需要用成员信息显示头像和昵称
+    await safe(loadFeed())
+    saveCache()
+}
+
+let loadedOnce = false
+onMounted(() => {
+    restoreCache()
+    refreshAll()
+    loadedOnce = true
+})
+
+onShow(() => {
+    greeting.value = getGreeting()
+    myName.value = (uni.getStorageSync('auth_user') || {}).nickname || ''
+    // 从其他页面返回时刷新（例如刚发了心情、改了纪念日）
+    if (loadedOnce) refreshAll()
+})
+
+const onRefresh = async () => {
+    refreshing.value = true
+    clearPCache(CACHE_KEY)
+    await refreshAll()
+    refreshing.value = false
 }
 
 const goTo = url => navigateToPage(url)
 </script>
 
 <style scoped>
-/* ===== 页面基础 ===== */
-.page-scroll {
+.page {
     height: 100vh;
-    background: #f5f0eb;
-}
-.page-scroll--transparent {
     background: transparent;
 }
 
-/* ===== Hero 标题区 ===== */
-.hero {
-    position: relative;
-    padding: 140rpx 48rpx 40rpx;
-    text-align: center;
-    overflow: hidden;
-}
-/* 装饰元素 */
-.hero-deco {
-    position: absolute;
-    pointer-events: none;
-    opacity: 0.06;
-}
-.hero-deco--bean1 {
-    top: 80rpx;
-    left: 40rpx;
-    font-size: 120rpx;
-    transform: rotate(-20deg);
-    color: #3c2413;
-}
-.hero-deco--bean2 {
-    top: 100rpx;
-    right: 50rpx;
-    font-size: 80rpx;
-    transform: rotate(15deg);
-    color: #8b6f47;
-}
-.hero-deco--ring {
-    bottom: 10rpx;
-    right: -40rpx;
-    width: 200rpx;
-    height: 200rpx;
-    border-radius: 50%;
-    border: 40rpx solid #c68b59;
-    opacity: 0.04;
-}
-/* 徽章 */
-.hero-badge {
-    width: 96rpx;
-    height: 96rpx;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #c68b59 0%, #8b6f47 100%);
+/* 顶部 */
+.top {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 24rpx;
-    box-shadow: 0 8rpx 32rpx rgba(139, 111, 71, 0.25);
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 20rpx 40rpx 28rpx;
 }
-.hero-badge-icon {
-    font-size: 44rpx;
-    filter: brightness(0) invert(1);
-}
-/* 标题 */
-.hero-title {
-    font-size: 72rpx;
-    font-weight: 800;
-    color: #3c2413;
-    display: block;
-    letter-spacing: 0.12em;
-    text-shadow: 0 2rpx 8rpx rgba(60, 36, 19, 0.08);
-}
-.hero-sub {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10rpx;
-    margin-top: 20rpx;
-    flex-wrap: wrap;
-    padding: 12rpx 24rpx;
-    background: rgba(255, 255, 255, 0.45);
-    border-radius: 40rpx;
-    backdrop-filter: blur(10px);
-}
-.hero-greeting {
-    font-size: 26rpx;
-    color: #8b6f47;
-}
-.hero-dot {
-    font-size: 22rpx;
-    color: #c4a882;
-}
-.hero-date {
-    font-size: 26rpx;
-    color: #8b6f47;
-}
-.hero-love {
-    font-size: 24rpx;
-    color: #c68b59;
-    font-weight: 600;
-}
-
-/* ===== 通用区块 ===== */
-.section {
-    padding: 0 32rpx 36rpx;
-}
-.section-header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 20rpx;
-    margin-bottom: 28rpx;
-}
-.section-title {
-    font-size: 26rpx;
-    color: #8b6f47;
-    font-weight: 600;
-    letter-spacing: 4rpx;
-}
-.section-title-line {
-    width: 60rpx;
-    height: 1rpx;
-    background: linear-gradient(90deg, transparent, rgba(139, 111, 71, 0.3));
-}
-.section-title-line:last-child {
-    background: linear-gradient(90deg, rgba(139, 111, 71, 0.3), transparent);
-}
-
-/* ===== 聚光灯区标题 ===== */
-.spotlight-swiper {
-    height: 186rpx;
-}
-.spotlight-card {
-    display: flex;
-    flex-direction: row;
-    border-radius: 28rpx;
-    overflow: hidden;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(12px);
-    box-shadow: 0 8rpx 40rpx rgba(60, 36, 19, 0.06);
-}
-/* 左侧渐变装饰条 */
-.spotlight-bar {
-    width: 8rpx;
-    flex-shrink: 0;
-    background: linear-gradient(180deg, #c68b59 0%, #8b6f47 60%, rgba(139, 111, 71, 0.2) 100%);
-    border-radius: 8rpx 0 0 8rpx;
-}
-.spotlight-content {
-    flex: 1;
-    padding: 24rpx 28rpx;
+.top-left {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    gap: 8rpx;
     min-width: 0;
 }
-.spotlight-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10rpx;
+.greet {
+    font-size: 48rpx;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.2;
 }
-.spotlight-source {
+.avatars {
     display: flex;
-    align-items: center;
-    gap: 12rpx;
+    flex-direction: row;
+    padding-left: 20rpx;
 }
-.spotlight-source-badge {
-    width: 40rpx;
-    height: 40rpx;
+.avatar {
+    width: 72rpx;
+    height: 72rpx;
     border-radius: 50%;
-    background: linear-gradient(135deg, rgba(198, 139, 89, 0.15) 0%, rgba(139, 111, 71, 0.1) 100%);
+    margin-left: -20rpx;
+    border: 4rpx solid #fff;
+    background: var(--grad-dawn);
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 22rpx;
-    flex-shrink: 0;
+    box-shadow: var(--shadow-soft);
+    position: relative;
 }
-.spotlight-source-name {
-    font-size: 24rpx;
-    color: #8b6f47;
-    font-weight: 600;
-    letter-spacing: 1rpx;
+.avatar-img {
+    width: 100%;
+    height: 100%;
 }
-.spotlight-arrow {
-    font-size: 40rpx;
-    color: #c4a882;
-    font-weight: 300;
-    line-height: 1;
-}
-.spotlight-text {
+.avatar-text {
     font-size: 28rpx;
-    color: #3c2413;
-    display: block;
-    line-height: 1.5;
-    font-weight: 500;
-    word-break: break-all;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    font-weight: 600;
+    color: var(--ink-2);
 }
-.spotlight-sub {
+.avatar--more {
+    background: var(--ink);
+    color: #fff;
     font-size: 22rpx;
-    color: #a08060;
+}
+
+/* 主卡片 */
+.love {
+    position: relative;
+    margin: 0 32rpx;
+    padding: 48rpx 44rpx 44rpx;
+    border-radius: var(--r-xl);
+    background: var(--grad-sunset);
+    overflow: hidden;
+    box-shadow: 0 40rpx 80rpx -36rpx rgba(214, 120, 140, 0.55);
+}
+.love-orb {
+    position: absolute;
+    border-radius: 50%;
+}
+.love-orb--1 {
+    width: 420rpx;
+    height: 420rpx;
+    top: -180rpx;
+    right: -120rpx;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 70%);
+    animation: orb 8s ease-in-out infinite alternate;
+}
+.love-orb--2 {
+    width: 300rpx;
+    height: 300rpx;
+    bottom: -140rpx;
+    left: -80rpx;
+    background: radial-gradient(circle, rgba(255, 236, 214, 0.8) 0%, rgba(255, 236, 214, 0) 70%);
+    animation: orb 10s ease-in-out infinite alternate-reverse;
+}
+@keyframes orb {
+    to {
+        transform: translate(-40rpx, 30rpx) scale(1.15);
+    }
+}
+.love-heart {
+    position: absolute;
+    color: rgba(255, 255, 255, 0.85);
+    animation: rise 6s ease-in-out infinite;
+}
+.love-heart--1 {
+    right: 72rpx;
+    top: 64rpx;
+    font-size: 40rpx;
+}
+.love-heart--2 {
+    right: 160rpx;
+    top: 150rpx;
+    font-size: 24rpx;
+    animation-delay: 2s;
+}
+.love-heart--3 {
+    right: 56rpx;
+    top: 210rpx;
+    font-size: 22rpx;
+    animation-delay: 3.5s;
+}
+@keyframes rise {
+    0%,
+    100% {
+        opacity: 0.35;
+        transform: translateY(0) scale(0.9);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(-16rpx) scale(1.1);
+    }
+}
+.love-eyebrow {
+    position: relative;
+    color: rgba(30, 26, 23, 0.55);
+}
+.love-count {
+    position: relative;
+    display: flex;
+    align-items: baseline;
+    gap: 12rpx;
+    margin-top: 12rpx;
+}
+.love-num {
+    font-size: 180rpx;
+    line-height: 1;
+    font-weight: 700;
+    color: var(--ink);
+}
+.love-unit {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 40rpx;
+    color: var(--ink-2);
+}
+.love-caption {
+    position: relative;
     display: block;
-    margin-top: 6rpx;
+    font-size: 26rpx;
+    color: var(--ink-2);
+    margin-top: 8rpx;
+}
+.love-empty {
+    position: relative;
+    display: block;
+    font-size: 44rpx;
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 20rpx 0 8rpx;
+    padding-right: 80rpx;
+}
+.love-chip {
+    position: relative;
+    display: inline-flex;
+    margin-top: 24rpx;
+    padding: 10rpx 24rpx;
+    border-radius: 999rpx;
+    background: rgba(255, 255, 255, 0.6);
+    font-size: 22rpx;
+    color: var(--ink-2);
+}
+
+/* 每日一句 */
+.quote {
+    position: relative;
+    margin: 28rpx 32rpx 0;
+    padding: 40rpx 44rpx 32rpx;
+}
+.quote-mark {
+    position: absolute;
+    top: -8rpx;
+    left: 28rpx;
+    font-size: 140rpx;
+    line-height: 1;
+    color: rgba(224, 122, 95, 0.25);
+}
+.quote-text {
+    position: relative;
+    display: block;
+    font-size: 34rpx;
+    line-height: 1.6;
+    color: var(--ink);
+    font-style: italic;
+}
+.quote-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20rpx;
+}
+.quote-origin {
+    font-size: 22rpx;
+    color: var(--muted);
+}
+.quote-shuffle {
+    font-size: 22rpx;
+    color: var(--ink-2);
+}
+
+/* 区块 */
+.block {
+    margin-top: 48rpx;
+}
+.block-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 0 40rpx 20rpx;
+}
+.block-title {
+    font-size: 40rpx;
+    font-weight: 700;
+    color: var(--ink);
+}
+.block-more,
+.block-sub {
+    font-size: 24rpx;
+    color: var(--muted);
+}
+.hscroll {
+    white-space: nowrap;
+    padding: 0 32rpx;
+    box-sizing: border-box;
+}
+
+/* 即将到来 */
+.soon {
+    display: inline-flex;
+    flex-direction: column;
+    vertical-align: top;
+    width: 240rpx;
+    height: 260rpx;
+    margin-right: 20rpx;
+    padding: 28rpx;
+    box-sizing: border-box;
+    border-radius: var(--r-l);
+    box-shadow: var(--shadow-soft);
+    white-space: normal;
+}
+.soon-emoji {
+    font-size: 44rpx;
+}
+.soon-count {
+    display: flex;
+    align-items: baseline;
+    gap: 6rpx;
+    margin-top: auto;
+}
+.soon-num {
+    font-size: 72rpx;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--ink);
+}
+.soon-today {
+    font-size: 52rpx;
+    font-weight: 700;
+    color: var(--coral);
+}
+.soon-unit {
+    font-size: 22rpx;
+    color: var(--ink-2);
+}
+.soon-title {
+    margin-top: 8rpx;
+    font-size: 24rpx;
+    color: var(--ink-2);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-/* ===== 功能入口区 ===== */
-.nav-grid {
+/* 便当格 */
+.bento {
     display: flex;
-    flex-wrap: wrap;
     gap: 20rpx;
+    margin: 48rpx 32rpx 0;
+    height: 440rpx;
 }
-.nav-item {
-    width: calc(33.333% - 14rpx);
+.bento-col {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: 32rpx 0 26rpx;
-    background: rgba(255, 255, 255, 0.7);
-    border-radius: 28rpx;
-    box-shadow: 0 4rpx 20rpx rgba(60, 36, 19, 0.04);
-    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-    backdrop-filter: blur(8px);
+    gap: 20rpx;
 }
-.nav-item:active {
-    transform: scale(0.92);
-    box-shadow: 0 2rpx 8rpx rgba(60, 36, 19, 0.06);
+.tile {
+    position: relative;
+    border-radius: var(--r-l);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    box-sizing: border-box;
 }
-.nav-icon {
-    width: 92rpx;
-    height: 92rpx;
-    border-radius: 28rpx;
+.tile--photo {
+    flex: 1.05;
+}
+.tile-photo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+.tile-photo--empty {
+    background: var(--grad-dawn);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 12rpx;
-    box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+    font-size: 80rpx;
 }
-.nav-icon-text {
-    font-size: 40rpx;
+.tile-shade {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 60%;
+    background: linear-gradient(180deg, rgba(30, 26, 23, 0) 0%, rgba(30, 26, 23, 0.55) 100%);
 }
-/* 六个图标各自不同的渐变底色 */
-.nav-icon--0 {
-    background: linear-gradient(135deg, #d4a574 0%, #c68b59 100%);
+.tile-photo-text {
+    position: absolute;
+    left: 28rpx;
+    bottom: 28rpx;
+    display: flex;
+    flex-direction: column;
 }
-.nav-icon--1 {
-    background: linear-gradient(135deg, #a08060 0%, #8b6f47 100%);
+.tile--wish,
+.tile--capsule {
+    flex: 1;
+    padding: 24rpx 26rpx;
+    display: flex;
+    flex-direction: column;
+    background: var(--card);
+    border: 1rpx solid var(--card-border);
 }
-.nav-icon--2 {
-    background: linear-gradient(135deg, #e8b4b8 0%, #d4908a 100%);
+.tile--wish {
+    background: linear-gradient(135deg, rgba(227, 241, 230, 0.95) 0%, rgba(207, 227, 243, 0.95) 100%);
 }
-.nav-icon--3 {
-    background: linear-gradient(135deg, #8bb8a0 0%, #6a9e80 100%);
+.tile--capsule {
+    background: linear-gradient(135deg, rgba(235, 228, 249, 0.95) 0%, rgba(248, 211, 216, 0.9) 100%);
 }
-.nav-icon--4 {
-    background: linear-gradient(135deg, #b8a88b 0%, #a09070 100%);
-}
-.nav-icon--5 {
-    background: linear-gradient(135deg, #9bb0c4 0%, #7a96b0 100%);
-}
-.nav-name {
-    font-size: 24rpx;
-    color: #5c3d2e;
-    letter-spacing: 1rpx;
+.tile-eyebrow {
+    font-size: 18rpx;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(30, 26, 23, 0.5);
     font-weight: 600;
 }
+.tile-eyebrow--light {
+    color: rgba(255, 255, 255, 0.8);
+}
+.tile-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-top: auto;
+}
+.tile-big {
+    font-size: 64rpx;
+    font-weight: 700;
+    line-height: 1.05;
+    color: var(--ink);
+}
+.tile-big--light {
+    color: #fff;
+    font-size: 80rpx;
+}
+.tile-pct {
+    font-size: 30rpx;
+}
+.tile-emoji {
+    font-size: 40rpx;
+}
+.tile-label {
+    font-size: 20rpx;
+    color: var(--ink-2);
+    margin-top: 6rpx;
+}
+.tile-label--light {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 22rpx;
+}
+.mini-bar {
+    height: 10rpx;
+    border-radius: 999rpx;
+    background: rgba(255, 255, 255, 0.7);
+    margin-top: 10rpx;
+    overflow: hidden;
+}
+.mini-bar-fill {
+    height: 100%;
+    border-radius: 999rpx;
+    background: var(--ink);
+}
 
+/* 功能入口 */
+.apps {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 40rpx 24rpx 0;
+    padding: 32rpx 8rpx 8rpx;
+    border-radius: var(--r-xl);
+    background: var(--card);
+    border: 1rpx solid var(--card-border);
+    box-shadow: var(--shadow-soft);
+}
+.app {
+    width: 25%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12rpx;
+    margin-bottom: 28rpx;
+}
+.app-name {
+    font-size: 22rpx;
+    color: var(--ink-2);
+    letter-spacing: 0.04em;
+}
+
+/* 置顶 */
+.pin {
+    display: inline-flex;
+    flex-direction: column;
+    vertical-align: top;
+    width: 460rpx;
+    margin-right: 20rpx;
+    padding: 28rpx 30rpx;
+    box-sizing: border-box;
+    white-space: normal;
+}
+.pin-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.pin-badge {
+    font-size: 20rpx;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+}
+.pin-flag {
+    font-size: 24rpx;
+}
+.pin-text {
+    margin-top: 12rpx;
+    font-size: 28rpx;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.pin-sub {
+    margin-top: 8rpx;
+    font-size: 22rpx;
+    color: var(--muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 动态 */
+.feed {
+    display: flex;
+    flex-direction: column;
+    gap: 20rpx;
+    padding: 0 32rpx;
+}
+.post {
+    padding: 28rpx 30rpx;
+}
+.post-head {
+    display: flex;
+    align-items: center;
+    gap: 18rpx;
+}
+.post-avatar {
+    width: 68rpx;
+    height: 68rpx;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--grad-dawn);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32rpx;
+    flex-shrink: 0;
+}
+.post-who {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+.post-name {
+    font-size: 26rpx;
+    font-weight: 600;
+    color: var(--ink);
+}
+.post-meta {
+    font-size: 20rpx;
+    color: var(--muted);
+}
+.post-mood {
+    font-size: 40rpx;
+}
+.post-title {
+    display: block;
+    margin-top: 18rpx;
+    font-size: 34rpx;
+    font-weight: 700;
+    color: var(--ink);
+}
+.post-text {
+    display: block;
+    margin-top: 12rpx;
+    font-size: 28rpx;
+    line-height: 1.65;
+    color: var(--ink-2);
+}
+.post-image {
+    display: block;
+    width: 100%;
+    height: 380rpx;
+    margin-top: 20rpx;
+    border-radius: var(--r-m);
+}
+.feed-empty {
+    margin: 0 32rpx;
+    padding: 48rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12rpx;
+}
+.feed-empty-emoji {
+    font-size: 56rpx;
+}
+.feed-empty-text {
+    font-size: 24rpx;
+    color: var(--muted);
+}
 .bottom-space {
-    height: 60rpx;
+    height: 80rpx;
 }
 </style>

@@ -256,6 +256,21 @@ exports.main = async (event, context) => {
             }
 
             // 获取当前用户信息
+            // 家庭成员概览（所有成员可见，只返回展示用字段）
+            case 'listMembers': {
+                const meRes = await db.collection('authorized_users').where({ openid }).limit(1).get()
+                if (meRes.data.length === 0) return { success: false, msg: '未授权' }
+                const res = await db.collection('authorized_users').orderBy('createTime', 'asc').limit(50).get()
+                const members = res.data.map(u => ({
+                    _id: u._id,
+                    openid: u.openid,
+                    nickname: u.nickname,
+                    avatar_url: u.avatar_url,
+                    role: u.role,
+                }))
+                return { success: true, members }
+            }
+
             case 'getCurrentUser': {
                 const res = await db.collection('authorized_users').where({ openid }).limit(1).get()
                 if (res.data.length > 0) {

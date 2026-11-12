@@ -1,6 +1,6 @@
 <template>
     <view>
-        <page-bg overlay="light" />
+        <page-bg overlay="light" tone="peach" />
         <scroll-view
             :scroll-y="!dishDragging && !catDragging"
             class="page-scroll"
@@ -10,24 +10,34 @@
             :refresher-triggered="refreshing"
             @refresherrefresh="onRefresh"
         >
+            <!-- 杂志式标题区 -->
+            <view class="hero ui-fade-up">
+                <text class="ui-eyebrow">KITCHEN</text>
+                <text class="ui-title hero-title">今天吃什么</text>
+                <text class="ui-sub hero-sub">{{ dishes.length }} 道家常菜 · {{ categories.length }} 个分类</text>
+            </view>
+
             <!-- 顶部操作栏 -->
-            <view class="top-bar">
-                <view class="top-btn outline" @tap="showCategoryManager = !showCategoryManager">
-                    <text>分类</text>
+            <view class="top-bar ui-fade-up ui-d1">
+                <view class="top-btn outline ui-press" @tap="showCategoryManager = !showCategoryManager">
+                    <text>分类管理</text>
                 </view>
-                <view class="top-btn primary" @tap="toggleForm">
-                    <text>{{ showForm ? '取消' : '+ 菜品' }}</text>
+                <view class="top-btn primary ui-press" @tap="toggleForm">
+                    <text>{{ showForm ? '取消' : '+ 新菜品' }}</text>
                 </view>
             </view>
 
             <!-- 分类管理 -->
-            <view class="group" v-if="showCategoryManager">
-                <text class="group-label">分类管理</text>
+            <view class="group ui-fade-up" v-if="showCategoryManager">
+                <view class="section-head">
+                    <text class="ui-eyebrow">CATEGORIES</text>
+                    <text class="section-title">分类管理</text>
+                </view>
                 <view class="group-card">
                     <view class="cell-h">
-                        <text class="cell-icon">📂</text>
+                        <view class="cell-bubble ui-bubble ui-bubble--peach"><text>📂</text></view>
                         <input class="cell-input" v-model="newCategory" placeholder="新分类名称" />
-                        <view class="cell-action" @tap="handleAddCategory">添加</view>
+                        <view class="cell-action ui-press" @tap="handleAddCategory">添加</view>
                     </view>
                     <view v-if="categories.length > 0">
                         <view
@@ -50,7 +60,7 @@
                         >
                             <view v-if="editingCatId === cat._id" class="cat-edit">
                                 <input
-                                    class="cell-input"
+                                    class="cell-input cat-edit-input"
                                     v-model="editCatName"
                                     @confirm="handleEditCategory(cat._id)"
                                 />
@@ -82,7 +92,7 @@
             />
 
             <!-- 分类筛选 -->
-            <view class="filter-row" v-if="categories.length > 0">
+            <view class="filter-row ui-fade-up ui-d2" v-if="categories.length > 0">
                 <scroll-view scroll-x class="filter-scroll">
                     <view class="filter-tag" :class="{ active: !selectedCategory }" @tap="selectedCategory = null"
                         >全部</view
@@ -102,25 +112,31 @@
             <!-- 菜品列表 -->
             <view v-if="loading" class="loading-area">
                 <view class="skeleton-card" v-for="i in 3" :key="i">
-                    <view class="skeleton-bar"></view>
-                    <view class="skeleton-line short"></view>
+                    <view class="skeleton-thumb"></view>
+                    <view class="skeleton-text">
+                        <view class="skeleton-bar"></view>
+                        <view class="skeleton-line short"></view>
+                    </view>
                 </view>
             </view>
 
-            <view v-else-if="filteredDishes.length === 0" class="empty-area">
-                <text class="empty-emoji">🍽️</text>
+            <view v-else-if="filteredDishes.length === 0" class="empty-area ui-fade-up ui-d2">
+                <view class="empty-bubble"><text class="empty-emoji">🍽️</text></view>
                 <text class="empty-text">{{ selectedCategory ? '该分类暂无菜品' : '菜单还是空的' }}</text>
                 <text class="empty-hint" v-if="!selectedCategory">添加第一道菜吧</text>
             </view>
 
             <view v-else class="group">
-                <text class="group-label">菜品 ({{ filteredDishes.length }})</text>
-                <view class="group-card" style="background: transparent; border: none; box-shadow: none">
+                <view class="section-head section-head--row ui-fade-up ui-d2">
+                    <text class="ui-eyebrow">THE MENU</text>
+                    <text class="section-count">{{ filteredDishes.length }} 道</text>
+                </view>
+                <view class="dish-list">
                     <view
                         class="dish-row"
                         v-for="(dish, idx) in filteredDishes"
                         :key="dish._id"
-                        :class="{ dragging: dishDragIndex === idx }"
+                        :class="[{ dragging: dishDragIndex === idx }, idx < 6 ? 'ui-d' + (idx + 1) : 'ui-d6']"
                         :style="
                             dishDragIndex === idx
                                 ? {
@@ -135,44 +151,57 @@
                         @touchend="onDishDragEnd()"
                     >
                         <view class="drag-grip"><text class="drag-dots">⠿</text></view>
-                        <image
-                            v-if="dish.displayUrl"
-                            :src="dish.displayUrl"
-                            class="dish-thumb"
-                            mode="aspectFill"
-                            lazy-load
-                        />
-                        <view class="dish-body">
-                            <view class="dish-top">
-                                <text class="dish-name">{{ dish.name }}</text>
-                                <text class="dish-stars"
-                                    >{{ '★'.repeat(dish.difficulty) }}{{ '☆'.repeat(5 - dish.difficulty) }}</text
-                                >
+                        <view class="dish-main">
+                            <image
+                                v-if="dish.displayUrl"
+                                :src="dish.displayUrl"
+                                class="dish-thumb"
+                                mode="aspectFill"
+                                lazy-load
+                            />
+                            <view v-else class="dish-thumb dish-thumb--empty">
+                                <text class="dish-thumb-emoji">🍳</text>
                             </view>
-                            <view class="dish-tags" v-if="dish.category_names && dish.category_names.length">
-                                <text class="mini-tag" v-for="cn in dish.category_names" :key="cn">{{ cn }}</text>
+                            <view class="dish-body">
+                                <view class="dish-tags" v-if="dish.category_names && dish.category_names.length">
+                                    <text class="mini-tag" v-for="cn in dish.category_names" :key="cn">{{ cn }}</text>
+                                </view>
+                                <view class="dish-top">
+                                    <text class="dish-name">{{ dish.name }}</text>
+                                </view>
+                                <view class="dish-level">
+                                    <view
+                                        class="level-dot"
+                                        v-for="n in 5"
+                                        :key="n"
+                                        :class="{ on: n <= dish.difficulty }"
+                                    ></view>
+                                </view>
+                                <text class="dish-desc" v-if="dish.description">{{ dish.description }}</text>
+                                <text class="dish-ing" v-if="dish.ingredients">食材 · {{ dish.ingredients }}</text>
+                                <view class="dish-meta">
+                                    <text
+                                        class="dish-meta-item"
+                                        :class="{ liked: likedByMe[dish._id] }"
+                                        @tap.stop="toggleLike(dish)"
+                                        >{{ likedByMe[dish._id] ? '❤' : '♡'
+                                        }}{{ likeCounts[dish._id] ? ' ' + likeCounts[dish._id] : '' }}</text
+                                    >
+                                    <text class="dish-meta-item" @tap.stop="openDetailModal(dish)"
+                                        >💬{{ commentCounts[dish._id] ? ' ' + commentCounts[dish._id] : '' }}</text
+                                    >
+                                    <text class="dish-meta-item" v-if="dish.order_count"
+                                        >已点 {{ dish.order_count }} 次</text
+                                    >
+                                </view>
                             </view>
-                            <text class="dish-desc" v-if="dish.description">{{ dish.description }}</text>
-                            <text class="dish-ing" v-if="dish.ingredients">食材：{{ dish.ingredients }}</text>
-                            <view class="dish-actions">
-                                <text class="dish-act detail" @tap="openDetailModal(dish)">详情</text>
-                                <text class="dish-act" @tap="editDish(dish)">编辑</text>
-                                <text class="dish-act primary" v-if="dish.available" @tap="orderDish = dish">点菜</text>
-                                <text class="dish-act del" @tap="handleDeleteDish(dish._id)">删除</text>
-                            </view>
-                            <view class="dish-meta">
-                                <text
-                                    class="dish-meta-item"
-                                    :class="{ liked: likedByMe[dish._id] }"
-                                    @tap.stop="toggleLike(dish)"
-                                    >{{ likedByMe[dish._id] ? '❤' : '♡'
-                                    }}{{ likeCounts[dish._id] ? ' ' + likeCounts[dish._id] : '' }}</text
-                                >
-                                <text class="dish-meta-item" @tap.stop="openDetailModal(dish)"
-                                    >💬{{ commentCounts[dish._id] ? ' ' + commentCounts[dish._id] : '' }}</text
-                                >
-                                <text class="dish-meta-item" v-if="dish.order_count">📋 {{ dish.order_count }}次</text>
-                            </view>
+                        </view>
+                        <view class="dish-actions">
+                            <text class="dish-act detail" @tap="openDetailModal(dish)">详情</text>
+                            <text class="dish-act" @tap="editDish(dish)">编辑</text>
+                            <text class="dish-act del" @tap="handleDeleteDish(dish._id)">删除</text>
+                            <view class="dish-act-spacer"></view>
+                            <text class="dish-act primary" v-if="dish.available" @tap="orderDish = dish">点菜</text>
                         </view>
                     </view>
                 </view>
@@ -447,190 +476,275 @@ const onOrdered = async () => {
 <style scoped>
 .page-scroll {
     height: 100vh;
-    background: #f2f2f7;
+    background: transparent;
 }
 .page-scroll--transparent {
     background: transparent;
+}
+
+/* Hero */
+.hero {
+    padding: 48rpx 40rpx 8rpx;
+    display: flex;
+    flex-direction: column;
+}
+.hero-title {
+    display: block;
+    margin-top: 12rpx;
+    font-size: 64rpx;
+    letter-spacing: 0.02em;
+}
+.hero-sub {
+    display: block;
+    margin-top: 12rpx;
+    letter-spacing: 0.06em;
 }
 
 /* Top Bar */
 .top-bar {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    padding: 24rpx 32rpx 20rpx;
-    background: transparent;
-    gap: 12rpx;
+    padding: 28rpx 40rpx 8rpx;
+    gap: 16rpx;
 }
 .top-btn {
-    padding: 10rpx 28rpx;
-    background: #c07a50;
-    color: #fff;
-    border-radius: 24rpx;
+    height: 72rpx;
+    padding: 0 32rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999rpx;
     font-size: 24rpx;
-    letter-spacing: 1rpx;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    background: var(--ink);
+    color: #fff;
+    box-shadow: 0 16rpx 32rpx -16rpx rgba(30, 26, 23, 0.6);
 }
 .top-btn.outline {
-    background: transparent;
-    color: #a06840;
-    border: 1rpx solid rgba(160, 104, 64, 0.35);
-}
-.top-btn:active {
-    opacity: 0.8;
+    background: rgba(255, 255, 255, 0.7);
+    color: var(--ink);
+    border: 1rpx solid var(--line);
+    box-shadow: none;
 }
 
-/* Group */
+/* Section Head */
 .group {
-    padding: 16rpx 32rpx 0;
+    padding: 32rpx 32rpx 0;
 }
-.group-label {
-    font-size: 24rpx;
-    color: #636366;
-    display: block;
-    margin-bottom: 12rpx;
-    margin-left: 8rpx;
-    letter-spacing: 2rpx;
-    font-weight: 500;
+.section-head {
+    display: flex;
+    flex-direction: column;
+    padding: 0 8rpx;
+    margin-bottom: 20rpx;
 }
-.group-card {
-    background: rgba(255, 255, 255, 0.6);
-    border-radius: 24rpx;
-    overflow: hidden;
-    box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.03);
-    border: 1rpx solid rgba(142, 142, 147, 0.06);
+.section-head--row {
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+}
+.section-title {
+    font-family: var(--font-serif);
+    font-size: 36rpx;
+    font-weight: 700;
+    color: var(--ink);
+    margin-top: 6rpx;
+}
+.section-count {
+    font-family: var(--font-serif);
+    font-size: 28rpx;
+    font-style: italic;
+    color: var(--ink-2);
 }
 
-/* Cell */
+/* Category Manager */
+.group-card {
+    background: var(--card);
+    border: 1rpx solid var(--card-border);
+    border-radius: var(--r-l);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    overflow: hidden;
+}
 .cell-h {
     display: flex;
     align-items: center;
     padding: 24rpx 28rpx;
-    gap: 16rpx;
+    gap: 20rpx;
 }
-.cell-icon {
+.cell-bubble {
+    width: 72rpx;
+    height: 72rpx;
+    border-radius: 24rpx;
     font-size: 32rpx;
     flex-shrink: 0;
 }
 .cell-input {
     flex: 1;
     font-size: 28rpx;
-    color: #1c1c1e;
+    color: var(--ink);
     background: transparent;
     border: none;
     padding: 0;
 }
 .cell-action {
-    padding: 10rpx 24rpx;
-    background: linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 100%);
-    color: #f2f2f7;
-    border-radius: 16rpx;
+    height: 64rpx;
+    padding: 0 32rpx;
+    display: flex;
+    align-items: center;
+    background: var(--ink);
+    color: #fff;
+    border-radius: 999rpx;
     font-size: 24rpx;
+    font-weight: 600;
     flex-shrink: 0;
-    letter-spacing: 1rpx;
+    letter-spacing: 0.08em;
 }
-
-/* Filter */
-.filter-row {
-    padding: 20rpx 32rpx 0;
-}
-.filter-scroll {
-    white-space: nowrap;
-}
-.filter-tag {
-    display: inline-block;
-    padding: 14rpx 28rpx;
-    background: rgba(255, 255, 255, 0.6);
-    border-radius: 24rpx;
-    font-size: 26rpx;
-    color: #3a3a3c;
-    margin-right: 12rpx;
-    border: 1rpx solid rgba(142, 142, 147, 0.08);
-}
-.filter-tag.active {
-    background: linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 100%);
-    color: #f2f2f7;
-    border-color: transparent;
-}
-
-/* Category Row */
 .cat-row {
-    padding: 18rpx 28rpx;
+    padding: 22rpx 28rpx;
     transition:
         transform 0.15s ease,
         opacity 0.15s;
     position: relative;
+    background: transparent;
 }
 .cat-row.dragging {
-    opacity: 0.9;
-    background: #fff;
+    opacity: 0.95;
+    background: var(--card-solid);
     transition: none;
 }
-.cat-row + .cat-row {
-    border-top: 1rpx solid rgba(142, 142, 147, 0.06);
+.cat-row::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 28rpx;
+    right: 28rpx;
+    height: 1rpx;
+    background: var(--line);
 }
 .cat-edit {
     display: flex;
     gap: 12rpx;
     align-items: center;
 }
+.cat-edit-input {
+    padding: 14rpx 24rpx;
+    background: var(--bg);
+    border-radius: 999rpx;
+}
 .cat-info {
     display: flex;
     align-items: center;
-    gap: 12rpx;
+    gap: 16rpx;
 }
 .cat-num {
-    width: 36rpx;
-    height: 36rpx;
-    border-radius: 18rpx;
-    background: rgba(142, 142, 147, 0.12);
-    text-align: center;
-    line-height: 36rpx;
+    width: 48rpx;
+    height: 48rpx;
+    border-radius: 50%;
+    background: rgba(244, 199, 180, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 .cat-num text {
-    font-size: 20rpx;
-    color: #3a3a3c;
+    font-family: var(--font-serif);
+    font-size: 24rpx;
+    font-weight: 700;
+    color: var(--ink);
 }
 .cat-name {
     font-size: 28rpx;
-    color: #1c1c1e;
+    color: var(--ink);
     flex: 1;
+    font-weight: 500;
 }
 .cat-count {
-    font-size: 22rpx;
-    color: #636366;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 24rpx;
+    color: var(--muted);
 }
 .cat-act {
     font-size: 28rpx;
-    padding: 4rpx 8rpx;
+    padding: 4rpx 10rpx;
 }
 .cat-act.del {
-    color: #ff3b30;
+    color: var(--coral);
+    font-size: 36rpx;
+    line-height: 1;
+}
+
+/* Filter */
+.filter-row {
+    padding: 28rpx 0 0;
+}
+.filter-scroll {
+    white-space: nowrap;
+    padding: 0 32rpx;
+    box-sizing: border-box;
+}
+.filter-tag {
+    display: inline-block;
+    padding: 14rpx 32rpx;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 999rpx;
+    font-size: 24rpx;
+    color: var(--ink-2);
+    margin-right: 14rpx;
+    border: 1rpx solid var(--line);
+    letter-spacing: 0.06em;
+}
+.filter-tag.active {
+    background: var(--ink);
+    color: #fff;
+    border-color: var(--ink);
+    box-shadow: 0 12rpx 24rpx -12rpx rgba(30, 26, 23, 0.6);
 }
 
 /* Skeleton */
 .loading-area {
-    padding: 24rpx 32rpx;
+    padding: 32rpx;
 }
 .skeleton-card {
-    background: #fff;
-    border-radius: 24rpx;
-    padding: 28rpx;
-    margin-bottom: 16rpx;
+    display: flex;
+    align-items: center;
+    gap: 24rpx;
+    background: var(--card);
+    border: 1rpx solid var(--card-border);
+    border-radius: var(--r-xl);
+    padding: 24rpx;
+    margin-bottom: 24rpx;
+    box-shadow: var(--shadow-soft);
+}
+.skeleton-thumb {
+    width: 176rpx;
+    height: 176rpx;
+    border-radius: var(--r-l);
+    flex-shrink: 0;
+    background: linear-gradient(90deg, var(--bg-2) 25%, var(--bg) 50%, var(--bg-2) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+.skeleton-text {
+    flex: 1;
 }
 .skeleton-bar {
     height: 32rpx;
-    background: linear-gradient(90deg, #e5e5ea 25%, #f2f2f7 50%, #e5e5ea 75%);
+    background: linear-gradient(90deg, var(--bg-2) 25%, var(--bg) 50%, var(--bg-2) 75%);
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
-    border-radius: 8rpx;
-    margin-bottom: 16rpx;
+    border-radius: 999rpx;
+    margin-bottom: 20rpx;
+    width: 70%;
 }
 .skeleton-line {
-    height: 24rpx;
-    background: linear-gradient(90deg, #e5e5ea 25%, #f2f2f7 50%, #e5e5ea 75%);
+    height: 22rpx;
+    background: linear-gradient(90deg, var(--bg-2) 25%, var(--bg) 50%, var(--bg-2) 75%);
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
-    border-radius: 8rpx;
+    border-radius: 999rpx;
 }
 .skeleton-line.short {
     width: 40%;
@@ -646,108 +760,163 @@ const onOrdered = async () => {
 
 /* Empty */
 .empty-area {
-    text-align: center;
-    padding: 160rpx 0 120rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 140rpx 0 120rpx;
+}
+.empty-bubble {
+    width: 200rpx;
+    height: 200rpx;
+    border-radius: 50%;
+    background: var(--grad-dawn);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-soft);
+    margin-bottom: 36rpx;
 }
 .empty-emoji {
-    font-size: 80rpx;
-    display: block;
-    margin-bottom: 20rpx;
+    font-size: 88rpx;
 }
 .empty-text {
-    font-size: 30rpx;
-    color: #1c1c1e;
-    font-weight: 500;
+    font-family: var(--font-serif);
+    font-size: 36rpx;
+    font-weight: 700;
+    color: var(--ink);
     display: block;
 }
 .empty-hint {
     font-size: 24rpx;
-    color: #8e8e93;
+    color: var(--muted);
     display: block;
-    margin-top: 8rpx;
-}
-
-/* Drag Grip */
-.drag-grip {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    padding: 0 4rpx;
-}
-.drag-dots {
-    font-size: 32rpx;
-    color: #8e8e93;
-    line-height: 1;
+    margin-top: 12rpx;
+    letter-spacing: 0.06em;
 }
 
 /* Dish Row */
+.dish-list {
+    padding-bottom: 8rpx;
+}
+@keyframes dish-in {
+    from {
+        opacity: 0;
+        transform: translateY(32rpx);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 .dish-row {
-    display: flex;
-    padding: 24rpx 28rpx;
-    gap: 16rpx;
+    position: relative;
+    padding: 24rpx;
+    margin-bottom: 28rpx;
+    background: var(--card);
+    border: 1rpx solid var(--card-border);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
     transition:
         transform 0.15s ease,
         opacity 0.15s;
-    position: relative;
-    background: rgba(255, 255, 255, 0.75);
-    border-radius: 20rpx;
-    margin-bottom: 16rpx;
-    box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
-    border: 1rpx solid rgba(142, 142, 147, 0.08);
+    animation-name: dish-in;
+    animation-duration: 0.7s;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    animation-fill-mode: backwards;
 }
 .dish-row.dragging {
-    opacity: 0.9;
-    background: #fff;
+    opacity: 0.95;
+    background: var(--card-solid);
     transition: none;
 }
+.drag-grip {
+    position: absolute;
+    top: 20rpx;
+    right: 24rpx;
+    padding: 4rpx 8rpx;
+    z-index: 2;
+}
+.drag-dots {
+    font-size: 28rpx;
+    color: var(--faint);
+    line-height: 1;
+}
+.dish-main {
+    display: flex;
+    gap: 28rpx;
+}
 .dish-thumb {
-    width: 120rpx;
-    height: 120rpx;
-    border-radius: 20rpx;
+    width: 176rpx;
+    height: 176rpx;
+    border-radius: var(--r-l);
     flex-shrink: 0;
+    box-shadow: 0 16rpx 32rpx -18rpx rgba(80, 56, 36, 0.45);
+}
+.dish-thumb--empty {
+    background: var(--grad-dawn);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.dish-thumb-emoji {
+    font-size: 64rpx;
+    opacity: 0.85;
 }
 .dish-body {
     flex: 1;
     min-width: 0;
-}
-.dish-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 6rpx;
-}
-.dish-name {
-    font-size: 30rpx;
-    font-weight: 600;
-    color: #1c1c1e;
-    letter-spacing: 0.5rpx;
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-.dish-stars {
-    font-size: 22rpx;
-    color: #d4a574;
-    flex-shrink: 0;
+    padding-top: 4rpx;
+    padding-right: 40rpx;
 }
 .dish-tags {
     display: flex;
     gap: 8rpx;
     flex-wrap: wrap;
-    margin-bottom: 4rpx;
+    margin-bottom: 8rpx;
 }
 .mini-tag {
-    font-size: 20rpx;
-    padding: 4rpx 14rpx;
-    background: rgba(142, 142, 147, 0.1);
-    border-radius: 10rpx;
-    color: #3a3a3c;
+    font-size: 18rpx;
+    padding: 2rpx 14rpx;
+    background: rgba(244, 199, 180, 0.4);
+    border-radius: 999rpx;
+    color: var(--ink-2);
+    letter-spacing: 0.12em;
+}
+.dish-top {
+    display: flex;
+    align-items: center;
+}
+.dish-name {
+    font-family: var(--font-serif);
+    font-size: 36rpx;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.3;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.dish-level {
+    display: flex;
+    align-items: center;
+    gap: 8rpx;
+    margin: 10rpx 0 8rpx;
+}
+.level-dot {
+    width: 12rpx;
+    height: 12rpx;
+    border-radius: 50%;
+    background: var(--line);
+}
+.level-dot.on {
+    background: var(--coral);
 }
 .dish-desc {
     font-size: 24rpx;
-    color: #636366;
+    color: var(--ink-2);
     display: block;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -756,55 +925,62 @@ const onOrdered = async () => {
 }
 .dish-ing {
     font-size: 22rpx;
-    color: #8e8e93;
+    color: var(--muted);
     display: block;
-    margin-top: 4rpx;
+    margin-top: 2rpx;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
-.dish-actions {
-    display: flex;
-    gap: 20rpx;
-    margin-top: 12rpx;
-}
-.dish-act {
-    font-size: 22rpx;
-    color: #636366;
-    padding: 4rpx 12rpx;
-    border-radius: 8rpx;
-    background: #f2f2f7;
-}
-.dish-act.detail {
-    color: #1c1c1e;
-    background: rgba(0, 0, 0, 0.06);
-    font-weight: 500;
-}
-.dish-act.primary {
-    color: #1c1c1e;
-    background: rgba(0, 0, 0, 0.08);
-}
-.dish-act.del {
-    color: #ff3b30;
-    background: rgba(255, 59, 48, 0.08);
-}
-
-/* Dish Meta */
 .dish-meta {
     display: flex;
-    gap: 16rpx;
-    margin-top: 8rpx;
+    gap: 20rpx;
+    margin-top: 10rpx;
 }
 .dish-meta-item {
-    font-size: 20rpx;
-    color: #636366;
-    padding: 4rpx 12rpx;
-    background: #f9f9fb;
-    border-radius: 8rpx;
+    font-size: 22rpx;
+    color: var(--muted);
 }
 .dish-meta-item.liked {
-    color: #ff3b30;
-    background: rgba(255, 59, 48, 0.06);
+    color: var(--coral);
+}
+
+/* Dish Actions */
+.dish-actions {
+    display: flex;
+    align-items: center;
+    gap: 8rpx;
+    margin-top: 22rpx;
+    padding-top: 18rpx;
+    border-top: 2rpx dashed var(--line);
+}
+.dish-act {
+    font-size: 24rpx;
+    color: var(--ink-2);
+    padding: 8rpx 16rpx;
+    letter-spacing: 0.06em;
+}
+.dish-act.detail {
+    color: var(--ink);
+    font-weight: 600;
+}
+.dish-act.del {
+    color: var(--coral);
+}
+.dish-act-spacer {
+    flex: 1;
+}
+.dish-act.primary {
+    padding: 12rpx 36rpx;
+    background: var(--ink);
+    color: #fff;
+    border-radius: 999rpx;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    box-shadow: 0 12rpx 24rpx -12rpx rgba(30, 26, 23, 0.6);
 }
 
 .bottom-space {
-    height: 80rpx;
+    height: 120rpx;
 }
 </style>

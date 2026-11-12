@@ -129,19 +129,54 @@
                     }
                 }
             ]
+        },
+        {
+            "root": "pages/anniversary",
+            "pages": [
+                {
+                    "path": "anniversary",
+                    "style": {
+                        "navigationBarTitleText": "纪念日"
+                    }
+                }
+            ]
+        },
+        {
+            "root": "pages/wish",
+            "pages": [
+                {
+                    "path": "wish",
+                    "style": {
+                        "navigationBarTitleText": "心愿清单"
+                    }
+                }
+            ]
+        },
+        {
+            "root": "pages/capsule",
+            "pages": [
+                {
+                    "path": "capsule",
+                    "style": {
+                        "navigationBarTitleText": "时光胶囊"
+                    }
+                }
+            ]
         }
     ],
     "globalStyle": {
         "navigationBarTextStyle": "black",
         "navigationBarTitleText": "猪猪",
-        "navigationBarBackgroundColor": "#ffffff",
-        "backgroundColor": "#f5f5f5"
+        "navigationBarBackgroundColor": "#F7F3EE",
+        "backgroundColor": "#F7F3EE",
+        "backgroundColorTop": "#F7F3EE",
+        "backgroundColorBottom": "#F7F3EE"
     },
     "tabBar": {
-        "color": "#c4a882",
-        "selectedColor": "#5c3d2e",
+        "color": "#A79E96",
+        "selectedColor": "#1E1A17",
         "borderStyle": "white",
-        "backgroundColor": "#faf6f1",
+        "backgroundColor": "#FFFFFF",
         "list": [
             {
                 "pagePath": "pages/home/home",

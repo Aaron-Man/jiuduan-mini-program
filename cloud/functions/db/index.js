@@ -30,6 +30,7 @@ const {
     interactionTargetOf,
     staleFilesAfterUpdate,
     touchesFiles,
+    maskCapsule,
 } = require('./rules')
 
 // 成员身份缓存：同一个热实例内短时间复用，减少重复查询
@@ -260,15 +261,17 @@ exports.main = async (event, context) => {
                 const pageSize = Math.min(Math.max(parseInt(limit, 10) || MAX_QUERY_LIMIT, 1), MAX_QUERY_LIMIT)
                 const skipCount = Math.max(parseInt(skip, 10) || 0, 0)
                 const dataQuery = orderBy ? query.orderBy(orderBy, orderType === 'asc' ? 'asc' : 'desc') : query
+                // 时光胶囊在开启日期之前不返回正文
+                const present = list => (collection === 'capsules' ? list.map(d => maskCapsule(d)) : list)
                 if (withCount === false) {
                     const dataRes = await dataQuery.skip(skipCount).limit(pageSize).get()
-                    return { data: dataRes.data }
+                    return { data: present(dataRes.data) }
                 }
                 const [countRes, dataRes] = await Promise.all([
                     query.count(),
                     dataQuery.skip(skipCount).limit(pageSize).get(),
                 ])
-                return { data: dataRes.data, total: countRes.total }
+                return { data: present(dataRes.data), total: countRes.total }
             }
 
             case 'batchLikeQuery': {

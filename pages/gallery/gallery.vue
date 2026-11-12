@@ -1,40 +1,55 @@
 <template>
+    <page-bg tone="rose" />
     <view class="gallery-page">
-        <!-- 顶部栏 -->
-        <view class="top-bar">
-            <view class="top-btn outline" @tap="showCategoryManager = !showCategoryManager">
-                <text>分类</text>
+        <!-- 杂志式标题区 + 操作按钮 -->
+        <view class="hero ui-fade-up">
+            <view class="hero-text">
+                <text class="ui-eyebrow">MOMENTS</text>
+                <text class="ui-title hero-title">相册</text>
+                <text class="ui-sub">{{ allPhotosData.length || photos.length }} 张照片 · {{ categories.length }} 个分类</text>
             </view>
-            <view class="top-btn outline" @tap="toggleEdit">
-                <text>{{ editing ? '完成' : '编辑' }}</text>
-            </view>
-            <view class="top-btn primary" @tap="showUpload = !showUpload">
-                <text>{{ showUpload ? '取消' : '+ 上传' }}</text>
+            <view class="top-bar">
+                <view
+                    class="top-btn outline ui-press"
+                    :class="{ on: showCategoryManager }"
+                    @tap="showCategoryManager = !showCategoryManager"
+                >
+                    <text>分类</text>
+                </view>
+                <view class="top-btn outline ui-press" :class="{ on: editing }" @tap="toggleEdit">
+                    <text>{{ editing ? '完成' : '编辑' }}</text>
+                </view>
+                <view class="top-btn primary ui-press" @tap="showUpload = !showUpload">
+                    <text>{{ showUpload ? '取消' : '+ 上传' }}</text>
+                </view>
             </view>
         </view>
 
         <scroll-view class="scroll-area" :scroll-y="!dragging">
             <!-- 分类管理 -->
-            <view class="section" v-if="showCategoryManager">
+            <view class="section ui-fade-up" v-if="showCategoryManager">
                 <view class="card">
+                    <view class="card-head">
+                        <text class="ui-eyebrow">CATEGORIES</text>
+                        <text class="card-title">管理分类</text>
+                    </view>
                     <view class="form-row">
-                        <text class="form-icon">🏷️</text>
+                        <view class="form-icon">{{ newCatEmoji }}</view>
                         <input
                             class="form-input"
                             v-model="newCatName"
                             placeholder="新分类名称"
                             @confirm="handleAddCategory"
                         />
-                        <view class="form-btn" @tap="handleAddCategory">添加</view>
+                        <view class="form-btn ui-press" @tap="handleAddCategory">添加</view>
                     </view>
-                    <view class="divider"></view>
                     <view class="form-col">
                         <text class="form-label">选择图标</text>
                         <view class="emoji-row">
                             <view
                                 v-for="emoji in CATEGORY_EMOJIS"
                                 :key="emoji"
-                                class="emoji-chip"
+                                class="emoji-chip ui-press"
                                 :class="{ active: newCatEmoji === emoji }"
                                 @tap="newCatEmoji = emoji"
                             >
@@ -45,14 +60,14 @@
                     <view v-if="categories.length > 0">
                         <view class="divider"></view>
                         <view class="cat-item" v-for="cat in categories" :key="cat.id">
-                            <text class="cat-emoji">{{ cat.emoji }}</text>
+                            <view class="cat-emoji">{{ cat.emoji }}</view>
                             <text class="cat-name">{{ cat.name }}</text>
                             <text class="cat-count">{{ getCategoryPhotoCount(cat.name) }}张</text>
                             <text class="cat-del" @tap="handleDeleteCategory(cat.id)">×</text>
                         </view>
                     </view>
                     <view class="cat-done-row">
-                        <view class="cat-done-btn" @tap="showCategoryManager = false">
+                        <view class="cat-done-btn ui-press" @tap="showCategoryManager = false">
                             <text>完成</text>
                         </view>
                     </view>
@@ -68,9 +83,10 @@
             />
 
             <!-- 分类筛选 -->
-            <view class="filter-bar" v-if="categories.length > 0 && !editing">
+            <view class="filter-bar ui-fade-up ui-d1" v-if="categories.length > 0 && !editing">
                 <view class="filter-tag" :class="{ active: !selectedCategory }" @tap="selectedCategory = ''">
-                    全部 ({{ photos.length }})
+                    <text>全部</text>
+                    <text class="filter-count">{{ photos.length }}</text>
                 </view>
                 <view
                     class="filter-tag"
@@ -79,13 +95,16 @@
                     :key="cat.id"
                     @tap="selectedCategory = cat.name"
                 >
-                    {{ cat.emoji }} {{ cat.name }} ({{ getCategoryPhotoCount(cat.name) }})
+                    <text>{{ cat.emoji }} {{ cat.name }}</text>
+                    <text class="filter-count">{{ getCategoryPhotoCount(cat.name) }}</text>
                 </view>
             </view>
 
             <!-- 空状态 -->
-            <view v-if="filteredPhotos.length === 0 && !editing" class="empty">
-                <text class="empty-icon">📷</text>
+            <view v-if="filteredPhotos.length === 0 && !editing" class="empty ui-fade-up ui-d2">
+                <view class="empty-bubble">
+                    <text class="empty-icon">📷</text>
+                </view>
                 <text class="empty-text">{{ selectedCategory ? '该分类还没有照片' : '还没有照片' }}</text>
                 <text class="empty-hint" v-if="!selectedCategory">点击右上角"+ 上传"添加第一张照片</text>
             </view>
@@ -96,10 +115,14 @@
                     class="photo-item"
                     v-for="(photo, idx) in filteredPhotos"
                     :key="photo.id"
-                    :class="{
-                        'is-dragging': dragFromIdx === idx,
-                        'is-drag-target': dragOverIdx === idx && dragFromIdx !== null,
-                    }"
+                    :class="[
+                        {
+                            'is-dragging': dragFromIdx === idx,
+                            'is-drag-target': dragOverIdx === idx && dragFromIdx !== null,
+                            'is-selected': editing && selectedIds.includes(photo.id),
+                        },
+                        'ui-d' + ((idx % 6) + 1),
+                    ]"
                     :style="
                         dragFromIdx === idx && dragMoved
                             ? { transform: 'translate(' + dragDx + 'px,' + dragDy + 'px)', zIndex: 10, opacity: 0.85 }
@@ -117,6 +140,7 @@
                         mode="aspectFill"
                         lazy-load
                     />
+                    <view class="photo-shade"></view>
                     <view class="select-mark" :class="{ on: selectedIds.includes(photo.id) }">
                         <text class="select-mark-icon" v-if="selectedIds.includes(photo.id)">✓</text>
                     </view>
@@ -130,7 +154,7 @@
             </view>
 
             <view v-if="hasMorePhotos && !editing" class="load-more-wrap">
-                <view class="load-more-btn" :class="{ disabled: loadingMore }" @tap="loadMorePhotos">
+                <view class="load-more-btn ui-press" :class="{ disabled: loadingMore }" @tap="loadMorePhotos">
                     <text>{{
                         loadingMore
                             ? '加载中...'
@@ -142,20 +166,23 @@
             <view class="bottom-space"></view>
         </scroll-view>
 
-        <!-- 编辑底栏 -->
-        <view class="edit-bar" v-if="editing">
-            <view class="edit-bar-btn" @tap="toggleSelectAll">
+        <!-- 编辑底栏：悬浮毛玻璃胶囊 -->
+        <view class="edit-bar ui-fade-up" v-if="editing">
+            <view class="edit-bar-btn ghost ui-press" @tap="toggleSelectAll">
                 <text>{{
                     selectedIds.length === filteredPhotos.length && filteredPhotos.length > 0 ? '取消全选' : '全选'
                 }}</text>
             </view>
-            <text class="edit-count">{{ selectedIds.length }} 张已选</text>
+            <view class="edit-count">
+                <text class="edit-count-num">{{ selectedIds.length }}</text>
+                <text class="edit-count-unit">张已选</text>
+            </view>
             <view class="edit-bar-actions">
-                <view class="edit-bar-btn" @tap="handleMove" :class="{ disabled: selectedIds.length === 0 }"
+                <view class="edit-bar-btn ui-press" @tap="handleMove" :class="{ disabled: selectedIds.length === 0 }"
                     ><text>移动</text></view
                 >
                 <view
-                    class="edit-bar-btn danger"
+                    class="edit-bar-btn danger ui-press"
                     @tap="handleBatchDelete"
                     :class="{ disabled: selectedIds.length === 0 }"
                     ><text>删除</text></view
@@ -166,9 +193,13 @@
         <!-- 分类选择弹窗 -->
         <view class="picker-mask" v-if="showCatPicker" @tap="showCatPicker = false">
             <view class="picker-sheet" @tap.stop>
+                <view class="sheet-grabber"></view>
+                <text class="ui-eyebrow picker-eyebrow">MOVE TO</text>
                 <view class="picker-title">移动到分类</view>
                 <view class="picker-item" v-for="cat in categories" :key="cat.id" @tap="confirmMove(cat.name)">
-                    <text>{{ cat.emoji }} {{ cat.name }}</text>
+                    <view class="picker-emoji">{{ cat.emoji }}</view>
+                    <text class="picker-name">{{ cat.name }}</text>
+                    <text class="picker-arrow">›</text>
                 </view>
             </view>
         </view>
@@ -187,6 +218,7 @@
 </template>
 
 <script setup>
+import PageBg from '../../components/page-bg/page-bg.vue'
 import PhotoUploadPanel from './components/photo-upload-panel.vue'
 import PhotoDetailSheet from './components/photo-detail-sheet.vue'
 import { ref, computed } from 'vue'
@@ -502,32 +534,60 @@ onShow(() => {
     height: 100vh;
     display: flex;
     flex-direction: column;
-    background: linear-gradient(180deg, #e8eef4 0%, #d8e2ec 100%);
+    background: transparent;
+}
+
+/* 标题区 */
+.hero {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 36rpx 32rpx 20rpx;
+    flex-shrink: 0;
+    gap: 16rpx;
+}
+.hero-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+.hero-title {
+    margin: 6rpx 0 4rpx;
 }
 .top-bar {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    padding: 24rpx 32rpx 20rpx;
-    background: transparent;
+    gap: 12rpx;
     flex-shrink: 0;
-    gap: 10rpx;
+    padding-bottom: 8rpx;
 }
 .top-btn {
-    padding: 8rpx 20rpx;
-    background: #7a96b0;
+    height: 64rpx;
+    padding: 0 28rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ink);
     color: #fff;
-    border-radius: 24rpx;
-    font-size: 22rpx;
-    letter-spacing: 1rpx;
+    border-radius: 999rpx;
+    font-size: 24rpx;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    box-shadow: 0 16rpx 32rpx -16rpx rgba(30, 26, 23, 0.6);
 }
 .top-btn.outline {
-    background: transparent;
-    color: #6884a0;
-    border: 1rpx solid rgba(104, 132, 160, 0.4);
+    background: rgba(255, 255, 255, 0.72);
+    color: var(--ink);
+    border: 1rpx solid var(--card-border);
+    box-shadow: var(--shadow-soft);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    font-weight: 500;
 }
-.top-btn:active {
-    opacity: 0.8;
+.top-btn.outline.on {
+    background: var(--ink-2);
+    color: #fff;
+    border-color: var(--ink-2);
 }
 .scroll-area {
     flex: 1;
@@ -535,204 +595,321 @@ onShow(() => {
     background: transparent;
     -webkit-overflow-scrolling: touch;
 }
+
+/* 分类管理卡片 */
 .section {
-    padding: 16rpx 32rpx 0;
+    padding: 12rpx 32rpx 8rpx;
 }
 .card {
-    background: #fff;
-    border-radius: 24rpx;
+    background: var(--card);
+    border-radius: var(--r-xl);
+    padding: 8rpx 0 8rpx;
+    margin-bottom: 0;
     overflow: hidden;
-    box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.03);
-    border: 1rpx solid rgba(142, 142, 147, 0.06);
+    box-shadow: var(--shadow);
+    border: 1rpx solid var(--card-border);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+.card-head {
+    display: flex;
+    flex-direction: column;
+    padding: 28rpx 36rpx 8rpx;
+}
+.card-title {
+    font-family: var(--font-serif);
+    font-size: 36rpx;
+    font-weight: 700;
+    color: var(--ink);
+    margin-top: 4rpx;
 }
 .form-row {
     display: flex;
     align-items: center;
-    padding: 24rpx 28rpx;
+    margin: 16rpx 28rpx 0;
+    padding: 12rpx 12rpx 12rpx 12rpx;
     gap: 16rpx;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1rpx solid var(--line);
+    border-radius: 999rpx;
 }
 .form-icon {
-    font-size: 32rpx;
+    width: 64rpx;
+    height: 64rpx;
+    border-radius: 50%;
+    background: var(--rose);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30rpx;
     flex-shrink: 0;
 }
 .form-input {
     flex: 1;
     font-size: 28rpx;
-    color: #1c1c1e;
+    color: var(--ink);
     background: transparent;
     border: none;
     padding: 0;
 }
 .form-btn {
-    padding: 10rpx 24rpx;
-    background: linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 100%);
-    color: #f2f2f7;
-    border-radius: 16rpx;
+    height: 64rpx;
+    padding: 0 32rpx;
+    display: flex;
+    align-items: center;
+    background: var(--ink);
+    color: #fff;
+    border-radius: 999rpx;
     font-size: 24rpx;
+    font-weight: 600;
+    letter-spacing: 0.06em;
     flex-shrink: 0;
 }
 .form-col {
-    padding: 24rpx 28rpx;
+    padding: 28rpx 36rpx 20rpx;
 }
 .form-label {
-    font-size: 24rpx;
-    color: #8e8e93;
+    font-size: 20rpx;
+    color: var(--muted);
     display: block;
-    margin-bottom: 12rpx;
-    letter-spacing: 1rpx;
+    margin-bottom: 18rpx;
+    letter-spacing: 0.24em;
+    font-weight: 600;
 }
 .divider {
     height: 1rpx;
-    background: rgba(142, 142, 147, 0.06);
-    margin: 0 28rpx;
+    background: var(--line);
+    margin: 8rpx 36rpx;
 }
 .emoji-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 12rpx;
+    gap: 14rpx;
 }
 .emoji-chip {
-    width: 56rpx;
-    height: 56rpx;
-    border-radius: 28rpx;
-    background: #f2f2f7;
+    width: 72rpx;
+    height: 72rpx;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1rpx solid var(--line);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 28rpx;
-    border: 2rpx solid transparent;
+    font-size: 32rpx;
+    box-sizing: border-box;
 }
 .emoji-chip.active {
-    background: linear-gradient(135deg, #f8ece4 0%, #f2ddd0 100%);
-    border-color: #8e8e93;
-    transform: scale(1.1);
+    background: var(--butter);
+    border: 3rpx solid var(--ink);
 }
 .cat-item {
     display: flex;
     align-items: center;
-    gap: 12rpx;
-    padding: 18rpx 28rpx;
-}
-.cat-item + .cat-item {
-    border-top: 1rpx solid rgba(142, 142, 147, 0.06);
+    gap: 20rpx;
+    padding: 18rpx 36rpx;
 }
 .cat-emoji {
-    font-size: 32rpx;
+    width: 64rpx;
+    height: 64rpx;
+    border-radius: 22rpx;
+    background: var(--grad-dawn);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30rpx;
+    flex-shrink: 0;
 }
 .cat-name {
     font-size: 28rpx;
-    color: #1c1c1e;
+    color: var(--ink);
+    font-weight: 500;
     flex: 1;
 }
 .cat-count {
-    font-size: 22rpx;
-    color: #8e8e93;
+    font-family: var(--font-serif);
+    font-size: 24rpx;
+    color: var(--muted);
 }
 .cat-del {
+    width: 52rpx;
+    height: 52rpx;
+    line-height: 48rpx;
+    text-align: center;
+    border-radius: 50%;
     font-size: 32rpx;
-    color: #ff3b30;
-    padding: 4rpx 8rpx;
+    color: var(--coral);
+    background: rgba(224, 122, 95, 0.1);
 }
 .cat-done-row {
     display: flex;
     justify-content: flex-end;
-    padding: 16rpx 28rpx;
+    padding: 16rpx 36rpx 28rpx;
 }
 .cat-done-btn {
-    padding: 12rpx 36rpx;
-    border: 2rpx solid rgba(142, 142, 147, 0.2);
-    border-radius: 16rpx;
+    height: 72rpx;
+    padding: 0 44rpx;
+    display: flex;
+    align-items: center;
+    border-radius: 999rpx;
+    background: var(--ink);
+    box-shadow: 0 16rpx 32rpx -16rpx rgba(30, 26, 23, 0.6);
 }
 .cat-done-btn text {
     font-size: 26rpx;
-    color: #1c1c1e;
-    font-weight: 500;
-    letter-spacing: 2rpx;
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.08em;
 }
+
+/* 分类筛选胶囊 */
 .filter-bar {
-    padding: 20rpx 32rpx 16rpx;
+    padding: 12rpx 32rpx 20rpx;
     white-space: nowrap;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
 }
 .filter-tag {
-    display: inline-block;
-    padding: 14rpx 28rpx;
-    background: #fff;
-    border-radius: 24rpx;
+    display: inline-flex;
+    align-items: center;
+    gap: 10rpx;
+    height: 64rpx;
+    padding: 0 26rpx;
+    background: rgba(255, 255, 255, 0.72);
+    border-radius: 999rpx;
     font-size: 24rpx;
-    color: #3a3a3c;
-    margin-right: 12rpx;
-    border: 1rpx solid rgba(142, 142, 147, 0.08);
+    color: var(--ink-2);
+    margin-right: 14rpx;
+    border: 1rpx solid var(--card-border);
+    box-shadow: var(--shadow-soft);
+    vertical-align: middle;
 }
 .filter-tag.active {
-    background: linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 100%);
-    color: #f2f2f7;
-    border-color: transparent;
+    background: var(--ink);
+    color: #fff;
+    border-color: var(--ink);
 }
+.filter-count {
+    font-family: var(--font-serif);
+    font-size: 22rpx;
+    opacity: 0.55;
+}
+
+/* 空状态 */
 .empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
-    padding: 160rpx 0 120rpx;
+    padding: 140rpx 48rpx 120rpx;
+}
+.empty-bubble {
+    width: 200rpx;
+    height: 200rpx;
+    border-radius: 50%;
+    background: var(--grad-dawn);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow);
+    margin-bottom: 40rpx;
 }
 .empty-icon {
-    font-size: 80rpx;
-    display: block;
-    margin-bottom: 20rpx;
+    font-size: 88rpx;
+    line-height: 1;
 }
 .empty-text {
-    font-size: 30rpx;
-    color: #1c1c1e;
-    font-weight: 500;
+    font-family: var(--font-serif);
+    font-size: 36rpx;
+    color: var(--ink);
+    font-weight: 700;
     display: block;
 }
 .empty-hint {
     font-size: 24rpx;
-    color: #c7c7cc;
+    color: var(--muted);
     display: block;
-    margin-top: 8rpx;
+    margin-top: 12rpx;
 }
 
-/* 照片网格 */
+/* 照片网格：INS 风格圆角方块 */
 .photo-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8rpx;
-    padding: 16rpx 24rpx 0;
-}
-.photo-grid.is-editing {
-    gap: 10rpx;
+    gap: 12rpx;
+    padding: 4rpx 24rpx 0;
 }
 .photo-item {
     position: relative;
-    border-radius: 16rpx;
+    border-radius: var(--r-m);
     overflow: hidden;
-    background: #e5e5ea;
+    background: var(--bg-2);
+    box-shadow: var(--shadow-soft);
+    animation-name: tile-in;
+    animation-duration: 0.7s;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    animation-fill-mode: backwards;
+}
+@keyframes tile-in {
+    from {
+        opacity: 0;
+        transform: translateY(28rpx) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
 }
 .is-editing .photo-item {
-    border-radius: 12rpx;
     transition:
         transform 0.12s,
         opacity 0.12s;
 }
 .photo-img {
     width: 100%;
-    height: 340rpx;
+    height: 430rpx;
     display: block;
+}
+.photo-shade {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 120rpx;
+    background: linear-gradient(180deg, rgba(30, 26, 23, 0) 0%, rgba(30, 26, 23, 0.28) 100%);
+    pointer-events: none;
+    z-index: 1;
+}
+.photo-item.is-selected::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 5rpx solid var(--ink);
+    border-radius: inherit;
+    background: rgba(255, 255, 255, 0.18);
+    z-index: 1;
+    pointer-events: none;
 }
 
 /* 加载更多 */
 .load-more-wrap {
-    padding: 24rpx 32rpx;
+    padding: 36rpx 32rpx 8rpx;
     text-align: center;
 }
 .load-more-btn {
-    display: inline-block;
-    padding: 16rpx 48rpx;
-    background: #fff;
-    border-radius: 32rpx;
-    font-size: 26rpx;
-    color: #636366;
-    border: 1rpx solid rgba(142, 142, 147, 0.1);
+    display: inline-flex;
+    align-items: center;
+    height: 76rpx;
+    padding: 0 48rpx;
+    background: rgba(255, 255, 255, 0.72);
+    border-radius: 999rpx;
+    font-size: 24rpx;
+    color: var(--ink-2);
+    letter-spacing: 0.06em;
+    border: 1rpx solid var(--card-border);
+    box-shadow: var(--shadow-soft);
 }
 .load-more-btn.disabled {
     opacity: 0.5;
@@ -740,19 +917,21 @@ onShow(() => {
 
 /* 拖拽 & 选择 */
 .is-dragging {
-    box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.25);
+    box-shadow: 0 40rpx 80rpx -24rpx rgba(80, 56, 36, 0.45);
 }
 .is-drag-target {
     opacity: 0.5;
 }
 .drag-handle {
     position: absolute;
-    bottom: 8rpx;
-    right: 8rpx;
-    width: 40rpx;
-    height: 40rpx;
-    border-radius: 20rpx;
-    background: rgba(0, 0, 0, 0.35);
+    bottom: 14rpx;
+    right: 14rpx;
+    width: 48rpx;
+    height: 48rpx;
+    border-radius: 50%;
+    background: rgba(30, 26, 23, 0.32);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -765,13 +944,14 @@ onShow(() => {
 }
 .select-mark {
     position: absolute;
-    top: 12rpx;
-    right: 12rpx;
-    width: 44rpx;
-    height: 44rpx;
-    border-radius: 22rpx;
-    background: rgba(255, 255, 255, 0.5);
-    border: 3rpx solid rgba(255, 255, 255, 0.9);
+    top: 16rpx;
+    right: 16rpx;
+    width: 48rpx;
+    height: 48rpx;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.35);
+    border: 3rpx solid rgba(255, 255, 255, 0.95);
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -783,8 +963,8 @@ onShow(() => {
     opacity: 1;
 }
 .select-mark.on {
-    background: #007aff;
-    border-color: #007aff;
+    background: var(--ink);
+    border-color: #fff;
 }
 .select-mark-icon {
     color: #fff;
@@ -793,47 +973,72 @@ onShow(() => {
 }
 
 .bottom-space {
-    height: 180rpx;
+    height: 240rpx;
 }
 
-/* 编辑底栏 */
+/* 编辑底栏：悬浮毛玻璃胶囊 */
 .edit-bar {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    left: 32rpx;
+    right: 32rpx;
+    bottom: calc(32rpx + env(safe-area-inset-bottom));
     z-index: 100;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-top: 1rpx solid rgba(0, 0, 0, 0.06);
-    padding: 20rpx 32rpx;
-    padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+    height: 112rpx;
+    padding: 0 16rpx;
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1rpx solid var(--card-border);
+    border-radius: 999rpx;
+    box-shadow: 0 32rpx 64rpx -24rpx rgba(80, 56, 36, 0.4);
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 .edit-bar-btn {
-    padding: 14rpx 28rpx;
-    background: #f2f2f7;
-    border-radius: 16rpx;
-    font-size: 28rpx;
-    color: #1c1c1e;
+    height: 80rpx;
+    padding: 0 30rpx;
+    display: flex;
+    align-items: center;
+    background: var(--ink);
+    border-radius: 999rpx;
+    font-size: 26rpx;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.04em;
+}
+.edit-bar-btn.ghost {
+    background: rgba(255, 255, 255, 0.8);
+    color: var(--ink);
+    border: 1rpx solid var(--line);
+    font-weight: 500;
 }
 .edit-bar-btn.disabled {
     opacity: 0.3;
 }
 .edit-bar-btn.danger {
-    background: #ff3b30;
-    color: #fff;
+    background: rgba(224, 122, 95, 0.12);
+    color: var(--coral);
 }
 .edit-bar-actions {
     display: flex;
     gap: 12rpx;
 }
 .edit-count {
-    font-size: 26rpx;
-    color: #8e8e93;
+    display: flex;
+    align-items: baseline;
+    gap: 6rpx;
+}
+.edit-count-num {
+    font-family: var(--font-serif);
+    font-size: 36rpx;
+    font-weight: 700;
+    color: var(--ink);
+}
+.edit-count-unit {
+    font-size: 22rpx;
+    color: var(--muted);
 }
 
 /* 分类选择弹窗 */
@@ -844,46 +1049,89 @@ onShow(() => {
     right: 0;
     bottom: 0;
     z-index: 1000;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(30, 26, 23, 0.35);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     display: flex;
     align-items: flex-end;
 }
 .picker-sheet {
     width: 100%;
-    background: #fff;
-    border-radius: 24rpx 24rpx 0 0;
-    padding: 16rpx 0;
-    padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
+    background: var(--card-solid);
+    border-radius: var(--r-xl) var(--r-xl) 0 0;
+    padding: 16rpx 32rpx;
+    padding-bottom: calc(32rpx + env(safe-area-inset-bottom));
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+.sheet-grabber {
+    width: 72rpx;
+    height: 8rpx;
+    border-radius: 8rpx;
+    background: var(--faint);
+    align-self: center;
+    margin-bottom: 28rpx;
+}
+.picker-eyebrow {
+    text-align: center;
 }
 .picker-title {
-    font-size: 26rpx;
-    color: #8e8e93;
+    font-family: var(--font-serif);
+    font-size: 40rpx;
+    font-weight: 700;
+    color: var(--ink);
     text-align: center;
-    padding: 16rpx 0 20rpx;
+    padding: 6rpx 0 28rpx;
 }
 .picker-item {
-    padding: 28rpx 40rpx;
-    font-size: 30rpx;
-    color: #1c1c1e;
-    text-align: center;
+    display: flex;
+    align-items: center;
+    gap: 20rpx;
+    padding: 20rpx 24rpx;
+    margin-bottom: 12rpx;
+    border-radius: var(--r-m);
+    background: var(--bg);
 }
 .picker-item:active {
-    background: #f2f2f7;
+    background: var(--bg-2);
 }
-.picker-item + .picker-item {
-    border-top: 1rpx solid rgba(0, 0, 0, 0.04);
+.picker-emoji {
+    width: 64rpx;
+    height: 64rpx;
+    border-radius: 22rpx;
+    background: var(--card-solid);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30rpx;
+}
+.picker-name {
+    flex: 1;
+    font-size: 28rpx;
+    font-weight: 500;
+    color: var(--ink);
+}
+.picker-arrow {
+    font-size: 36rpx;
+    color: var(--faint);
 }
 
 /* 照片点赞角标 */
 .photo-like-badge {
     position: absolute;
-    bottom: 8rpx;
-    left: 8rpx;
-    padding: 4rpx 14rpx;
-    background: rgba(0, 0, 0, 0.45);
-    border-radius: 16rpx;
+    bottom: 14rpx;
+    left: 14rpx;
+    padding: 6rpx 16rpx;
+    background: rgba(30, 26, 23, 0.32);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1rpx solid rgba(255, 255, 255, 0.25);
+    border-radius: 999rpx;
     font-size: 20rpx;
     color: #fff;
+    letter-spacing: 0.04em;
     z-index: 2;
 }
 </style>

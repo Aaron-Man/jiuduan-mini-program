@@ -1,5 +1,5 @@
 <template>
-    <page-bg overlay="light" />
+    <page-bg overlay="light" tone="sunset" />
     <scroll-view
         scroll-y
         class="page-scroll"
@@ -9,17 +9,24 @@
         :refresher-triggered="refreshing"
         @refresherrefresh="onRefresh"
     >
+        <!-- 杂志式标题区 -->
+        <view class="mast ui-fade-up">
+            <text class="ui-eyebrow">SETTINGS</text>
+            <text class="ui-title mast-title">设置</text>
+            <text class="ui-sub mast-sub">打理属于你们的小空间</text>
+        </view>
+
         <!-- 顶部个人档案 Hero -->
-        <view class="profile-hero">
+        <view class="profile-hero ui-fade-up ui-d1">
             <view class="hero-bg-decor"></view>
             <view class="hero-bg-decor small"></view>
             <view class="profile-row">
-                <view class="avatar-wrap" @tap="chooseAvatar">
+                <view class="avatar-wrap ui-press" @tap="chooseAvatar">
+                    <view class="avatar-ring"></view>
                     <image v-if="avatarUrl" :src="avatarUrl" class="avatar-img" mode="aspectFill" />
                     <view v-else class="avatar-placeholder">
                         <text class="avatar-emoji">👤</text>
                     </view>
-                    <view class="avatar-ring"></view>
                     <view class="camera-dot">
                         <text class="camera-icon">📷</text>
                     </view>
@@ -42,10 +49,11 @@
         </view>
 
         <!-- 分组：个人信息 -->
-        <view class="group">
+        <view class="group ui-fade-up ui-d2">
+            <text class="group-label">PROFILE · 个人信息</text>
             <view class="group-card">
-                <view class="cell" @tap="goTo('/pages/period/period')">
-                    <text class="cell-icon">🌸</text>
+                <view class="cell ui-press" @tap="goTo('/pages/period/period')">
+                    <text class="cell-icon ui-bubble--rose">🌸</text>
                     <text class="cell-label">经期管理</text>
                     <view class="cell-value">
                         <text class="cell-arrow">›</text>
@@ -53,19 +61,19 @@
                 </view>
                 <view class="cell-divider"></view>
                 <view class="cell">
-                    <text class="cell-icon">🏷️</text>
+                    <text class="cell-icon ui-bubble--butter">🏷️</text>
                     <text class="cell-label">昵称</text>
                     <input class="cell-input" v-model="displayName" placeholder="你的昵称" />
                 </view>
                 <view class="cell-divider"></view>
                 <view class="cell">
-                    <text class="cell-icon">💑</text>
+                    <text class="cell-icon ui-bubble--peach">💑</text>
                     <text class="cell-label">空间名称</text>
                     <input class="cell-input" v-model="coupleName" placeholder="我们的小窝" />
                 </view>
                 <view class="cell-divider"></view>
                 <view class="cell" @tap="showDatePicker = true">
-                    <text class="cell-icon">📅</text>
+                    <text class="cell-icon ui-bubble--sky">📅</text>
                     <text class="cell-label">纪念日</text>
                     <picker mode="date" :value="anniversaryDate" @change="anniversaryDate = $event.detail.value">
                         <view class="cell-value">
@@ -78,10 +86,11 @@
         </view>
 
         <!-- 分组：成员管理（仅管理员） -->
-        <view class="group" v-if="isAdmin">
+        <view class="group ui-fade-up ui-d3" v-if="isAdmin">
+            <text class="group-label">FAMILY · 家庭</text>
             <view class="group-card">
-                <view class="cell" @tap="goTo('/pages/members/members')">
-                    <text class="cell-icon">👥</text>
+                <view class="cell ui-press" @tap="goTo('/pages/members/members')">
+                    <text class="cell-icon ui-bubble--lilac">👥</text>
                     <text class="cell-label">成员管理</text>
                     <view class="cell-value">
                         <text class="cell-hint-text">{{ totalMembers }} 人</text>
@@ -92,10 +101,11 @@
         </view>
 
         <!-- 分组：通知管理 -->
-        <view class="group">
+        <view class="group ui-fade-up ui-d4">
+            <text class="group-label">NOTIFICATIONS · 通知</text>
             <view class="group-card">
-                <view class="cell no-input" @tap="showNotifications = !showNotifications">
-                    <text class="cell-icon">🔔</text>
+                <view class="cell no-input ui-press" @tap="showNotifications = !showNotifications">
+                    <text class="cell-icon ui-bubble--butter">🔔</text>
                     <text class="cell-label">通知管理</text>
                     <view class="cell-value">
                         <text class="cell-hint-text">已订阅 {{ subscribedTypes.length }} 项</text>
@@ -105,13 +115,13 @@
                 <template v-if="showNotifications">
                     <view class="cell-divider"></view>
                     <view
-                        class="cell no-input"
+                        class="cell no-input notify-cell"
                         v-for="nt in NOTIFY_TYPES"
                         :key="nt.key"
                         @tap="handleSubscribe(nt.key)"
                         :class="{ subscribed: subscribedTypes.includes(nt.key) }"
                     >
-                        <text class="cell-icon">{{ nt.icon }}</text>
+                        <text class="cell-icon cell-icon--soft">{{ nt.icon }}</text>
                         <view class="cell-label-wrap">
                             <text class="cell-label">{{ nt.name }}</text>
                             <text class="cell-desc">{{ nt.desc }}</text>
@@ -119,7 +129,6 @@
                         <view class="cell-value">
                             <text class="sub-status" v-if="subscribedTypes.includes(nt.key)">已订阅</text>
                             <text class="sub-action" v-else>点击订阅</text>
-                            <text class="cell-arrow">›</text>
                         </view>
                     </view>
                 </template>
@@ -128,10 +137,11 @@
         </view>
 
         <!-- 分组：外观 -->
-        <view class="group">
+        <view class="group ui-fade-up ui-d5">
+            <text class="group-label">APPEARANCE · 外观与其他</text>
             <view class="group-card">
-                <view class="cell no-input" @tap="goTo('/pages/settings/background')">
-                    <text class="cell-icon">🎨</text>
+                <view class="cell no-input ui-press" @tap="goTo('/pages/settings/background')">
+                    <text class="cell-icon ui-bubble--sage">🎨</text>
                     <text class="cell-label">背景设置</text>
                     <view class="cell-value">
                         <text class="cell-hint-text" v-if="isPresetBg">{{ bgPresetName }}</text>
@@ -141,8 +151,8 @@
                     </view>
                 </view>
                 <view class="cell-divider"></view>
-                <view class="cell no-input" @tap="handleClearCache">
-                    <text class="cell-icon">🗑️</text>
+                <view class="cell no-input ui-press" @tap="handleClearCache">
+                    <text class="cell-icon ui-bubble--peach">🗑️</text>
                     <text class="cell-label">清除缓存</text>
                     <view class="cell-value">
                         <text class="cell-arrow">›</text>
@@ -150,13 +160,19 @@
                 </view>
                 <view class="cell-divider"></view>
                 <view class="cell no-input">
-                    <text class="cell-icon">📱</text>
+                    <text class="cell-icon ui-bubble--sky">📱</text>
                     <text class="cell-label">版本</text>
                     <view class="cell-value">
-                        <text>1.0.0</text>
+                        <text class="version-text">1.0.0</text>
                     </view>
                 </view>
             </view>
+        </view>
+
+        <!-- 底部署名 -->
+        <view class="colophon ui-fade-up ui-d6">
+            <text class="colophon-mark">猪猪</text>
+            <text class="ui-eyebrow">OUR LITTLE HOME</text>
         </view>
 
         <!-- 底部留白 -->
@@ -395,141 +411,183 @@ const fetchMemberCount = async () => {
 <style scoped>
 .page-scroll {
     height: 100vh;
-    background: #f2f2f7;
+    background: transparent;
 }
 .page-scroll--transparent {
     background: transparent;
 }
 
+/* ===== 标题区 ===== */
+.mast {
+    padding: 40rpx 44rpx 8rpx;
+    display: flex;
+    flex-direction: column;
+}
+.mast-title {
+    margin-top: 12rpx;
+}
+.mast-sub {
+    margin-top: 10rpx;
+    letter-spacing: 0.04em;
+}
+
 /* ===== Profile Hero ===== */
 .profile-hero {
     position: relative;
-    padding: 80rpx 44rpx 48rpx;
+    margin: 32rpx 32rpx 0;
+    padding: 56rpx 40rpx 48rpx;
     overflow: hidden;
+    background: var(--card);
+    border: 1rpx solid var(--card-border);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
 }
 .hero-bg-decor {
     position: absolute;
-    top: -120rpx;
-    right: -60rpx;
-    width: 400rpx;
-    height: 400rpx;
+    top: -160rpx;
+    right: -120rpx;
+    width: 420rpx;
+    height: 420rpx;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.06);
+    background: radial-gradient(circle, rgba(242, 184, 192, 0.55) 0%, rgba(242, 184, 192, 0) 70%);
 }
 .hero-bg-decor.small {
     top: auto;
-    bottom: -80rpx;
+    bottom: -120rpx;
     right: auto;
-    left: -60rpx;
-    width: 240rpx;
-    height: 240rpx;
-    background: rgba(255, 255, 255, 0.04);
+    left: -100rpx;
+    width: 320rpx;
+    height: 320rpx;
+    background: radial-gradient(circle, rgba(214, 197, 242, 0.55) 0%, rgba(214, 197, 242, 0) 70%);
 }
 .profile-row {
     position: relative;
     z-index: 1;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 36rpx;
+    text-align: center;
 }
 .avatar-wrap {
     position: relative;
     flex-shrink: 0;
+    width: 196rpx;
+    height: 196rpx;
+    border-radius: 50%;
+    padding: 8rpx;
+    box-sizing: border-box;
+    background: var(--grad-sunset);
+    box-shadow: 0 30rpx 60rpx -28rpx rgba(160, 100, 110, 0.6);
 }
 .avatar-img {
-    width: 128rpx;
-    height: 128rpx;
-    border-radius: 64rpx;
+    width: 180rpx;
+    height: 180rpx;
+    border-radius: 50%;
+    border: 6rpx solid #fff;
+    box-sizing: border-box;
+    display: block;
 }
 .avatar-placeholder {
-    width: 128rpx;
-    height: 128rpx;
-    border-radius: 64rpx;
-    background: linear-gradient(135deg, #c7c7cc 0%, #aeaeb2 100%);
+    width: 180rpx;
+    height: 180rpx;
+    border-radius: 50%;
+    border: 6rpx solid #fff;
+    box-sizing: border-box;
+    background: var(--bg-2);
     display: flex;
     align-items: center;
     justify-content: center;
 }
 .avatar-emoji {
-    font-size: 52rpx;
+    font-size: 76rpx;
 }
 .avatar-ring {
     position: absolute;
-    top: -4rpx;
-    left: -4rpx;
-    right: -4rpx;
-    bottom: -4rpx;
-    border-radius: 68rpx;
-    border: 2rpx solid rgba(255, 255, 255, 0.35);
+    top: -16rpx;
+    left: -16rpx;
+    right: -16rpx;
+    bottom: -16rpx;
+    border-radius: 50%;
+    border: 2rpx dashed rgba(30, 26, 23, 0.12);
 }
 .camera-dot {
     position: absolute;
-    bottom: 2rpx;
-    right: 2rpx;
-    width: 40rpx;
-    height: 40rpx;
-    border-radius: 20rpx;
-    background: rgba(255, 255, 255, 0.85);
+    bottom: 4rpx;
+    right: 4rpx;
+    width: 56rpx;
+    height: 56rpx;
+    border-radius: 50%;
+    background: var(--ink);
+    border: 4rpx solid #fff;
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+    box-shadow: 0 8rpx 16rpx -6rpx rgba(30, 26, 23, 0.5);
 }
 .camera-icon {
-    font-size: 20rpx;
+    font-size: 22rpx;
 }
 .profile-text {
-    flex: 1;
+    margin-top: 36rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 .name-row {
     display: flex;
     align-items: center;
-    gap: 12rpx;
+    justify-content: center;
+    gap: 14rpx;
 }
 .profile-name {
-    font-size: 38rpx;
+    font-family: var(--font-serif);
+    font-size: 48rpx;
     font-weight: 700;
-    color: #1c1c1e;
-    letter-spacing: 1rpx;
-    text-shadow: 0 1rpx 4rpx rgba(255, 255, 255, 0.3);
+    color: var(--ink);
+    letter-spacing: 0.01em;
 }
 .role-tag {
-    padding: 4rpx 14rpx;
-    background: rgba(255, 255, 255, 0.25);
-    border-radius: 14rpx;
-    border: 1rpx solid rgba(255, 255, 255, 0.2);
+    padding: 4rpx 18rpx;
+    background: var(--ink);
+    border-radius: 999rpx;
 }
 .role-tag-text {
     font-size: 20rpx;
-    color: #636366;
-    font-weight: 500;
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.12em;
 }
 .profile-sub {
-    font-size: 26rpx;
-    color: #636366;
+    font-size: 24rpx;
+    color: var(--ink-2);
     display: block;
-    margin-top: 10rpx;
-    letter-spacing: 1rpx;
-    text-shadow: 0 1rpx 3rpx rgba(255, 255, 255, 0.2);
+    margin-top: 14rpx;
+    padding: 8rpx 24rpx;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1rpx solid var(--line);
+    border-radius: 999rpx;
+    letter-spacing: 0.04em;
 }
 
 /* ===== Group ===== */
 .group {
-    padding: 32rpx 32rpx 0;
+    padding: 44rpx 32rpx 0;
 }
 .group-label {
-    font-size: 22rpx;
-    color: #8e8e93;
+    font-size: 20rpx;
+    color: var(--muted);
     display: block;
-    margin-bottom: 10rpx;
-    margin-left: 8rpx;
-    letter-spacing: 2rpx;
-    font-weight: 500;
-    text-transform: uppercase;
+    margin-bottom: 16rpx;
+    margin-left: 16rpx;
+    letter-spacing: 0.24em;
+    font-weight: 600;
 }
 .group-chevron {
-    font-size: 26rpx;
-    color: #8e8e93;
+    font-size: 30rpx;
+    color: var(--faint);
     transform: rotate(90deg);
     transition: transform 0.25s ease;
     margin-left: 8rpx;
@@ -539,22 +597,25 @@ const fetchMemberCount = async () => {
 }
 .cell-hint-text {
     font-size: 24rpx;
-    color: #636366;
+    color: var(--muted);
 }
 .group-card {
-    background: rgba(255, 255, 255, 0.45);
-    border-radius: 20rpx;
+    background: var(--card);
+    border-radius: var(--r-l);
     overflow: hidden;
-    box-shadow: 0 1rpx 12rpx rgba(0, 0, 0, 0.03);
-    border: 1rpx solid rgba(255, 255, 255, 0.5);
+    box-shadow: var(--shadow-soft);
+    border: 1rpx solid var(--card-border);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
 }
 
 /* ===== Cell ===== */
 .cell {
     display: flex;
     align-items: center;
-    padding: 26rpx 28rpx;
-    gap: 16rpx;
+    padding: 24rpx 28rpx;
+    gap: 22rpx;
+    min-height: 72rpx;
 }
 .cell.no-input {
     pointer-events: auto;
@@ -562,20 +623,27 @@ const fetchMemberCount = async () => {
 .cell-icon {
     font-size: 30rpx;
     flex-shrink: 0;
-    width: 44rpx;
+    width: 64rpx;
+    height: 64rpx;
+    line-height: 64rpx;
+    border-radius: 22rpx;
     text-align: center;
+}
+.cell-icon--soft {
+    background: var(--bg-2);
 }
 .cell-label {
     font-size: 28rpx;
-    color: #1c1c1e;
+    color: var(--ink);
+    font-weight: 500;
     flex-shrink: 0;
-    letter-spacing: 0.5rpx;
+    letter-spacing: 0.02em;
 }
 .cell-input {
     flex: 1;
     text-align: right;
     font-size: 28rpx;
-    color: #3a3a3c;
+    color: var(--ink-2);
     background: transparent;
     border: none;
     padding: 0;
@@ -585,34 +653,49 @@ const fetchMemberCount = async () => {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 6rpx;
+    gap: 8rpx;
     font-size: 26rpx;
-    color: #636366;
+    color: var(--ink-2);
 }
 .cell-arrow {
-    font-size: 30rpx;
-    color: #c7c7cc;
-    margin-left: 2rpx;
+    font-size: 34rpx;
+    color: var(--faint);
+    margin-left: 4rpx;
+    line-height: 1;
 }
 .cell-divider {
     height: 1rpx;
-    background: rgba(60, 60, 67, 0.06);
-    margin: 0 28rpx;
+    background: var(--line);
+    margin: 0 28rpx 0 114rpx;
 }
-
-/* ===== Bottom ===== */
-.bottom-space {
-    height: 80rpx;
+.version-text {
+    font-family: var(--font-serif);
+    font-size: 28rpx;
+    color: var(--muted);
+    letter-spacing: 0.08em;
 }
 
 /* ===== Notify ===== */
+.notify-cell.subscribed .cell-icon--soft {
+    background: var(--sage);
+}
 .sub-status {
-    font-size: 24rpx;
-    color: #34c759;
+    font-size: 22rpx;
+    font-weight: 600;
+    color: #4f7a5b;
+    background: var(--sage);
+    padding: 8rpx 20rpx;
+    border-radius: 999rpx;
+    letter-spacing: 0.06em;
 }
 .sub-action {
-    font-size: 24rpx;
-    color: #007aff;
+    font-size: 22rpx;
+    font-weight: 600;
+    color: #fff;
+    background: var(--ink);
+    padding: 8rpx 20rpx;
+    border-radius: 999rpx;
+    letter-spacing: 0.06em;
 }
 .cell-label-wrap {
     flex: 1;
@@ -620,16 +703,37 @@ const fetchMemberCount = async () => {
 }
 .cell-desc {
     font-size: 22rpx;
-    color: #8e8e93;
+    color: var(--muted);
     display: block;
     margin-top: 4rpx;
 }
 .notify-hint {
     font-size: 22rpx;
-    color: #8e8e93;
+    color: var(--muted);
     display: block;
-    margin-top: 10rpx;
-    margin-left: 8rpx;
-    letter-spacing: 0.5rpx;
+    margin-top: 14rpx;
+    margin-left: 16rpx;
+    letter-spacing: 0.02em;
+}
+
+/* ===== Colophon ===== */
+.colophon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 72rpx 0 0;
+    opacity: 0.8;
+}
+.colophon-mark {
+    font-family: var(--font-serif);
+    font-size: 40rpx;
+    font-weight: 700;
+    color: var(--ink-2);
+    margin-bottom: 6rpx;
+}
+
+/* ===== Bottom ===== */
+.bottom-space {
+    height: calc(80rpx + env(safe-area-inset-bottom));
 }
 </style>

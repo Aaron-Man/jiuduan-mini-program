@@ -1,21 +1,26 @@
 <template>
-    <view class="section">
+    <view class="section ui-fade-up">
         <view class="card">
-            <view v-if="!previewUrl" class="upload-area" @tap="chooseImage">
-                <text class="upload-icon">📷</text>
+            <view class="card-head">
+                <text class="ui-eyebrow">NEW MOMENT</text>
+                <text class="card-title">上传照片</text>
+            </view>
+            <view v-if="!previewUrl" class="upload-area ui-press" @tap="chooseImage">
+                <view class="upload-bubble">
+                    <text class="upload-icon">📷</text>
+                </view>
                 <text class="upload-text">点击选择照片</text>
+                <text class="upload-hint">相册 / 拍摄</text>
             </view>
             <view v-else>
                 <view class="preview-wrap">
                     <image :src="previewUrl" class="preview-img" mode="aspectFill" @error="previewUrl = ''" />
-                    <view class="preview-change" @tap="chooseImage">更换</view>
+                    <view class="preview-change ui-press" @tap="chooseImage">更换</view>
                 </view>
-                <view class="divider"></view>
                 <view class="form-row">
                     <text class="form-icon">📝</text>
                     <input class="form-input" v-model="caption" placeholder="照片描述（可选）" maxlength="20" />
                 </view>
-                <view class="divider"></view>
                 <view class="form-col">
                     <text class="form-label">选择分类</text>
                     <view class="tag-row">
@@ -33,7 +38,7 @@
                 </view>
             </view>
         </view>
-        <view v-if="previewUrl" class="submit-btn" :class="{ disabled: uploading }" @tap="handleUpload">
+        <view v-if="previewUrl" class="submit-btn ui-press" :class="{ disabled: uploading }" @tap="handleUpload">
             <text>{{ uploading ? '上传中...' : '上传照片' }}</text>
         </view>
     </view>
@@ -132,125 +137,167 @@ const handleUpload = async () => {
 
 <style scoped>
 .section {
-    padding: 16rpx 32rpx 0;
+    padding: 12rpx 32rpx 8rpx;
 }
 .card {
-    background: #fff;
-    border-radius: 24rpx;
+    background: var(--card);
+    border-radius: var(--r-xl);
     overflow: hidden;
-    box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.03);
-    border: 1rpx solid rgba(142, 142, 147, 0.06);
+    box-shadow: var(--shadow);
+    border: 1rpx solid var(--card-border);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    padding-bottom: 12rpx;
+}
+.card-head {
+    display: flex;
+    flex-direction: column;
+    padding: 32rpx 36rpx 4rpx;
+}
+.card-title {
+    font-family: var(--font-serif);
+    font-size: 36rpx;
+    font-weight: 700;
+    color: var(--ink);
+    margin-top: 4rpx;
 }
 .form-row {
     display: flex;
     align-items: center;
-    padding: 24rpx 28rpx;
+    margin: 0 28rpx;
+    padding: 20rpx 28rpx;
     gap: 16rpx;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1rpx solid var(--line);
+    border-radius: var(--r-m);
 }
 .form-icon {
-    font-size: 32rpx;
+    font-size: 30rpx;
     flex-shrink: 0;
 }
 .form-input {
     flex: 1;
     font-size: 28rpx;
-    color: #1c1c1e;
+    color: var(--ink);
     background: transparent;
     border: none;
     padding: 0;
 }
-.form-btn {
-    padding: 10rpx 24rpx;
-    background: linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 100%);
-    color: #f2f2f7;
-    border-radius: 16rpx;
-    font-size: 24rpx;
-    flex-shrink: 0;
-}
 .form-col {
-    padding: 24rpx 28rpx;
+    padding: 28rpx 36rpx 20rpx;
 }
 .form-label {
-    font-size: 24rpx;
-    color: #8e8e93;
+    font-size: 20rpx;
+    color: var(--muted);
     display: block;
-    margin-bottom: 12rpx;
-    letter-spacing: 1rpx;
-}
-.divider {
-    height: 1rpx;
-    background: rgba(142, 142, 147, 0.06);
-    margin: 0 28rpx;
+    margin-bottom: 18rpx;
+    letter-spacing: 0.24em;
+    font-weight: 600;
 }
 .upload-area {
-    padding: 80rpx 0;
-    border: 2rpx dashed rgba(142, 142, 147, 0.25);
-    border-radius: 20rpx;
-    margin: 28rpx;
+    margin: 24rpx 28rpx 20rpx;
+    padding: 72rpx 0 64rpx;
+    border: 2rpx dashed var(--faint);
+    border-radius: var(--r-l);
+    background: rgba(255, 255, 255, 0.5);
     display: flex;
     flex-direction: column;
     align-items: center;
 }
+.upload-bubble {
+    width: 128rpx;
+    height: 128rpx;
+    border-radius: 50%;
+    background: var(--grad-dawn);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-soft);
+    margin-bottom: 24rpx;
+}
 .upload-icon {
     font-size: 56rpx;
-    margin-bottom: 12rpx;
+    line-height: 1;
 }
 .upload-text {
-    font-size: 26rpx;
-    color: #8e8e93;
+    font-family: var(--font-serif);
+    font-size: 30rpx;
+    font-weight: 700;
+    color: var(--ink);
+}
+.upload-hint {
+    font-size: 22rpx;
+    color: var(--muted);
+    margin-top: 6rpx;
+    letter-spacing: 0.12em;
 }
 .preview-wrap {
     position: relative;
-    padding: 28rpx;
+    padding: 24rpx 28rpx;
 }
 .preview-img {
     width: 100%;
-    height: 360rpx;
-    border-radius: 20rpx;
+    height: 440rpx;
+    border-radius: var(--r-l);
+    display: block;
+    box-shadow: var(--shadow-soft);
 }
 .preview-change {
     position: absolute;
-    bottom: 44rpx;
-    right: 44rpx;
-    padding: 10rpx 24rpx;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 16rpx;
-    font-size: 24rpx;
-    color: #1c1c1e;
+    bottom: 48rpx;
+    right: 52rpx;
+    height: 56rpx;
+    padding: 0 26rpx;
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 999rpx;
+    font-size: 22rpx;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: 0.06em;
 }
 .tag-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 12rpx;
+    gap: 14rpx;
 }
 .tag {
-    padding: 12rpx 24rpx;
-    background: #f2f2f7;
-    border-radius: 24rpx;
+    height: 60rpx;
+    padding: 0 26rpx;
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 999rpx;
     font-size: 24rpx;
-    color: #3a3a3c;
-    border: 1rpx solid rgba(142, 142, 147, 0.1);
+    color: var(--ink-2);
+    border: 1rpx solid var(--line);
 }
 .tag.active {
-    background: linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 100%);
-    color: #f2f2f7;
-    border-color: transparent;
+    background: var(--ink);
+    color: #fff;
+    border-color: var(--ink);
 }
 .hint {
     font-size: 24rpx;
-    color: #8e8e93;
+    color: var(--muted);
 }
 .submit-btn {
-    margin-top: 24rpx;
-    padding: 24rpx;
-    background: linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 100%);
-    color: #f2f2f7;
-    border-radius: 24rpx;
+    margin-top: 28rpx;
+    height: 96rpx;
+    line-height: 96rpx;
+    background: var(--ink);
+    color: #fff;
+    border-radius: 999rpx;
     text-align: center;
-    font-size: 30rpx;
-    font-weight: 500;
+    font-size: 28rpx;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    box-shadow: 0 20rpx 40rpx -20rpx rgba(30, 26, 23, 0.6);
 }
 .submit-btn.disabled {
-    opacity: 0.35;
+    opacity: 0.4;
 }
 </style>

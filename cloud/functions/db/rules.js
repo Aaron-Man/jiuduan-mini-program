@@ -16,6 +16,9 @@ const ALLOWED_COLLECTIONS = new Set([
     'periods',
     'likes',
     'comments',
+    'anniversaries',
+    'wishes',
+    'capsules',
 ])
 
 // 归属于具体作者的集合：只有作者本人或管理员可修改、删除
@@ -38,6 +41,7 @@ const CASCADE = {
     gallery_photos: { files: ['fileID'], targetType: 'photo', targetIdField: 'id' },
     travels: { files: ['cover_image'] },
     profiles: { files: ['bg_image'], arrayFiles: ['bg_images'] },
+    wishes: { files: ['photo'] },
 }
 
 const MAX_QUERY_LIMIT = 100
@@ -122,6 +126,17 @@ function staleFilesAfterUpdate(collection, before, patch) {
     return [...new Set(stale.filter(x => isCloudFile(x) && !stillUsed.has(x)))]
 }
 
+/** 北京时间的今天（YYYY-MM-DD），云函数运行在 UTC 时区 */
+function todayInChina(now = Date.now()) {
+    return new Date(now + 8 * 3600 * 1000).toISOString().slice(0, 10)
+}
+
+/** 时光胶囊：未到开启日期的信件不返回正文 */
+function maskCapsule(doc, today = todayInChina()) {
+    if (!doc || !doc.open_date || doc.open_date <= today) return { ...doc, locked: false }
+    return { ...doc, content: '', locked: true }
+}
+
 /** 本次修改是否涉及需要级联清理的文件字段 */
 function touchesFiles(collection, patch) {
     const cfg = CASCADE[collection]
@@ -148,4 +163,6 @@ module.exports = {
     interactionTargetOf,
     staleFilesAfterUpdate,
     touchesFiles,
+    todayInChina,
+    maskCapsule,
 }

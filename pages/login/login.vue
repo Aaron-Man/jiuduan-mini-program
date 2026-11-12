@@ -1,19 +1,26 @@
 <template>
+    <page-bg image="" tone="sunset" />
     <view class="login-page">
         <!-- 状态：检查中 -->
         <view v-if="checking" class="login-center">
+            <view class="logo-mark logo-mark--pulse"><text class="logo-mark-emoji">🐷</text></view>
+            <text class="ui-eyebrow logo-eyebrow">OUR LITTLE HOME</text>
             <text class="logo-text">猪猪</text>
             <text class="loading-text">正在验证...</text>
         </view>
 
         <!-- 状态：未授权，需要邀请码 -->
         <view v-else-if="!authorized" class="login-center">
-            <view class="logo-area">
+            <view class="logo-area ui-fade-up">
+                <view class="logo-mark"><text class="logo-mark-emoji">🐷</text></view>
+                <text class="ui-eyebrow logo-eyebrow">OUR LITTLE HOME</text>
                 <text class="logo-text">猪猪</text>
+                <view class="logo-rule"></view>
                 <text class="logo-subtitle">输入邀请码加入空间</text>
             </view>
 
-            <view class="input-area">
+            <view class="input-area ui-fade-up ui-d2">
+                <text class="field-label">INVITE CODE · 邀请码</text>
                 <input
                     class="code-input"
                     v-model="inviteCode"
@@ -22,6 +29,7 @@
                     :focus="true"
                     @confirm="handleRegister"
                 />
+                <text class="field-label">NICKNAME · 昵称</text>
                 <input
                     class="code-input nickname-input"
                     v-model="userNickname"
@@ -30,7 +38,7 @@
                     @confirm="handleRegister"
                 />
                 <view
-                    class="join-btn"
+                    class="join-btn ui-press"
                     @tap="handleRegister"
                     :class="{ disabled: registering || inviteCode.trim().length !== 6 }"
                 >
@@ -40,11 +48,11 @@
             </view>
 
             <!-- 首次用户：创建管理员 -->
-            <view class="first-user-area" v-if="isFirstUser && !networkError">
+            <view class="first-user-area ui-fade-up ui-d3" v-if="isFirstUser && !networkError">
                 <text class="first-label">你是第一个到来的人</text>
-                <input class="code-input" v-model="adminNickname" placeholder="输入你的昵称" maxlength="20" />
+                <input class="code-input admin-input" v-model="adminNickname" placeholder="输入你的昵称" maxlength="20" />
                 <view
-                    class="admin-btn"
+                    class="admin-btn ui-press"
                     @tap="handleInitAdmin"
                     :class="{ disabled: initializing || !adminNickname.trim() }"
                 >
@@ -53,24 +61,29 @@
             </view>
 
             <!-- 网络异常提示 -->
-            <view class="first-user-area" v-if="networkError">
+            <view class="first-user-area ui-fade-up ui-d3" v-if="networkError">
                 <text class="first-label">网络异常，请检查网络后重试</text>
-                <view class="admin-btn" @tap="retryCheck">
+                <view class="admin-btn ui-press" @tap="retryCheck">
                     <text>重试</text>
                 </view>
             </view>
+
+            <text class="login-foot">made with love · for the two of us</text>
         </view>
 
         <!-- 状态：已授权，跳转中 -->
         <view v-else class="login-center">
-            <text class="logo-text">欢迎回来</text>
-            <text class="logo-subtitle">{{ userName }}</text>
-            <text class="loading-text">正在进入...</text>
+            <view class="logo-mark ui-fade-up"><text class="logo-mark-emoji">🐷</text></view>
+            <text class="ui-eyebrow logo-eyebrow ui-fade-up ui-d1">WELCOME HOME</text>
+            <text class="logo-text logo-text--welcome ui-fade-up ui-d1">欢迎回来</text>
+            <text class="logo-subtitle ui-fade-up ui-d2">{{ userName }}</text>
+            <text class="loading-text ui-fade-up ui-d3">正在进入...</text>
         </view>
     </view>
 </template>
 
 <script setup>
+import PageBg from '../../components/page-bg/page-bg.vue'
 import { ref, onMounted } from 'vue'
 import { callFunction } from '../../utils/cloud'
 
@@ -232,11 +245,12 @@ const redirectToHome = () => {
 <style scoped>
 .login-page {
     min-height: 100vh;
-    background: #f2f2f7;
+    background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 64rpx;
+    padding: 64rpx 48rpx;
+    box-sizing: border-box;
 }
 .login-center {
     display: flex;
@@ -250,62 +264,137 @@ const redirectToHome = () => {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 80rpx;
+    margin-bottom: 64rpx;
+}
+.logo-mark {
+    width: 148rpx;
+    height: 148rpx;
+    border-radius: 50%;
+    padding: 8rpx;
+    box-sizing: border-box;
+    background: var(--grad-sunset);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 30rpx 60rpx -28rpx rgba(160, 100, 110, 0.65);
+    margin-bottom: 40rpx;
+}
+.logo-mark-emoji {
+    width: 132rpx;
+    height: 132rpx;
+    line-height: 132rpx;
+    text-align: center;
+    border-radius: 50%;
+    background: #fffaf7;
+    font-size: 68rpx;
+}
+.logo-mark--pulse {
+    animation: logo-breathe 2.4s ease-in-out infinite;
+}
+@keyframes logo-breathe {
+    0%,
+    100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.06);
+    }
+}
+.logo-eyebrow {
+    letter-spacing: 0.42em;
 }
 .logo-text {
-    font-size: 56rpx;
+    font-family: var(--font-serif);
+    font-size: 132rpx;
     font-weight: 700;
-    color: #1c1c1e;
-    letter-spacing: 8rpx;
+    color: var(--ink);
+    letter-spacing: 0.12em;
+    line-height: 1.1;
+    margin-top: 16rpx;
+    margin-right: -0.12em;
+}
+.logo-text--welcome {
+    font-size: 88rpx;
+    letter-spacing: 0.08em;
+    margin-right: -0.08em;
+}
+.logo-rule {
+    width: 64rpx;
+    height: 4rpx;
+    border-radius: 999rpx;
+    background: var(--ink);
+    margin: 28rpx 0 24rpx;
 }
 .logo-subtitle {
     font-size: 26rpx;
-    color: #8e8e93;
+    color: var(--ink-2);
     margin-top: 12rpx;
-    letter-spacing: 2rpx;
+    letter-spacing: 0.12em;
 }
 
-/* Input area */
+/* Input area：毛玻璃卡片 */
 .input-area {
     width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
+    padding: 48rpx 40rpx 40rpx;
+    box-sizing: border-box;
+    background: var(--card);
+    border: 1rpx solid var(--card-border);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+}
+.field-label {
+    font-size: 18rpx;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+    font-weight: 600;
+    margin: 0 0 14rpx 8rpx;
 }
 .code-input {
     width: 100%;
-    height: 96rpx;
-    font-size: 34rpx;
-    color: #1c1c1e;
-    background: transparent;
-    border: none;
-    border-bottom: 2rpx solid #c7c7cc;
+    height: 112rpx;
+    font-family: var(--font-serif);
+    font-size: 44rpx;
+    font-weight: 700;
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.85);
+    border: 1rpx solid var(--line);
+    border-radius: var(--r-m);
     text-align: center;
-    letter-spacing: 8rpx;
-    margin-bottom: 48rpx;
+    letter-spacing: 0.4em;
+    margin-bottom: 36rpx;
+    box-sizing: border-box;
 }
 .code-input:focus {
-    border-bottom-color: #1c1c1e;
+    border-color: var(--ink);
 }
 .nickname-input {
-    margin-bottom: 32rpx;
+    height: 96rpx;
+    margin-bottom: 40rpx;
+    font-family: var(--font-sans);
     font-size: 28rpx;
-    letter-spacing: 2rpx;
+    font-weight: 500;
+    letter-spacing: 0.08em;
 }
 
 /* Button */
 .join-btn {
     width: 100%;
-    height: 88rpx;
-    background: #1c1c1e;
-    color: #f2f2f7;
-    border-radius: 44rpx;
+    height: 100rpx;
+    background: var(--ink);
+    color: #fff;
+    border-radius: 999rpx;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 30rpx;
-    font-weight: 500;
-    letter-spacing: 4rpx;
+    font-weight: 600;
+    letter-spacing: 0.4em;
+    box-shadow: 0 24rpx 44rpx -20rpx rgba(30, 26, 23, 0.65);
 }
 .join-btn.disabled {
     opacity: 0.3;
@@ -313,47 +402,77 @@ const redirectToHome = () => {
 
 .error-hint {
     font-size: 24rpx;
-    color: #ff3b30;
+    color: var(--coral);
     margin-top: 24rpx;
     text-align: center;
+    line-height: 1.5;
 }
 
 /* First user */
 .first-user-area {
-    margin-top: 80rpx;
+    margin-top: 32rpx;
     width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
+    padding: 40rpx;
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.5);
+    border: 1rpx solid var(--card-border);
+    border-radius: var(--r-xl);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
 }
 .first-label {
-    font-size: 24rpx;
-    color: #8e8e93;
-    margin-bottom: 24rpx;
-    letter-spacing: 2rpx;
+    font-family: var(--font-serif);
+    font-size: 30rpx;
+    font-weight: 700;
+    color: var(--ink);
+    text-align: center;
+    margin-bottom: 28rpx;
+    letter-spacing: 0.08em;
+}
+.admin-input {
+    height: 96rpx;
+    margin-bottom: 0;
+    font-family: var(--font-sans);
+    font-size: 28rpx;
+    font-weight: 500;
+    letter-spacing: 0.08em;
 }
 .admin-btn {
     width: 100%;
-    height: 88rpx;
-    background: #8e8e93;
-    color: #fff;
-    border-radius: 44rpx;
+    height: 96rpx;
+    background: rgba(255, 255, 255, 0.85);
+    color: var(--ink);
+    border: 1rpx solid var(--line);
+    border-radius: 999rpx;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 28rpx;
-    font-weight: 500;
-    letter-spacing: 4rpx;
+    font-weight: 600;
+    letter-spacing: 0.2em;
     margin-top: 24rpx;
+    box-sizing: border-box;
 }
 .admin-btn.disabled {
     opacity: 0.4;
 }
 
+.login-foot {
+    margin-top: 56rpx;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 22rpx;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+}
+
 .loading-text {
-    font-size: 26rpx;
-    color: #8e8e93;
-    margin-top: 24rpx;
-    letter-spacing: 1rpx;
+    font-size: 22rpx;
+    color: var(--muted);
+    margin-top: 32rpx;
+    letter-spacing: 0.3em;
 }
 </style>

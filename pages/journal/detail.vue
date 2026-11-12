@@ -1,27 +1,47 @@
 <template>
-    <page-bg />
+    <page-bg tone="lilac" />
     <scroll-view scroll-y class="page-scroll" :class="{ 'page-scroll--transparent': bgImage }">
         <view v-if="journal" class="detail-wrap">
             <!-- 顶部 -->
-            <view class="detail-hero">
-                <text class="detail-mood" v-if="journal.mood">{{ journal.mood }}</text>
+            <view class="detail-hero ui-fade-up">
+                <view class="detail-eyebrow">
+                    <text class="ui-eyebrow">JOURNAL</text>
+                    <view class="eyebrow-dot" v-if="dateEyebrow"></view>
+                    <text class="ui-eyebrow" v-if="dateEyebrow">{{ dateEyebrow }}</text>
+                </view>
                 <text class="detail-title">{{ journal.title }}</text>
-                <text class="detail-date">{{ formatTime(journal.createTime) }}</text>
+                <view class="detail-byline">
+                    <view class="detail-mood" v-if="journal.mood">
+                        <text>{{ moodEmoji }}</text>
+                        <text class="detail-mood-label">{{ journal.mood }}</text>
+                    </view>
+                    <text class="detail-date">{{ formatTime(journal.createTime) }}</text>
+                    <text class="detail-sep">·</text>
+                    <text class="detail-date">约 {{ readMinutes }} 分钟读完</text>
+                </view>
+                <view class="detail-rule"></view>
             </view>
 
             <!-- 正文 -->
-            <view class="detail-body">
+            <view class="detail-body ui-fade-up ui-d2">
                 <text class="detail-text">{{ journal.content }}</text>
             </view>
 
             <!-- 底部信息 -->
+            <view class="detail-end ui-fade-up ui-d3">
+                <view class="end-line"></view>
+                <text class="end-mark">FIN</text>
+                <view class="end-line"></view>
+            </view>
             <view class="detail-footer" v-if="journal.updateTime">
                 <text class="detail-update">最后编辑 {{ formatTime(journal.updateTime) }}</text>
             </view>
         </view>
 
-        <view v-else class="empty-area">
-            <text class="empty-emoji">📖</text>
+        <view v-else class="empty-area ui-fade-up">
+            <view class="empty-bubble">
+                <text class="empty-emoji">📖</text>
+            </view>
             <text class="empty-text">{{
                 loadState === 'loading'
                     ? '加载中...'
@@ -37,9 +57,10 @@
 
 <script setup>
 import PageBg from '../../components/page-bg/page-bg.vue'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { callFunction, formatRelativeTime, getPCache, setPCache, useSharedBg } from '../../utils/cloud'
+import { MOOD_OPTIONS } from '../../utils/constants'
 
 const journal = ref(null)
 // loading | ok | missing | error
@@ -83,85 +104,179 @@ onLoad(async options => {
 })
 
 const formatTime = t => formatRelativeTime(t)
+
+// 以下仅用于页面展示
+const MONTHS = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
+const dateEyebrow = computed(() => {
+    const t = journal.value?.createTime
+    const d = t ? new Date(t) : null
+    if (!d || isNaN(d.getTime())) return ''
+    return `${MONTHS[d.getMonth()]} ${String(d.getDate()).padStart(2, '0')} · ${d.getFullYear()}`
+})
+const moodEmoji = computed(() => MOOD_OPTIONS.find(m => m.label === journal.value?.mood)?.emoji || '✨')
+const readMinutes = computed(() => Math.max(1, Math.ceil((journal.value?.content || '').length / 400)))
 </script>
 
 <style scoped>
 .page-scroll {
     height: 100vh;
-    background: #f5f0eb;
+    background: transparent;
 }
 .page-scroll--transparent {
     background: transparent;
 }
 
 .detail-wrap {
-    padding: 0 32rpx;
+    padding: 0 44rpx;
 }
 
+/* 标题区 */
 .detail-hero {
-    padding: 48rpx 0 32rpx;
+    padding: 72rpx 0 8rpx;
 }
-.detail-mood {
-    font-size: 56rpx;
-    display: block;
-    margin-bottom: 16rpx;
+.detail-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 16rpx;
+}
+.eyebrow-dot {
+    width: 8rpx;
+    height: 8rpx;
+    border-radius: 50%;
+    background: var(--plum);
+    opacity: 0.6;
 }
 .detail-title {
-    font-size: 44rpx;
-    font-weight: 700;
-    color: #1c1c1e;
     display: block;
-    line-height: 1.4;
-    letter-spacing: 1rpx;
+    margin-top: 28rpx;
+    font-family: var(--font-serif);
+    font-size: 68rpx;
+    font-weight: 700;
+    line-height: 1.22;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+    word-break: break-all;
+}
+.detail-byline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14rpx;
+    margin-top: 32rpx;
+}
+.detail-mood {
+    display: flex;
+    align-items: center;
+    gap: 8rpx;
+    padding: 8rpx 20rpx;
+    border-radius: 999rpx;
+    background: rgba(212, 200, 240, 0.55);
+    font-size: 24rpx;
+}
+.detail-mood-label {
+    font-size: 22rpx;
+    color: var(--ink-2);
+    letter-spacing: 0.1em;
 }
 .detail-date {
-    font-size: 24rpx;
-    color: #c7c7cc;
-    display: block;
-    margin-top: 12rpx;
-    letter-spacing: 1rpx;
+    font-size: 22rpx;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+}
+.detail-sep {
+    font-size: 22rpx;
+    color: var(--faint);
+}
+.detail-rule {
+    width: 88rpx;
+    height: 4rpx;
+    margin-top: 48rpx;
+    border-radius: 4rpx;
+    background: var(--ink);
 }
 
+/* 正文 */
 .detail-body {
-    background: #fff;
-    border-radius: 24rpx;
-    padding: 36rpx 32rpx;
-    box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.03);
-    border: 1rpx solid rgba(142, 142, 147, 0.06);
+    margin-top: 48rpx;
+    padding: 56rpx 48rpx;
+    background: rgba(255, 255, 255, 0.62);
+    border: 1rpx solid var(--card-border);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
 }
 .detail-text {
-    font-size: 30rpx;
-    color: #4a4a4a;
-    line-height: 2;
+    font-size: 31rpx;
+    color: var(--ink-2);
+    line-height: 2.1;
+    letter-spacing: 0.04em;
     white-space: pre-wrap;
-    letter-spacing: 0.5rpx;
+    word-break: break-all;
+    text-align: justify;
 }
 
+/* 文末 */
+.detail-end {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24rpx;
+    margin-top: 64rpx;
+}
+.end-line {
+    width: 72rpx;
+    height: 1rpx;
+    background: var(--faint);
+}
+.end-mark {
+    font-family: var(--font-serif);
+    font-size: 22rpx;
+    font-style: italic;
+    letter-spacing: 0.4em;
+    color: var(--muted);
+}
 .detail-footer {
-    padding: 24rpx 8rpx;
+    padding: 20rpx 0 0;
+    text-align: center;
 }
 .detail-update {
-    font-size: 22rpx;
-    color: #c7c7cc;
-    letter-spacing: 1rpx;
+    font-size: 20rpx;
+    color: var(--muted);
+    letter-spacing: 0.1em;
 }
 
+/* 空状态 */
 .empty-area {
-    text-align: center;
-    padding: 200rpx 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 220rpx 48rpx 0;
+}
+.empty-bubble {
+    width: 200rpx;
+    height: 200rpx;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ece6fa 0%, #d4c8f0 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-soft);
+    margin-bottom: 40rpx;
 }
 .empty-emoji {
-    font-size: 72rpx;
-    display: block;
+    font-size: 88rpx;
 }
 .empty-text {
-    font-size: 28rpx;
-    color: #8e8e93;
-    display: block;
-    margin-top: 16rpx;
+    font-family: var(--font-serif);
+    font-size: 34rpx;
+    font-weight: 700;
+    color: var(--ink);
+    text-align: center;
+    letter-spacing: 0.04em;
 }
 
 .bottom-space {
-    height: 80rpx;
+    height: calc(120rpx + env(safe-area-inset-bottom));
 }
 </style>

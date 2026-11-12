@@ -1,5 +1,5 @@
 <template>
-    <page-bg />
+    <page-bg tone="peach" />
     <scroll-view
         :scroll-y="!dragging"
         class="page-scroll"
@@ -9,15 +9,22 @@
         :refresher-triggered="refreshing"
         @refresherrefresh="onRefresh"
     >
-        <!-- 顶部操作栏 -->
-        <view class="top-bar">
-            <view class="top-btn primary" @tap="showForm = !showForm">
+        <!-- 杂志式标题区 -->
+        <view class="hero ui-fade-up">
+            <view class="hero-text">
+                <text class="ui-eyebrow">MOOD</text>
+                <text class="ui-title hero-title">心情</text>
+                <text class="ui-sub hero-sub">{{
+                    list.length ? '已收藏 ' + list.length + ' 个此刻' : '把此刻的心情，轻轻放在这里'
+                }}</text>
+            </view>
+            <view class="hero-btn ui-press" :class="{ 'hero-btn--ghost': showForm }" @tap="showForm = !showForm">
                 <text>{{ showForm ? '取消' : '+ 发布' }}</text>
             </view>
         </view>
 
         <!-- 发布表单 -->
-        <view class="group" v-if="showForm">
+        <view class="group ui-fade-up" v-if="showForm">
             <text class="group-label">{{ editingId ? '编辑心情' : '发布新心情' }}</text>
             <view class="group-card">
                 <view class="cell-v">
@@ -54,7 +61,7 @@
                     </view>
                 </view>
             </view>
-            <view class="submit-btn" @tap="handleSubmit" :class="{ disabled: submitting || !content.trim() }">
+            <view class="submit-btn ui-press" @tap="handleSubmit" :class="{ disabled: submitting || !content.trim() }">
                 <text>{{ submitting ? '发布中...' : editingId ? '保存修改' : '发布心情' }}</text>
             </view>
         </view>
@@ -67,26 +74,31 @@
             </view>
         </view>
 
-        <view v-else-if="list.length === 0" class="empty-area">
-            <text class="empty-emoji">💭</text>
+        <view v-else-if="list.length === 0" class="empty-area ui-fade-up ui-d2">
+            <view class="empty-bubble">
+                <text class="empty-emoji">💭</text>
+            </view>
             <text class="empty-text">还没有心情</text>
             <text class="empty-hint">发布第一条心情吧</text>
         </view>
 
         <view v-else class="group">
-            <text class="group-label">最新动态</text>
-            <view class="group-card" style="background: transparent; border: none; box-shadow: none">
+            <view class="section-head ui-fade-up ui-d1">
+                <text class="group-label">最新动态</text>
+                <view class="section-line"></view>
+            </view>
+            <view class="feed">
                 <view
                     class="status-row"
                     v-for="(s, idx) in list"
                     :key="s._id"
-                    :class="{ dragging: dragIndex === idx }"
+                    :class="['row-in', 'ui-d' + Math.min(idx + 1, 6), { dragging: dragIndex === idx }]"
                     :style="
                         dragIndex === idx
                             ? {
                                   transform: 'translateY(' + dragOffset + 'px)',
                                   zIndex: 10,
-                                  boxShadow: '0 8rpx 32rpx rgba(0,0,0,0.12)',
+                                  boxShadow: '0 32rpx 64rpx -20rpx rgba(80,56,36,0.35)',
                               }
                             : {}
                     "
@@ -94,7 +106,9 @@
                     @touchmove="onDragMove($event)"
                     @touchend="onDragEnd()"
                 >
-                    <view class="status-dot" :style="{ background: s.mood ? '#f2ddd0' : '#e5e5ea' }"></view>
+                    <view class="status-mood" :class="{ 'status-mood--on': s.mood }">
+                        <text>{{ moodEmoji(s.mood) || '💭' }}</text>
+                    </view>
                     <view class="status-body">
                         <text class="status-content">{{ s.content }}</text>
                         <image
@@ -361,129 +375,177 @@ const handleDelete = id =>
 const handleToggleShowOnHome = item => toggleShowOnHome('statuses', item)
 
 const formatTime = t => formatRelativeTime(t)
+
+// 列表展示用：心情标签对应的 emoji
+const moodEmoji = label => (label && MOOD_OPTIONS.find(m => m.label === label)?.emoji) || ''
 </script>
 
 <style scoped>
 .page-scroll {
     height: 100vh;
-    background: #f5f0eb;
+    background: transparent;
 }
 .page-scroll--transparent {
     background: transparent;
 }
 
-/* Top Bar */
-.top-bar {
+/* 标题区 */
+.hero {
     display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding: 24rpx 32rpx 20rpx;
-    background: transparent;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 56rpx 40rpx 36rpx;
 }
-.top-btn {
-    padding: 10rpx 28rpx;
-    background: #c07a50;
+.hero-text {
+    flex: 1;
+    min-width: 0;
+}
+.hero-text .ui-eyebrow {
+    display: block;
+}
+.hero-title {
+    display: block;
+    margin-top: 12rpx;
+    font-size: 76rpx;
+    letter-spacing: 0.04em;
+}
+.hero-sub {
+    display: block;
+    margin-top: 14rpx;
+    letter-spacing: 0.06em;
+}
+.hero-btn {
+    flex-shrink: 0;
+    margin-left: 24rpx;
+    margin-bottom: 8rpx;
+    height: 76rpx;
+    line-height: 76rpx;
+    padding: 0 36rpx;
+    border-radius: 999rpx;
+    background: var(--ink);
     color: #fff;
-    border-radius: 24rpx;
-    font-size: 24rpx;
-    letter-spacing: 1rpx;
+    font-size: 26rpx;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    box-shadow: 0 20rpx 40rpx -20rpx rgba(30, 26, 23, 0.6);
 }
-.top-btn:active {
-    opacity: 0.8;
+.hero-btn--ghost {
+    background: rgba(255, 255, 255, 0.7);
+    color: var(--ink);
+    border: 1rpx solid var(--line);
+    box-shadow: none;
 }
 
-/* Group */
+/* 分组 */
 .group {
-    padding: 16rpx 32rpx 0;
+    padding: 0 32rpx;
+    margin-bottom: 16rpx;
 }
 .group-label {
-    font-size: 24rpx;
-    color: #8e8e93;
     display: block;
-    margin-bottom: 12rpx;
-    margin-left: 8rpx;
-    letter-spacing: 2rpx;
-    font-weight: 500;
+    margin: 0 0 20rpx 8rpx;
+    font-size: 20rpx;
+    font-weight: 600;
+    letter-spacing: 0.32em;
+    color: var(--muted);
 }
 .group-card {
-    background: #fff;
-    border-radius: 24rpx;
+    background: var(--card);
+    border: 1rpx solid var(--card-border);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
     overflow: hidden;
-    box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.03);
-    border: 1rpx solid rgba(142, 142, 147, 0.06);
+}
+.section-head {
+    display: flex;
+    align-items: center;
+    gap: 20rpx;
+    margin: 8rpx 0 24rpx;
+}
+.section-head .group-label {
+    margin: 0 0 0 8rpx;
+}
+.section-line {
+    flex: 1;
+    height: 1rpx;
+    background: var(--line);
 }
 
-/* Cell Vertical */
+/* 表单 */
 .cell-v {
-    padding: 24rpx 28rpx;
+    padding: 32rpx 36rpx;
 }
 .cell-v-label {
-    font-size: 24rpx;
-    color: #8e8e93;
     display: block;
-    margin-bottom: 12rpx;
-    letter-spacing: 1rpx;
+    margin-bottom: 16rpx;
+    font-size: 22rpx;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--ink-2);
 }
 .cell-divider {
     height: 1rpx;
-    background: rgba(142, 142, 147, 0.06);
-    margin: 0 28rpx;
+    background: var(--line);
+    margin: 0 36rpx;
 }
 .cell-textarea {
     width: 100%;
-    min-height: 140rpx;
-    font-size: 28rpx;
-    color: #1c1c1e;
+    min-height: 160rpx;
+    font-size: 30rpx;
+    color: var(--ink);
     background: transparent;
     border: none;
     padding: 0;
     box-sizing: border-box;
-    line-height: 1.6;
+    line-height: 1.8;
 }
 
-/* Mood */
 .mood-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 12rpx;
+    gap: 16rpx;
 }
 .mood-chip {
-    width: 64rpx;
-    height: 64rpx;
-    border-radius: 32rpx;
-    background: #f2f2f7;
+    width: 76rpx;
+    height: 76rpx;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1rpx solid var(--line);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 28rpx;
-    border: 2rpx solid transparent;
-    transition: all 0.2s;
+    font-size: 34rpx;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s;
 }
 .mood-chip.active {
-    background: linear-gradient(135deg, #f8ece4 0%, #f2ddd0 100%);
-    border-color: #8e8e93;
-    transform: scale(1.1);
+    background: var(--ink);
+    border-color: var(--ink);
+    transform: scale(1.08);
+    box-shadow: 0 12rpx 24rpx -12rpx rgba(30, 26, 23, 0.6);
 }
 
-/* Image */
 .img-area {
     margin-top: 4rpx;
 }
 .img-pick {
     display: flex;
     align-items: center;
-    gap: 12rpx;
-    padding: 20rpx 28rpx;
-    background: #f2f2f7;
-    border-radius: 16rpx;
-    border: 1rpx dashed rgba(142, 142, 147, 0.25);
+    justify-content: center;
+    gap: 14rpx;
+    height: 120rpx;
+    background: rgba(244, 199, 180, 0.22);
+    border-radius: var(--r-m);
+    border: 2rpx dashed rgba(224, 122, 95, 0.28);
 }
 .img-pick-icon {
-    font-size: 32rpx;
+    font-size: 34rpx;
 }
 .img-pick-text {
     font-size: 26rpx;
-    color: #8e8e93;
+    color: var(--ink-2);
+    letter-spacing: 0.06em;
 }
 .img-preview {
     position: relative;
@@ -492,62 +554,66 @@ const formatTime = t => formatRelativeTime(t)
 .preview-img {
     width: 240rpx;
     height: 240rpx;
-    border-radius: 20rpx;
+    border-radius: var(--r-m);
+    box-shadow: var(--shadow-soft);
 }
 .img-remove {
     position: absolute;
-    top: -12rpx;
-    right: -12rpx;
-    width: 44rpx;
-    height: 44rpx;
-    background: #ff3b30;
+    top: -14rpx;
+    right: -14rpx;
+    width: 48rpx;
+    height: 48rpx;
+    background: var(--ink);
     color: #fff;
-    border-radius: 22rpx;
+    border-radius: 50%;
     text-align: center;
-    line-height: 44rpx;
-    font-size: 28rpx;
+    line-height: 46rpx;
+    font-size: 30rpx;
+    border: 4rpx solid #fff;
 }
 
-/* Submit */
 .submit-btn {
-    margin-top: 24rpx;
-    padding: 24rpx;
-    background: linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 100%);
-    color: #f2f2f7;
-    border-radius: 24rpx;
+    margin-top: 32rpx;
+    height: 96rpx;
+    line-height: 96rpx;
+    padding: 0;
+    background: var(--ink);
+    color: #fff;
+    border-radius: 999rpx;
     text-align: center;
-    font-size: 30rpx;
-    font-weight: 500;
-    letter-spacing: 2rpx;
+    font-size: 28rpx;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    box-shadow: 0 20rpx 40rpx -20rpx rgba(30, 26, 23, 0.6);
 }
 .submit-btn.disabled {
     opacity: 0.35;
 }
 
-/* Skeleton */
+/* 骨架屏 */
 .loading-area {
-    padding: 24rpx 32rpx;
+    padding: 8rpx 32rpx;
 }
 .skeleton-card {
-    background: #fff;
-    border-radius: 24rpx;
-    padding: 28rpx;
-    margin-bottom: 16rpx;
+    background: var(--card);
+    border: 1rpx solid var(--card-border);
+    border-radius: var(--r-l);
+    padding: 36rpx;
+    margin-bottom: 24rpx;
+}
+.skeleton-bar,
+.skeleton-line {
+    background: linear-gradient(90deg, var(--bg-2) 25%, #f8f4ef 50%, var(--bg-2) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 999rpx;
 }
 .skeleton-bar {
-    height: 32rpx;
-    background: linear-gradient(90deg, #e5e5ea 25%, #f2f2f7 50%, #e5e5ea 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
-    border-radius: 8rpx;
-    margin-bottom: 16rpx;
+    height: 30rpx;
+    margin-bottom: 20rpx;
 }
 .skeleton-line {
-    height: 24rpx;
-    background: linear-gradient(90deg, #e5e5ea 25%, #f2f2f7 50%, #e5e5ea 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
-    border-radius: 8rpx;
+    height: 22rpx;
 }
 .skeleton-line.short {
     width: 40%;
@@ -561,142 +627,183 @@ const formatTime = t => formatRelativeTime(t)
     }
 }
 
-/* Empty */
+/* 空状态 */
 .empty-area {
-    text-align: center;
-    padding: 160rpx 0 120rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 120rpx 0 120rpx;
+}
+.empty-bubble {
+    width: 200rpx;
+    height: 200rpx;
+    border-radius: 50%;
+    background: var(--grad-dawn);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-soft);
+    margin-bottom: 40rpx;
 }
 .empty-emoji {
-    font-size: 80rpx;
-    display: block;
-    margin-bottom: 20rpx;
+    font-size: 88rpx;
 }
 .empty-text {
-    font-size: 30rpx;
-    color: #1c1c1e;
-    font-weight: 500;
-    display: block;
+    font-family: var(--font-serif);
+    font-size: 38rpx;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: 0.06em;
 }
 .empty-hint {
     font-size: 24rpx;
-    color: #c7c7cc;
-    display: block;
-    margin-top: 8rpx;
+    color: var(--muted);
+    margin-top: 12rpx;
+    letter-spacing: 0.06em;
 }
 
-/* Status Row */
+/* 心情卡片 */
+@keyframes rise {
+    from {
+        opacity: 0;
+        transform: translateY(32rpx);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.row-in {
+    animation-name: rise;
+    animation-duration: 0.7s;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    animation-fill-mode: backwards;
+}
 .status-row {
     display: flex;
-    padding: 24rpx 28rpx;
-    gap: 20rpx;
-    transition:
-        transform 0.15s ease,
-        opacity 0.15s;
+    gap: 24rpx;
+    padding: 36rpx 32rpx 28rpx;
+    margin-bottom: 28rpx;
     position: relative;
-    background: rgba(255, 255, 255, 0.75);
-    border-radius: 20rpx;
-    margin-bottom: 16rpx;
-    box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
-    border: 1rpx solid rgba(142, 142, 147, 0.08);
+    background: var(--card);
+    border: 1rpx solid var(--card-border);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    transition: transform 0.15s ease, opacity 0.15s;
 }
 .status-row.dragging {
-    opacity: 0.9;
-    background: #fff;
+    opacity: 0.95;
+    background: var(--card-solid);
     transition: none;
 }
-.status-dot {
-    width: 16rpx;
-    height: 16rpx;
-    border-radius: 8rpx;
+.status-mood {
+    width: 80rpx;
+    height: 80rpx;
     flex-shrink: 0;
-    margin-top: 10rpx;
+    border-radius: 28rpx;
+    background: var(--bg-2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38rpx;
+}
+.status-mood--on {
+    background: var(--grad-dawn);
 }
 .status-body {
     flex: 1;
     min-width: 0;
 }
 .status-content {
-    font-size: 28rpx;
-    color: #1c1c1e;
     display: block;
-    line-height: 1.8;
+    font-size: 30rpx;
+    color: var(--ink);
+    line-height: 1.85;
+    letter-spacing: 0.02em;
     word-break: break-all;
 }
 .status-img {
-    margin-top: 12rpx;
+    margin-top: 20rpx;
     width: 100%;
-    max-width: 400rpx;
-    border-radius: 16rpx;
+    max-width: 440rpx;
+    border-radius: var(--r-m);
+    box-shadow: var(--shadow-soft);
 }
 .status-bottom {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 12rpx;
+    margin-top: 20rpx;
 }
 .status-time {
-    font-size: 22rpx;
-    color: #c7c7cc;
+    font-size: 20rpx;
+    color: var(--muted);
+    letter-spacing: 0.12em;
 }
 .status-actions {
     display: flex;
-    gap: 16rpx;
+    gap: 12rpx;
     align-items: center;
 }
 .status-act {
     font-size: 22rpx;
-    color: #8e8e93;
-    padding: 6rpx 16rpx;
-    background: #f2f2f7;
-    border-radius: 12rpx;
+    color: var(--ink-2);
+    padding: 6rpx 18rpx;
+    border-radius: 999rpx;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1rpx solid var(--line);
 }
 .status-act.active {
-    color: #ff9500;
-    background: rgba(255, 149, 0, 0.1);
+    color: #fff;
+    background: var(--ink);
+    border-color: var(--ink);
 }
 .status-act.del {
-    color: #ff3b30;
-    background: rgba(255, 59, 48, 0.08);
+    color: var(--coral);
+    background: transparent;
+    border-color: rgba(224, 122, 95, 0.25);
 }
 
-/* Interact Bar */
+/* 互动栏 */
 .interact-bar {
     display: flex;
-    gap: 24rpx;
-    margin-top: 12rpx;
-    padding-top: 12rpx;
-    border-top: 1rpx solid rgba(142, 142, 147, 0.06);
+    gap: 16rpx;
+    margin-top: 20rpx;
+    padding-top: 20rpx;
+    border-top: 1rpx solid var(--line);
 }
 .interact-btn {
     display: flex;
     align-items: center;
-    gap: 6rpx;
+    gap: 8rpx;
     font-size: 24rpx;
-    color: #8e8e93;
-    padding: 6rpx 16rpx;
-    border-radius: 12rpx;
-    background: #f2f2f7;
+    color: var(--ink-2);
+    padding: 8rpx 22rpx;
+    border-radius: 999rpx;
+    background: rgba(255, 255, 255, 0.6);
 }
 .interact-btn.liked {
-    color: #ff3b30;
-    background: rgba(255, 59, 48, 0.08);
+    color: var(--coral);
+    background: rgba(244, 199, 180, 0.4);
 }
 
-/* Comment Area */
+/* 评论区 */
 .comment-area {
-    margin-top: 12rpx;
-    padding: 16rpx 20rpx;
-    background: #f9f9fb;
-    border-radius: 16rpx;
+    margin-top: 20rpx;
+    padding: 20rpx 24rpx;
+    background: rgba(247, 243, 238, 0.8);
+    border-radius: var(--r-m);
 }
 .comment-item {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    padding: 10rpx 0;
+    padding: 12rpx 0;
 }
 .comment-item + .comment-item {
-    border-top: 1rpx solid rgba(142, 142, 147, 0.06);
+    border-top: 1rpx solid var(--line);
 }
 .comment-body {
     flex: 1;
@@ -704,51 +811,55 @@ const formatTime = t => formatRelativeTime(t)
 }
 .comment-user {
     font-size: 22rpx;
-    color: #3a3a3c;
-    font-weight: 500;
-    margin-right: 8rpx;
+    color: var(--ink);
+    font-weight: 600;
+    margin-right: 10rpx;
 }
 .comment-text {
     font-size: 24rpx;
-    color: #4a4a4a;
-    line-height: 1.6;
+    color: var(--ink-2);
+    line-height: 1.7;
 }
 .comment-reply {
     font-size: 22rpx;
-    color: #8e8e93;
+    color: var(--plum);
 }
 .comment-del {
-    font-size: 28rpx;
-    color: #c7c7cc;
+    font-size: 30rpx;
+    color: var(--faint);
     padding: 0 8rpx;
     flex-shrink: 0;
 }
 .comment-input-row {
     display: flex;
     gap: 12rpx;
-    margin-top: 12rpx;
+    margin-top: 16rpx;
     align-items: center;
 }
 .comment-input {
     flex: 1;
-    height: 60rpx;
+    height: 68rpx;
     background: #fff;
-    border-radius: 30rpx;
-    padding: 0 24rpx;
+    border-radius: 999rpx;
+    padding: 0 28rpx;
     font-size: 24rpx;
-    color: #1c1c1e;
-    border: 1rpx solid rgba(142, 142, 147, 0.12);
+    color: var(--ink);
+    border: 1rpx solid var(--line);
 }
 .comment-send {
-    padding: 10rpx 24rpx;
-    background: linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 100%);
-    color: #f2f2f7;
-    border-radius: 30rpx;
-    font-size: 22rpx;
+    height: 68rpx;
+    line-height: 68rpx;
+    padding: 0 28rpx;
+    background: var(--ink);
+    color: #fff;
+    border-radius: 999rpx;
+    font-size: 24rpx;
+    font-weight: 600;
+    letter-spacing: 0.06em;
     flex-shrink: 0;
 }
 
 .bottom-space {
-    height: 80rpx;
+    height: calc(120rpx + env(safe-area-inset-bottom));
 }
 </style>

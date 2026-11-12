@@ -1,8 +1,15 @@
 <template>
-    <page-bg />
+    <page-bg tone="rose" />
     <scroll-view scroll-y class="page-scroll" :class="{ 'page-scroll--transparent': bgImage }">
+        <!-- 杂志式标题区 -->
+        <view class="mast ui-fade-up">
+            <text class="ui-eyebrow">CYCLE ARCHIVE</text>
+            <text class="ui-title mast-title">历史记录</text>
+            <text class="ui-sub mast-sub">按月份整理的每一次经期</text>
+        </view>
+
         <!-- 顶部统计卡片 -->
-        <view class="section">
+        <view class="section ui-fade-up ui-d1">
             <view class="summary-card">
                 <view class="summary-header">
                     <text class="summary-title">经期概览</text>
@@ -10,7 +17,7 @@
                 </view>
                 <view class="summary-stats">
                     <view class="stat-item">
-                        <view class="stat-icon cycle"><view class="si-ring"></view></view>
+                        <view class="stat-icon ui-bubble--rose"><text>🌙</text></view>
                         <view class="stat-info">
                             <text class="stat-value">{{ avgCycleLen ? Math.round(avgCycleLen) : '--' }}</text>
                             <text class="stat-label">平均周期(天)</text>
@@ -18,7 +25,7 @@
                     </view>
                     <view class="stat-divider"></view>
                     <view class="stat-item">
-                        <view class="stat-icon period"><view class="si-drop"></view></view>
+                        <view class="stat-icon ui-bubble--peach"><text>🌸</text></view>
                         <view class="stat-info">
                             <text class="stat-value">{{ avgPeriodLen ? Math.round(avgPeriodLen) : '--' }}</text>
                             <text class="stat-label">平均经期(天)</text>
@@ -26,7 +33,7 @@
                     </view>
                     <view class="stat-divider"></view>
                     <view class="stat-item">
-                        <view class="stat-icon regular" :class="regClass"></view>
+                        <view class="stat-icon regular" :class="regClass"><text>✦</text></view>
                         <view class="stat-info">
                             <text class="stat-value" :class="regClass">{{ regLabel }}</text>
                             <text class="stat-label">规律性</text>
@@ -37,14 +44,19 @@
         </view>
 
         <!-- 按年月分组的历史记录 -->
-        <view class="section" v-for="(group, groupIdx) in groupedHistory" :key="groupIdx">
+        <view
+            class="section ui-fade-up"
+            :class="'ui-d' + Math.min(groupIdx + 2, 6)"
+            v-for="(group, groupIdx) in groupedHistory"
+            :key="groupIdx"
+        >
             <view class="group-header">
                 <view class="gh-dot"></view>
                 <text class="gh-title">{{ group.label }}</text>
                 <text class="gh-count">{{ group.items.length }} 次</text>
             </view>
             <view class="history-cards">
-                <view class="history-card" v-for="(p, idx) in group.items" :key="p._id" @tap="onTapRecord(p)">
+                <view class="history-card ui-press" v-for="(p, idx) in group.items" :key="p._id" @tap="onTapRecord(p)">
                     <view class="hc-left">
                         <view class="hc-date-box" :class="{ active: !p.endDate }">
                             <text class="hc-day">{{ getDay(p.startDate) }}</text>
@@ -84,9 +96,9 @@
         </view>
 
         <!-- 空状态 -->
-        <view v-if="!loading && periods.length === 0" class="empty-area">
+        <view v-if="!loading && periods.length === 0" class="empty-area ui-fade-up ui-d2">
             <view class="empty-card">
-                <text class="empty-emoji">📅</text>
+                <view class="empty-bubble"><text class="empty-emoji">📅</text></view>
                 <text class="empty-title">还没有历史记录</text>
                 <text class="empty-desc">记录经期后，这里会显示完整历史</text>
             </view>
@@ -188,40 +200,58 @@ const deleteRecord = id => {
 <style scoped>
 .page-scroll {
     height: 100vh;
-    background: #f5f0eb;
+    background: transparent;
 }
 .page-scroll--transparent {
     background: transparent;
 }
+
+/* 标题区 */
+.mast {
+    padding: 40rpx 44rpx 8rpx;
+    display: flex;
+    flex-direction: column;
+}
+.mast-title {
+    margin-top: 12rpx;
+}
+.mast-sub {
+    margin-top: 10rpx;
+    letter-spacing: 0.04em;
+}
+
 .section {
-    padding: 0 28rpx;
-    margin-bottom: 24rpx;
-    padding-top: 24rpx;
+    padding: 0 32rpx;
+    margin-bottom: 12rpx;
+    padding-top: 28rpx;
 }
 
 /* 统计卡片 */
 .summary-card {
-    background: linear-gradient(135deg, #fff 0%, #fdf2f6 100%);
-    border-radius: 28rpx;
-    padding: 32rpx;
-    box-shadow: 0 8rpx 32rpx rgba(212, 135, 154, 0.12);
-    border: 2rpx solid rgba(212, 135, 154, 0.15);
+    background: var(--card);
+    border: 1rpx solid var(--card-border);
+    border-radius: var(--r-xl);
+    padding: 36rpx 32rpx 32rpx;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
 }
 .summary-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 28rpx;
+    align-items: baseline;
+    margin-bottom: 32rpx;
 }
 .summary-title {
-    font-size: 34rpx;
+    font-family: var(--font-serif);
+    font-size: 38rpx;
     font-weight: 700;
-    color: #d4879a;
-    letter-spacing: 1rpx;
+    color: var(--ink);
 }
 .summary-count {
-    font-size: 24rpx;
-    color: #8e8e93;
+    font-size: 22rpx;
+    color: var(--muted);
+    letter-spacing: 0.06em;
 }
 .summary-stats {
     display: flex;
@@ -230,133 +260,115 @@ const deleteRecord = id => {
 .stat-item {
     flex: 1;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 16rpx;
+    text-align: center;
+    gap: 14rpx;
 }
 .stat-icon {
-    width: 56rpx;
-    height: 56rpx;
-    border-radius: 16rpx;
+    width: 72rpx;
+    height: 72rpx;
+    border-radius: 26rpx;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-}
-.stat-icon.cycle {
-    background: linear-gradient(135deg, rgba(212, 135, 154, 0.15) 0%, rgba(212, 135, 154, 0.08) 100%);
-}
-.stat-icon.period {
-    background: linear-gradient(135deg, rgba(232, 143, 163, 0.15) 0%, rgba(232, 143, 163, 0.08) 100%);
+    font-size: 32rpx;
 }
 .stat-icon.regular {
-    background: linear-gradient(135deg, rgba(168, 197, 160, 0.15) 0%, rgba(168, 197, 160, 0.08) 100%);
+    background: var(--sage);
+    color: #4f7a5b;
 }
 .stat-icon.regular.warn {
-    background: linear-gradient(135deg, rgba(212, 165, 116, 0.15) 0%, rgba(212, 165, 116, 0.08) 100%);
+    background: var(--butter);
+    color: #9a7430;
 }
 .stat-icon.regular.bad {
-    background: linear-gradient(135deg, rgba(255, 59, 48, 0.15) 0%, rgba(255, 59, 48, 0.08) 100%);
-}
-.si-ring {
-    width: 26rpx;
-    height: 26rpx;
-    border: 3rpx solid #d4879a;
-    border-radius: 50%;
-    position: relative;
-}
-.si-ring::after {
-    content: '';
-    position: absolute;
-    top: -5rpx;
-    right: -3rpx;
-    width: 8rpx;
-    height: 8rpx;
-    background: #d4879a;
-    border-radius: 4rpx;
-}
-.si-drop {
-    width: 18rpx;
-    height: 22rpx;
-    background: #e88fa3;
-    border-radius: 50% 50% 50% 0;
-    transform: rotate(-45deg);
+    background: rgba(224, 122, 95, 0.18);
+    color: var(--coral);
 }
 .stat-info {
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 .stat-value {
-    font-size: 36rpx;
+    font-family: var(--font-serif);
+    font-size: 52rpx;
     font-weight: 700;
-    color: #1c1c1e;
-    line-height: 1.2;
+    color: var(--ink);
+    line-height: 1.1;
 }
 .stat-value.good {
-    color: #a8c5a0;
-    font-size: 28rpx;
+    color: #4f7a5b;
+    font-size: 32rpx;
+    line-height: 1.6;
 }
 .stat-value.warn {
-    color: #d4a574;
-    font-size: 28rpx;
+    color: #9a7430;
+    font-size: 32rpx;
+    line-height: 1.6;
 }
 .stat-value.bad {
-    color: #ff3b30;
-    font-size: 28rpx;
+    color: var(--coral);
+    font-size: 32rpx;
+    line-height: 1.6;
 }
 .stat-label {
-    font-size: 22rpx;
-    color: #8e8e93;
-    margin-top: 4rpx;
+    font-size: 20rpx;
+    color: var(--muted);
+    margin-top: 6rpx;
+    letter-spacing: 0.06em;
 }
 .stat-divider {
     width: 1rpx;
-    height: 64rpx;
-    background: rgba(212, 135, 154, 0.12);
-    margin: 0 12rpx;
+    height: 96rpx;
+    background: var(--line);
+    margin: 0 8rpx;
 }
 
 /* 分组头部 */
 .group-header {
     display: flex;
-    align-items: center;
-    gap: 12rpx;
-    margin-bottom: 16rpx;
-    padding: 0 8rpx;
+    align-items: baseline;
+    gap: 14rpx;
+    margin-bottom: 20rpx;
+    padding: 0 12rpx;
 }
 .gh-dot {
-    width: 12rpx;
-    height: 12rpx;
-    border-radius: 6rpx;
-    background: linear-gradient(135deg, #e88fa3 0%, #d4879a 100%);
+    width: 14rpx;
+    height: 14rpx;
+    border-radius: 50%;
+    background: linear-gradient(150deg, #f0b7c0 0%, #e595a4 100%);
+    align-self: center;
 }
 .gh-title {
-    font-size: 28rpx;
-    font-weight: 600;
-    color: #d4879a;
+    font-family: var(--font-serif);
+    font-size: 34rpx;
+    font-weight: 700;
+    color: var(--ink);
     flex: 1;
 }
 .gh-count {
-    font-size: 22rpx;
-    color: #8e8e93;
+    font-size: 20rpx;
+    color: var(--muted);
+    letter-spacing: 0.2em;
 }
 
 /* 历史卡片 */
 .history-cards {
     display: flex;
     flex-direction: column;
-    gap: 16rpx;
-}
-.history-card {
-    background: #fff;
-    border-radius: 24rpx;
-    padding: 24rpx;
-    box-shadow: 0 4rpx 20rpx rgba(212, 135, 154, 0.08);
-    border: 1rpx solid rgba(212, 135, 154, 0.1);
-    display: flex;
     gap: 20rpx;
 }
-.history-card:active {
-    background: rgba(212, 135, 154, 0.02);
+.history-card {
+    background: var(--card);
+    border: 1rpx solid var(--card-border);
+    border-radius: var(--r-l);
+    padding: 28rpx;
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    gap: 24rpx;
 }
 .hc-left {
     display: flex;
@@ -365,43 +377,45 @@ const deleteRecord = id => {
     flex-shrink: 0;
 }
 .hc-date-box {
-    width: 80rpx;
-    height: 80rpx;
-    border-radius: 20rpx;
-    background: linear-gradient(135deg, #fdf2f6 0%, #fce8ef 100%);
+    width: 92rpx;
+    height: 92rpx;
+    border-radius: 50%;
+    background: rgba(235, 178, 184, 0.22);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border: 2rpx solid rgba(212, 135, 154, 0.15);
 }
 .hc-date-box.active {
-    background: linear-gradient(135deg, #e88fa3 0%, #d4879a 100%);
-    border-color: transparent;
+    background: linear-gradient(150deg, #e895a5 0%, #d6788c 100%);
+    box-shadow: 0 14rpx 28rpx -14rpx rgba(214, 120, 140, 0.8);
 }
 .hc-date-box.active .hc-day,
 .hc-date-box.active .hc-month {
     color: #fff;
 }
 .hc-date-box.end {
-    background: #fdf2f6;
+    background: rgba(255, 255, 255, 0.85);
+    border: 2rpx solid var(--line);
+    box-sizing: border-box;
 }
 .hc-day {
-    font-size: 32rpx;
+    font-family: var(--font-serif);
+    font-size: 36rpx;
     font-weight: 700;
-    color: #d4879a;
+    color: var(--ink);
     line-height: 1;
 }
 .hc-month {
     font-size: 18rpx;
-    color: #8e8e93;
+    color: var(--muted);
     margin-top: 4rpx;
 }
 .hc-line {
     width: 8rpx;
     height: 60rpx;
-    background: rgba(212, 135, 154, 0.1);
-    border-radius: 4rpx;
+    background: rgba(30, 26, 23, 0.06);
+    border-radius: 999rpx;
     position: relative;
     overflow: hidden;
     display: flex;
@@ -409,8 +423,8 @@ const deleteRecord = id => {
 }
 .hc-line-bar {
     width: 100%;
-    background: linear-gradient(180deg, #e88fa3 0%, #d4879a 100%);
-    border-radius: 4rpx;
+    background: linear-gradient(180deg, #f0b7c0 0%, #e595a4 100%);
+    border-radius: 999rpx;
     min-height: 8rpx;
 }
 .hc-arrow {
@@ -418,19 +432,20 @@ const deleteRecord = id => {
     align-items: center;
 }
 .hc-arrow-icon {
-    font-size: 28rpx;
-    color: #d4879a;
+    font-size: 26rpx;
+    color: var(--faint);
     font-weight: 300;
 }
 .hc-ongoing {
-    padding: 8rpx 16rpx;
-    background: rgba(212, 135, 154, 0.08);
-    border-radius: 12rpx;
+    padding: 8rpx 18rpx;
+    background: var(--ink);
+    border-radius: 999rpx;
 }
 .hc-ongoing-text {
     font-size: 20rpx;
-    color: #d4879a;
-    font-weight: 500;
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.1em;
 }
 .hc-right {
     flex: 1;
@@ -440,99 +455,114 @@ const deleteRecord = id => {
 }
 .hc-tags {
     display: flex;
-    gap: 8rpx;
+    gap: 10rpx;
     flex-wrap: wrap;
 }
 .hc-tag {
-    padding: 6rpx 16rpx;
-    border-radius: 16rpx;
+    padding: 6rpx 18rpx;
+    border-radius: 999rpx;
 }
 .hc-tag.cycle {
-    background: rgba(212, 135, 154, 0.1);
+    background: rgba(235, 178, 184, 0.35);
 }
 .hc-tag.period {
-    background: rgba(142, 142, 147, 0.08);
+    background: rgba(212, 200, 240, 0.45);
 }
 .hc-tag text {
     font-size: 22rpx;
-    color: #3a3a3c;
+    color: var(--ink-2);
 }
 .hc-note {
+    font-family: var(--font-serif);
     font-size: 24rpx;
-    color: #8e8e93;
+    color: var(--ink-2);
     line-height: 1.5;
     font-style: italic;
 }
 .hc-actions {
     display: flex;
-    gap: 16rpx;
+    gap: 12rpx;
     margin-top: 4rpx;
 }
 .hc-action {
     font-size: 22rpx;
-    padding: 6rpx 16rpx;
-    border-radius: 12rpx;
+    padding: 6rpx 20rpx;
+    border-radius: 999rpx;
 }
 .hc-action.edit {
-    color: #d4879a;
-    background: rgba(212, 135, 154, 0.08);
+    color: var(--ink);
+    background: rgba(255, 255, 255, 0.8);
+    border: 1rpx solid var(--line);
 }
 .hc-action.delete {
-    color: #ff3b30;
-    background: rgba(255, 59, 48, 0.06);
+    color: var(--coral);
 }
 
 /* 空状态 */
 .empty-area {
-    padding: 80rpx 28rpx;
+    padding: 40rpx 32rpx;
 }
 .empty-card {
-    background: #fff;
-    border-radius: 32rpx;
-    padding: 80rpx 40rpx;
+    background: var(--card);
+    border: 1rpx solid var(--card-border);
+    border-radius: var(--r-xl);
+    padding: 72rpx 40rpx 64rpx;
     text-align: center;
-    box-shadow: 0 4rpx 24rpx rgba(212, 135, 154, 0.1);
-    border: 1rpx solid rgba(212, 135, 154, 0.1);
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.empty-bubble {
+    width: 168rpx;
+    height: 168rpx;
+    border-radius: 50%;
+    background: var(--grad-dawn);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 32rpx;
+    box-shadow: 0 24rpx 48rpx -24rpx rgba(214, 120, 140, 0.55);
 }
 .empty-emoji {
-    font-size: 100rpx;
-    display: block;
-    margin-bottom: 24rpx;
+    font-size: 80rpx;
 }
 .empty-title {
-    font-size: 34rpx;
-    font-weight: 600;
-    color: #1c1c1e;
+    font-family: var(--font-serif);
+    font-size: 38rpx;
+    font-weight: 700;
+    color: var(--ink);
     display: block;
     margin-bottom: 12rpx;
 }
 .empty-desc {
-    font-size: 26rpx;
-    color: #c7c7cc;
+    font-size: 24rpx;
+    color: var(--muted);
     display: block;
 }
 
 /* 骨架 */
 .skeleton-card {
-    background: #fff;
-    border-radius: 24rpx;
-    padding: 28rpx;
-    margin-bottom: 16rpx;
+    background: var(--card);
+    border-radius: var(--r-l);
+    padding: 32rpx;
+    margin-bottom: 20rpx;
+    border: 1rpx solid var(--card-border);
 }
 .skeleton-bar {
     height: 32rpx;
-    background: linear-gradient(90deg, #fce8ef 25%, #fdf0f8 50%, #fce8ef 75%);
+    background: linear-gradient(90deg, rgba(235, 178, 184, 0.25) 25%, rgba(255, 255, 255, 0.6) 50%, rgba(235, 178, 184, 0.25) 75%);
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
-    border-radius: 8rpx;
-    margin-bottom: 16rpx;
+    border-radius: 999rpx;
+    margin-bottom: 18rpx;
 }
 .skeleton-line {
     height: 24rpx;
-    background: linear-gradient(90deg, #fce8ef 25%, #fdf0f8 50%, #fce8ef 75%);
+    background: linear-gradient(90deg, rgba(235, 178, 184, 0.25) 25%, rgba(255, 255, 255, 0.6) 50%, rgba(235, 178, 184, 0.25) 75%);
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
-    border-radius: 8rpx;
+    border-radius: 999rpx;
 }
 .skeleton-line.short {
     width: 40%;
@@ -547,6 +577,6 @@ const deleteRecord = id => {
 }
 
 .bottom-space {
-    height: 80rpx;
+    height: calc(80rpx + env(safe-area-inset-bottom));
 }
 </style>

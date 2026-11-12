@@ -1,5 +1,5 @@
 <template>
-    <page-bg overlay="light" />
+    <page-bg overlay="light" tone="lilac" />
     <scroll-view
         scroll-y
         class="page-scroll"
@@ -9,28 +9,42 @@
         :refresher-triggered="refreshing"
         @refresherrefresh="onRefresh"
     >
-        <!-- 顶部标题 -->
-        <view class="page-header">
-            <text class="page-title">成员管理</text>
-            <text class="page-desc">共 {{ total }} 位成员</text>
+        <!-- 杂志式标题区 -->
+        <view class="mast ui-fade-up">
+            <text class="ui-eyebrow">FAMILY</text>
+            <text class="ui-title mast-title">家庭成员</text>
+            <text class="ui-sub mast-sub">共 {{ total }} 位成员</text>
         </view>
 
         <!-- 邀请码区域 -->
-        <view class="section">
+        <view class="section ui-fade-up ui-d1">
             <view class="invite-card">
                 <view class="invite-header">
-                    <text class="invite-icon">🎫</text>
-                    <text class="invite-title">邀请码</text>
+                    <view class="invite-icon ui-bubble ui-bubble--lilac"><text>🎫</text></view>
+                    <view class="invite-head-text">
+                        <text class="invite-eyebrow">ADMIT ONE · INVITATION</text>
+                        <text class="invite-title">邀请码</text>
+                    </view>
+                </view>
+                <!-- 票根撕线 -->
+                <view class="ticket-perf">
+                    <view class="ticket-notch ticket-notch--l"></view>
+                    <view class="ticket-dash"></view>
+                    <view class="ticket-notch ticket-notch--r"></view>
                 </view>
                 <view class="invite-body" v-if="inviteCode">
-                    <text class="invite-code">{{ inviteCode }}</text>
+                    <text class="invite-code" @tap="copyInviteCode">{{ inviteCode }}</text>
                     <text class="invite-hint">点击复制 · 7天内有效 · 最多 10 人使用</text>
                 </view>
+                <view class="invite-body invite-body--empty" v-else>
+                    <text class="invite-code invite-code--ph">· · · · · ·</text>
+                    <text class="invite-hint">生成一张邀请券，邀请家人加入</text>
+                </view>
                 <view class="invite-actions">
-                    <view class="invite-btn" @tap="handleGenerateInvite" :class="{ disabled: generating }">
+                    <view class="invite-btn ui-press" @tap="handleGenerateInvite" :class="{ disabled: generating }">
                         <text>{{ generating ? '生成中...' : inviteCode ? '重新生成' : '生成邀请码' }}</text>
                     </view>
-                    <view class="invite-btn invite-btn--secondary" @tap="copyInviteCode" v-if="inviteCode">
+                    <view class="invite-btn invite-btn--secondary ui-press" @tap="copyInviteCode" v-if="inviteCode">
                         <text>复制</text>
                     </view>
                 </view>
@@ -38,7 +52,7 @@
         </view>
 
         <!-- 邀请码历史 -->
-        <view class="section" v-if="inviteCodes.length > 0">
+        <view class="section ui-fade-up ui-d2" v-if="inviteCodes.length > 0">
             <view class="section-header" @tap="showCodeHistory = !showCodeHistory">
                 <view class="section-title-line"></view>
                 <text class="section-title">历史邀请码</text>
@@ -67,7 +81,7 @@
         </view>
 
         <!-- 成员列表 -->
-        <view class="section">
+        <view class="section ui-fade-up ui-d3">
             <view class="section-header">
                 <view class="section-title-line"></view>
                 <text class="section-title">成员列表</text>
@@ -99,10 +113,10 @@
                         </view>
                     </view>
                     <view class="member-actions" v-if="user.role !== 'admin'">
-                        <view class="member-action-btn" @tap="handleSetAdmin(user)">
+                        <view class="member-action-btn ui-press" @tap="handleSetAdmin(user)">
                             <text class="action-text action-text--blue">设为管理</text>
                         </view>
-                        <view class="member-action-btn" @tap="handleRemoveUser(user)">
+                        <view class="member-action-btn member-action-btn--danger ui-press" @tap="handleRemoveUser(user)">
                             <text class="action-text action-text--red">移除</text>
                         </view>
                     </view>
@@ -112,8 +126,9 @@
                 </view>
             </view>
             <view class="empty-state" v-else-if="!loadingUsers">
-                <text class="empty-icon">👥</text>
+                <view class="empty-bubble"><text class="empty-icon">👥</text></view>
                 <text class="empty-text">暂无成员</text>
+                <text class="empty-tip">生成邀请码，把家人请进来吧</text>
             </view>
             <view class="loading-state" v-if="loadingUsers">
                 <text class="loading-text">加载中...</text>
@@ -324,63 +339,60 @@ const formatTime = time => {
 <style scoped>
 .page-scroll {
     height: 100vh;
-    background: #f2f2f7;
+    background: transparent;
 }
 .page-scroll--transparent {
     background: transparent;
 }
 
-/* 页面标题 */
-.page-header {
-    padding: 120rpx 44rpx 32rpx;
+/* 标题区 */
+.mast {
+    padding: 40rpx 44rpx 8rpx;
+    display: flex;
+    flex-direction: column;
 }
-.page-title {
-    font-size: 44rpx;
-    font-weight: 700;
-    color: #1c1c1e;
-    display: block;
-    letter-spacing: 2rpx;
+.mast-title {
+    margin-top: 12rpx;
 }
-.page-desc {
-    font-size: 24rpx;
-    color: #8e8e93;
-    display: block;
-    margin-top: 8rpx;
-    letter-spacing: 1rpx;
+.mast-sub {
+    margin-top: 10rpx;
+    letter-spacing: 0.04em;
 }
 
 /* 区块 */
 .section {
-    padding: 0 32rpx 24rpx;
+    padding: 28rpx 32rpx 8rpx;
 }
 .section-header {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 16rpx;
-    padding: 24rpx 0 16rpx;
+    padding: 16rpx 0 24rpx;
 }
 .section-title-line {
     flex: 1;
     height: 1rpx;
-    background: rgba(60, 60, 67, 0.08);
+    background: var(--line);
 }
 .section-title {
-    font-size: 24rpx;
-    color: #8e8e93;
-    letter-spacing: 2rpx;
-    font-weight: 500;
+    font-family: var(--font-serif);
+    font-size: 30rpx;
+    color: var(--ink);
+    letter-spacing: 0.1em;
+    font-weight: 700;
 }
 .section-count {
-    font-size: 22rpx;
-    color: #aeaeb2;
-    background: rgba(142, 142, 147, 0.1);
-    padding: 2rpx 12rpx;
-    border-radius: 10rpx;
+    font-size: 20rpx;
+    color: #fff;
+    background: var(--ink);
+    padding: 2rpx 14rpx;
+    border-radius: 999rpx;
+    font-weight: 600;
 }
 .section-chevron {
-    font-size: 24rpx;
-    color: #8e8e93;
+    font-size: 28rpx;
+    color: var(--muted);
     transform: rotate(90deg);
     transition: transform 0.25s ease;
 }
@@ -388,88 +400,142 @@ const formatTime = time => {
     transform: rotate(-90deg);
 }
 
-/* 邀请码卡片 */
+/* 邀请码卡片：票券样式 */
 .invite-card {
-    background: rgba(255, 255, 255, 0.5);
-    border-radius: 24rpx;
-    padding: 32rpx;
-    border: 1rpx solid rgba(255, 255, 255, 0.5);
-    box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.03);
+    position: relative;
+    background: linear-gradient(160deg, rgba(255, 255, 255, 0.92) 0%, rgba(244, 238, 252, 0.88) 100%);
+    border-radius: var(--r-xl);
+    padding: 36rpx 36rpx 36rpx;
+    border: 1rpx solid var(--card-border);
+    box-shadow: var(--shadow);
 }
 .invite-header {
     display: flex;
     align-items: center;
-    gap: 12rpx;
-    margin-bottom: 20rpx;
+    gap: 20rpx;
 }
 .invite-icon {
-    font-size: 32rpx;
+    width: 80rpx;
+    height: 80rpx;
+    border-radius: 28rpx;
+    font-size: 38rpx;
+    flex-shrink: 0;
+}
+.invite-head-text {
+    display: flex;
+    flex-direction: column;
+}
+.invite-eyebrow {
+    font-size: 18rpx;
+    letter-spacing: 0.3em;
+    color: var(--plum);
+    font-weight: 600;
 }
 .invite-title {
-    font-size: 28rpx;
-    font-weight: 600;
-    color: #1c1c1e;
-    letter-spacing: 1rpx;
+    font-family: var(--font-serif);
+    font-size: 36rpx;
+    font-weight: 700;
+    color: var(--ink);
+    margin-top: 4rpx;
+}
+/* 票根撕线 */
+.ticket-perf {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin: 32rpx -36rpx 8rpx;
+    height: 40rpx;
+}
+.ticket-dash {
+    flex: 1;
+    height: 0;
+    border-top: 3rpx dashed rgba(107, 78, 113, 0.22);
+    margin: 0 32rpx;
+}
+.ticket-notch {
+    width: 40rpx;
+    height: 40rpx;
+    border-radius: 50%;
+    background: var(--bg);
+    flex-shrink: 0;
+    box-shadow: inset 0 2rpx 6rpx rgba(80, 56, 36, 0.08);
+}
+.ticket-notch--l {
+    margin-left: -20rpx;
+}
+.ticket-notch--r {
+    margin-right: -20rpx;
 }
 .invite-body {
     text-align: center;
-    padding: 24rpx 0;
+    padding: 28rpx 0 12rpx;
 }
 .invite-code {
-    font-size: 56rpx;
+    font-family: var(--font-serif);
+    font-size: 88rpx;
     font-weight: 700;
-    color: #1c1c1e;
-    letter-spacing: 12rpx;
+    color: var(--ink);
+    letter-spacing: 0.18em;
+    line-height: 1.15;
     display: block;
+}
+.invite-code--ph {
+    color: var(--faint);
+    letter-spacing: 0.1em;
 }
 .invite-hint {
     font-size: 22rpx;
-    color: #8e8e93;
+    color: var(--muted);
     display: block;
-    margin-top: 8rpx;
+    margin-top: 14rpx;
+    letter-spacing: 0.06em;
 }
 .invite-actions {
     display: flex;
     gap: 16rpx;
-    margin-top: 20rpx;
+    margin-top: 32rpx;
 }
 .invite-btn {
     flex: 1;
-    height: 72rpx;
-    background: #1c1c1e;
-    color: #f2f2f7;
-    border-radius: 36rpx;
+    height: 92rpx;
+    background: var(--ink);
+    color: #fff;
+    border-radius: 999rpx;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 26rpx;
-    font-weight: 500;
-    letter-spacing: 2rpx;
+    font-size: 28rpx;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    box-shadow: 0 20rpx 40rpx -20rpx rgba(30, 26, 23, 0.6);
 }
 .invite-btn.disabled {
     opacity: 0.4;
 }
 .invite-btn--secondary {
-    background: rgba(28, 28, 30, 0.08);
-    color: #1c1c1e;
+    flex: 0 0 200rpx;
+    background: rgba(255, 255, 255, 0.8);
+    color: var(--ink);
+    border: 1rpx solid var(--line);
+    box-shadow: none;
 }
 
 /* 邀请码历史 */
 .code-history {
-    background: rgba(255, 255, 255, 0.4);
-    border-radius: 20rpx;
+    background: var(--card);
+    border-radius: var(--r-l);
     overflow: hidden;
-    margin-top: 12rpx;
-    border: 1rpx solid rgba(255, 255, 255, 0.4);
+    border: 1rpx solid var(--card-border);
+    box-shadow: var(--shadow-soft);
 }
 .code-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 22rpx 28rpx;
+    padding: 26rpx 32rpx;
 }
 .code-item + .code-item {
-    border-top: 1rpx solid rgba(60, 60, 67, 0.06);
+    border-top: 1rpx solid var(--line);
 }
 .code-left {
     display: flex;
@@ -477,75 +543,90 @@ const formatTime = time => {
     gap: 4rpx;
 }
 .code-text {
-    font-size: 28rpx;
-    font-weight: 600;
-    color: #1c1c1e;
-    letter-spacing: 4rpx;
+    font-family: var(--font-serif);
+    font-size: 34rpx;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: 0.14em;
 }
 .code-meta {
     font-size: 22rpx;
-    color: #8e8e93;
+    color: var(--muted);
+}
+.code-right {
+    display: flex;
+    align-items: center;
 }
 .code-status {
     font-size: 22rpx;
-    color: #34c759;
-    padding: 4rpx 14rpx;
-    background: rgba(52, 199, 89, 0.1);
-    border-radius: 10rpx;
+    font-weight: 600;
+    color: #4f7a5b;
+    padding: 6rpx 18rpx;
+    background: var(--sage);
+    border-radius: 999rpx;
 }
 .code-status.expired {
-    color: #8e8e93;
-    background: rgba(142, 142, 147, 0.1);
+    color: var(--muted);
+    background: var(--bg-2);
 }
 .code-revoke {
     font-size: 22rpx;
-    color: #ff3b30;
-    margin-left: 16rpx;
-    padding: 4rpx 12rpx;
+    color: var(--coral);
+    margin-left: 12rpx;
+    padding: 6rpx 12rpx;
 }
 
 /* 成员列表 */
 .member-list {
     display: flex;
     flex-direction: column;
-    gap: 12rpx;
+    gap: 20rpx;
 }
 .member-card {
-    background: rgba(255, 255, 255, 0.5);
-    border-radius: 20rpx;
-    padding: 24rpx 28rpx;
+    background: var(--card);
+    border-radius: var(--r-l);
+    padding: 28rpx 28rpx;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border: 1rpx solid rgba(255, 255, 255, 0.4);
-    box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.02);
+    border: 1rpx solid var(--card-border);
+    box-shadow: var(--shadow-soft);
 }
 .member-left {
     display: flex;
     align-items: center;
-    gap: 20rpx;
+    gap: 24rpx;
     flex: 1;
     min-width: 0;
 }
 .member-avatar {
     flex-shrink: 0;
+    padding: 4rpx;
+    border-radius: 50%;
+    background: var(--grad-sunset);
 }
 .member-avatar-img {
-    width: 72rpx;
-    height: 72rpx;
-    border-radius: 36rpx;
+    width: 88rpx;
+    height: 88rpx;
+    border-radius: 50%;
+    border: 4rpx solid #fff;
+    box-sizing: border-box;
+    display: block;
 }
 .member-avatar-ph {
-    width: 72rpx;
-    height: 72rpx;
-    border-radius: 36rpx;
-    background: linear-gradient(135deg, #c7c7cc 0%, #aeaeb2 100%);
+    width: 88rpx;
+    height: 88rpx;
+    border-radius: 50%;
+    border: 4rpx solid #fff;
+    box-sizing: border-box;
+    background: var(--lilac);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 28rpx;
-    color: #fff;
-    font-weight: 600;
+    font-family: var(--font-serif);
+    font-size: 36rpx;
+    color: var(--plum);
+    font-weight: 700;
 }
 .member-info {
     flex: 1;
@@ -554,63 +635,75 @@ const formatTime = time => {
 .member-name-row {
     display: flex;
     align-items: center;
-    gap: 10rpx;
+    gap: 12rpx;
 }
 .member-name {
     font-size: 30rpx;
     font-weight: 600;
-    color: #1c1c1e;
+    color: var(--ink);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 .member-role-tag {
-    padding: 2rpx 12rpx;
-    background: rgba(28, 28, 30, 0.06);
-    border-radius: 10rpx;
+    padding: 2rpx 14rpx;
+    background: var(--ink);
+    border-radius: 999rpx;
     flex-shrink: 0;
 }
 .member-role-text {
-    font-size: 20rpx;
-    color: #636366;
-    font-weight: 500;
+    font-size: 18rpx;
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.1em;
 }
 .member-time {
     font-size: 22rpx;
-    color: #8e8e93;
+    color: var(--muted);
     display: block;
-    margin-top: 4rpx;
+    margin-top: 6rpx;
+    letter-spacing: 0.04em;
 }
 .member-actions {
     display: flex;
-    gap: 12rpx;
+    gap: 10rpx;
     flex-shrink: 0;
 }
 .member-action-btn {
-    padding: 8rpx 16rpx;
-    border-radius: 12rpx;
-    background: rgba(28, 28, 30, 0.04);
+    padding: 10rpx 20rpx;
+    border-radius: 999rpx;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1rpx solid var(--line);
+}
+.member-action-btn--danger {
+    background: transparent;
+    border-color: transparent;
 }
 .action-text {
     font-size: 22rpx;
-    font-weight: 500;
+    font-weight: 600;
 }
 .action-text--blue {
-    color: #007aff;
+    color: var(--ink);
 }
 .action-text--red {
-    color: #ff3b30;
+    color: var(--coral);
 }
 .member-self-badge {
-    padding: 4rpx 14rpx;
-    background: rgba(28, 28, 30, 0.06);
-    border-radius: 12rpx;
+    width: 56rpx;
+    height: 56rpx;
+    border-radius: 50%;
+    background: var(--lilac);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
 }
 .self-badge-text {
-    font-size: 22rpx;
-    color: #636366;
-    font-weight: 500;
+    font-family: var(--font-serif);
+    font-size: 24rpx;
+    color: var(--plum);
+    font-weight: 700;
 }
 
 /* 空状态/加载 */
@@ -618,26 +711,44 @@ const formatTime = time => {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 80rpx 0;
+    padding: 64rpx 0;
+}
+.empty-bubble {
+    width: 160rpx;
+    height: 160rpx;
+    border-radius: 50%;
+    background: var(--lilac);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 24rpx 48rpx -24rpx rgba(107, 78, 113, 0.5);
 }
 .empty-icon {
-    font-size: 56rpx;
+    font-size: 72rpx;
 }
 .empty-text {
-    font-size: 26rpx;
-    color: #8e8e93;
-    margin-top: 16rpx;
+    font-family: var(--font-serif);
+    font-size: 36rpx;
+    font-weight: 700;
+    color: var(--ink);
+    margin-top: 28rpx;
+}
+.empty-tip {
+    font-size: 24rpx;
+    color: var(--muted);
+    margin-top: 8rpx;
 }
 .loading-state {
     text-align: center;
     padding: 60rpx 0;
 }
 .loading-text {
-    font-size: 26rpx;
-    color: #8e8e93;
+    font-size: 24rpx;
+    color: var(--muted);
+    letter-spacing: 0.2em;
 }
 
 .bottom-space {
-    height: 60rpx;
+    height: calc(60rpx + env(safe-area-inset-bottom));
 }
 </style>

@@ -1,10 +1,13 @@
 <template>
-    <view class="group">
-        <text class="group-label">{{ isEditing ? '编辑菜品' : '添加新菜品' }}</text>
+    <view class="group ui-fade-up">
+        <view class="section-head">
+            <text class="ui-eyebrow">{{ isEditing ? 'EDIT DISH' : 'NEW DISH' }}</text>
+            <text class="group-label">{{ isEditing ? '编辑菜品' : '添加新菜品' }}</text>
+        </view>
         <view class="group-card">
             <view class="cell-h">
-                <text class="cell-icon">🏷️</text>
-                <input class="cell-input" v-model="form.name" placeholder="菜名" />
+                <view class="cell-icon ui-bubble ui-bubble--peach"><text>🏷️</text></view>
+                <input class="cell-input cell-input--title" v-model="form.name" placeholder="菜名" />
             </view>
             <view class="cell-divider"></view>
             <view class="cell-v">
@@ -29,7 +32,7 @@
             </view>
             <view class="cell-divider"></view>
             <view class="cell-h">
-                <text class="cell-icon">🥬</text>
+                <view class="cell-icon ui-bubble ui-bubble--sage"><text>🥬</text></view>
                 <input class="cell-input" v-model="form.ingredients" placeholder="食材（逗号分隔）" />
             </view>
             <view class="cell-divider"></view>
@@ -49,8 +52,9 @@
             </view>
             <view class="cell-divider"></view>
             <view class="cell-h">
-                <text class="cell-icon">📷</text>
-                <view class="img-pick" v-if="!formImageDisplay" @tap="chooseDishImage">
+                <view class="cell-icon ui-bubble ui-bubble--butter"><text>📷</text></view>
+                <view class="img-pick ui-press" v-if="!formImageDisplay" @tap="chooseDishImage">
+                    <text class="img-pick-plus">＋</text>
                     <text class="img-pick-text">选择图片</text>
                 </view>
                 <view v-else class="img-preview">
@@ -65,7 +69,7 @@
             </view>
         </view>
         <view
-            class="submit-btn"
+            class="submit-btn ui-press"
             @tap="handleSubmit"
             :class="{ disabled: submitting || !form.name.trim() || form.category_ids.length === 0 }"
         >
@@ -176,152 +180,192 @@ const handleSubmit = async () => {
 
 <style scoped>
 .group {
-    padding: 16rpx 32rpx 0;
+    padding: 32rpx 32rpx 0;
+}
+.section-head {
+    display: flex;
+    flex-direction: column;
+    padding: 0 8rpx;
+    margin-bottom: 20rpx;
 }
 .group-label {
-    font-size: 24rpx;
-    color: #636366;
+    font-family: var(--font-serif);
+    font-size: 36rpx;
+    font-weight: 700;
+    color: var(--ink);
     display: block;
-    margin-bottom: 12rpx;
-    margin-left: 8rpx;
-    letter-spacing: 2rpx;
-    font-weight: 500;
+    margin-top: 6rpx;
 }
 .group-card {
-    background: rgba(255, 255, 255, 0.6);
-    border-radius: 24rpx;
+    background: var(--card);
+    border: 1rpx solid var(--card-border);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
     overflow: hidden;
-    box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.03);
-    border: 1rpx solid rgba(142, 142, 147, 0.06);
 }
 .cell-h {
     display: flex;
     align-items: center;
-    padding: 24rpx 28rpx;
-    gap: 16rpx;
+    padding: 24rpx 32rpx;
+    gap: 20rpx;
 }
 .cell-icon {
+    width: 72rpx;
+    height: 72rpx;
+    border-radius: 24rpx;
     font-size: 32rpx;
     flex-shrink: 0;
 }
 .cell-input {
     flex: 1;
     font-size: 28rpx;
-    color: #1c1c1e;
+    color: var(--ink);
     background: transparent;
     border: none;
     padding: 0;
+}
+.cell-input--title {
+    font-family: var(--font-serif);
+    font-size: 34rpx;
+    font-weight: 700;
 }
 .cell-divider {
     height: 1rpx;
-    background: rgba(142, 142, 147, 0.06);
-    margin: 0 28rpx;
+    background: var(--line);
+    margin: 0 32rpx;
 }
 .cell-v {
-    padding: 24rpx 28rpx;
+    padding: 28rpx 32rpx;
 }
 .cell-v-label {
-    font-size: 24rpx;
-    color: #636366;
+    font-size: 20rpx;
+    font-weight: 600;
+    color: var(--muted);
     display: block;
-    margin-bottom: 12rpx;
-    letter-spacing: 1rpx;
+    margin-bottom: 18rpx;
+    letter-spacing: 0.32em;
 }
 .cell-textarea {
     width: 100%;
-    min-height: 120rpx;
+    min-height: 140rpx;
     font-size: 28rpx;
-    color: #1c1c1e;
-    background: transparent;
+    color: var(--ink);
+    background: var(--bg);
     border: none;
-    padding: 0;
+    border-radius: var(--r-m);
+    padding: 20rpx 24rpx;
     box-sizing: border-box;
     line-height: 1.6;
 }
-.cell-action {
-    padding: 10rpx 24rpx;
-    background: linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 100%);
-    color: #f2f2f7;
-    border-radius: 16rpx;
-    font-size: 24rpx;
-    flex-shrink: 0;
-    letter-spacing: 1rpx;
-}
 .check-box {
-    width: 40rpx;
-    height: 40rpx;
-    border: 2rpx solid #c7c7cc;
-    border-radius: 10rpx;
+    position: relative;
+    width: 44rpx;
+    height: 44rpx;
+    border: 2rpx solid var(--faint);
+    border-radius: 14rpx;
     flex-shrink: 0;
+    box-sizing: border-box;
 }
 .check-box.checked {
-    background: linear-gradient(135deg, #8e8e93 0%, #aeaeb2 100%);
-    border-color: transparent;
+    background: var(--ink);
+    border-color: var(--ink);
+}
+.check-box.checked::after {
+    content: '';
+    position: absolute;
+    left: 13rpx;
+    top: 6rpx;
+    width: 10rpx;
+    height: 18rpx;
+    border-right: 4rpx solid #fff;
+    border-bottom: 4rpx solid #fff;
+    transform: rotate(45deg);
 }
 .tag-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 12rpx;
+    gap: 14rpx;
 }
 .tag {
-    padding: 12rpx 24rpx;
-    background: #f2f2f7;
-    border-radius: 24rpx;
+    padding: 12rpx 28rpx;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 999rpx;
     font-size: 24rpx;
-    color: #3a3a3c;
-    border: 1rpx solid rgba(142, 142, 147, 0.1);
+    color: var(--ink-2);
+    border: 1rpx solid var(--line);
+    letter-spacing: 0.04em;
 }
 .tag.active {
-    background: linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 100%);
-    color: #f2f2f7;
-    border-color: transparent;
+    background: var(--ink);
+    color: #fff;
+    border-color: var(--ink);
 }
 .hint {
     font-size: 24rpx;
-    color: #636366;
+    color: var(--muted);
 }
 .img-pick {
-    padding: 14rpx 24rpx;
-    background: #f2f2f7;
-    border-radius: 16rpx;
-    border: 1rpx dashed rgba(142, 142, 147, 0.25);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 200rpx;
+    height: 150rpx;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: var(--r-m);
+    border: 2rpx dashed var(--faint);
+    box-sizing: border-box;
+}
+.img-pick-plus {
+    font-size: 40rpx;
+    font-weight: 300;
+    color: var(--ink-2);
+    line-height: 1.1;
 }
 .img-pick-text {
-    font-size: 26rpx;
-    color: #636366;
+    font-size: 22rpx;
+    color: var(--muted);
+    letter-spacing: 0.06em;
 }
 .img-preview {
     position: relative;
     display: inline-block;
 }
 .preview-img {
-    width: 160rpx;
-    height: 120rpx;
-    border-radius: 16rpx;
+    width: 200rpx;
+    height: 150rpx;
+    border-radius: var(--r-m);
+    box-shadow: var(--shadow-soft);
 }
 .img-remove {
     position: absolute;
-    top: -12rpx;
-    right: -12rpx;
-    width: 40rpx;
-    height: 40rpx;
-    background: #ff3b30;
+    top: -14rpx;
+    right: -14rpx;
+    width: 44rpx;
+    height: 44rpx;
+    background: var(--ink);
     color: #fff;
-    border-radius: 20rpx;
+    border-radius: 50%;
     text-align: center;
-    line-height: 40rpx;
+    line-height: 42rpx;
     font-size: 28rpx;
+    box-shadow: var(--shadow-soft);
 }
 .submit-btn {
-    margin-top: 24rpx;
-    padding: 24rpx;
-    background: linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 100%);
-    color: #f2f2f7;
-    border-radius: 24rpx;
+    margin-top: 32rpx;
+    height: 96rpx;
+    line-height: 96rpx;
+    padding: 0;
+    background: var(--ink);
+    color: #fff;
+    border-radius: 999rpx;
     text-align: center;
-    font-size: 30rpx;
-    font-weight: 500;
-    letter-spacing: 2rpx;
+    font-size: 28rpx;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    box-shadow: 0 20rpx 40rpx -20rpx rgba(30, 26, 23, 0.6);
 }
 .submit-btn.disabled {
     opacity: 0.35;

@@ -138,3 +138,27 @@ export const NOTIFY_TYPES = [
     { key: 'new_photo', name: '相册提醒', desc: '新照片上传提醒', icon: '📷' },
     { key: 'period_remind', name: '经期提醒', desc: '经期前后提醒', icon: '🌸' },
 ]
+
+// 卡片主题色（纪念日、心愿、胶囊等共用）：key 对应 App.vue 中的马卡龙色
+export const THEME_COLORS = [
+    { key: 'rose', name: '玫瑰', grad: 'linear-gradient(135deg, #f8d3d8 0%, #ebb2b8 100%)', ink: '#8a3f4c' },
+    { key: 'peach', name: '蜜桃', grad: 'linear-gradient(135deg, #fde3d4 0%, #f4c7b4 100%)', ink: '#8c4a2f' },
+    { key: 'butter', name: '奶油', grad: 'linear-gradient(135deg, #fbf0cf 0%, #f5e3b3 100%)', ink: '#7a5f1f' },
+    { key: 'sage', name: '鼠尾草', grad: 'linear-gradient(135deg, #e3f1e6 0%, #c9dfcf 100%)', ink: '#3f6a4f' },
+    { key: 'sky', name: '雾蓝', grad: 'linear-gradient(135deg, #e2edf9 0%, #c7dbf2 100%)', ink: '#36597f' },
+    { key: 'lilac', name: '薰衣草', grad: 'linear-gradient(135deg, #ebe4f9 0%, #d4c8f0 100%)', ink: '#5b4a87' },
+]
+export const themeOf = key => THEME_COLORS.find(t => t.key === key) || THEME_COLORS[0]
+
+// 纪念日可选图标
+export const ANNIVERSARY_EMOJIS = ['💞', '🎂', '💍', '🏠', '✈️', '🎓', '👶', '🐶', '🎄', '🌙', '🌸', '⭐']
+
+// 心愿分类
+export const WISH_CATEGORIES = [
+    { key: 'travel', label: '去远方', emoji: '🌍', color: 'sky' },
+    { key: 'food', label: '吃好吃的', emoji: '🍰', color: 'peach' },
+    { key: 'family', label: '家人时光', emoji: '🏡', color: 'rose' },
+    { key: 'grow', label: '一起成长', emoji: '🌱', color: 'sage' },
+    { key: 'buy', label: '想要的', emoji: '🎁', color: 'lilac' },
+    { key: 'other', label: '其他', emoji: '✨', color: 'butter' },
+]

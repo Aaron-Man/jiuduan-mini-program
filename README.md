@@ -8,7 +8,7 @@
 
 | 模块 | 页面             | 说明                                                                       |
 | ---- | ---------------- | -------------------------------------------------------------------------- |
-| 首页 | `pages/home`     | 空间名、在一起天数、每日情话、各模块「上首页 / 置顶」内容聚合、功能入口    |
+| 首页 | `pages/home`     | 问候与家人头像、在一起天数、每日一句、即将到来的日子、相册 / 心愿 / 胶囊卡片、功能入口、置顶内容、家人动态 |
 | 登录 | `pages/login`    | 首位用户初始化管理员；其他成员凭邀请码注册                                 |
 | 菜谱 | `pages/menu`     | 分类与菜品管理、拖拽排序、点赞评论、一键点菜                               |
 | 点菜 | `pages/orders`   | 订单列表，按日期 / 状态筛选，状态流转（待处理 → 烹饪中 → 已完成 / 已取消） |
@@ -20,12 +20,16 @@
 | 经期 | `pages/period`   | 经期日历、周期预测、历史记录、提醒                                         |
 | 成员 | `pages/members`  | （管理员）生成邀请码、设置管理员、移除成员                                 |
 | 设置 | `pages/settings` | 昵称头像、空间名与纪念日、订阅通知、背景设置、清缓存                       |
+| 纪念日 | `pages/anniversary` | 纪念日（已经 N 天）、倒数日、每年重复的生日 / 周年，可选图标和颜色，可显示在首页 |
+| 心愿 | `pages/wish` | 家庭心愿清单，分类、完成进度，实现时有小烟花动效 |
+| 时光胶囊 | `pages/capsule` | 写给未来的信，到开启日期前内容由云函数隐藏，到期后才能打开阅读 |
 
 除首页 / 登录 / 菜谱 / 点菜 / 设置外，其余页面均为**分包**加载（见 `pages.json`）。
 
 ## 技术栈
 
 - uni-app 3 + Vue 3 `<script setup>` + Vite 5
+- 视觉：奶油杂志风设计系统（全局 CSS 变量与 `ui-*` 工具类定义在 `App.vue`，页面背景的柔光氛围由 `components/page-bg` 提供）
 - 目标平台：微信小程序（`mp-weixin`）
 - 微信云开发：云数据库、云存储、云函数（`wx-server-sdk`）、订阅消息
 
@@ -50,6 +54,7 @@
 │   ├── useDragSort.js      # 列表 / 网格拖拽排序
 │   ├── usePeriodData.js    # 经期记录与设置的加载、保存，日期工具
 │   ├── usePeriodStats.js   # 经期统计与预测
+│   ├── anniversary.js      # 纪念日 / 倒数日的日期计算
 │   └── useSubscription.js  # 订阅通知偏好
 ├── data/quotes.js          # 首页情话语录
 ├── static/tabbar/          # tabBar 图标
@@ -124,6 +129,9 @@ npm run build
 | `gallery_photos` / `gallery_categories`       | 相册照片 / 分类                                  |
 | `periods`                                     | 经期记录                                         |
 | `likes` / `comments`                          | 通用点赞 / 评论                                  |
+| `anniversaries`                               | 纪念日 / 倒数日                                  |
+| `wishes`                                      | 心愿清单                                         |
+| `capsules`                                    | 时光胶囊                                         |
 
 云存储会使用 `dishes/`、`status/`、`travels/`、`gallery/`、`backgrounds/` 等目录。
 

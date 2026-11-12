@@ -1,5 +1,5 @@
 <template>
-    <page-bg overlay="light" />
+    <page-bg overlay="light" tone="butter" />
     <scroll-view
         scroll-y
         class="page-scroll"
@@ -9,26 +9,33 @@
         :refresher-triggered="refreshing"
         @refresherrefresh="onRefresh"
     >
+        <!-- 杂志式标题区 -->
+        <view class="hero ui-fade-up">
+            <text class="ui-eyebrow">ORDERS</text>
+            <text class="ui-title hero-title">点菜单</text>
+            <text class="ui-sub hero-sub">{{ dateFilteredOrders.length }} 份订单 · {{ stats.pending + stats.cooking }} 份待出餐</text>
+        </view>
+
         <!-- 统计概览 -->
-        <view class="stats-row">
+        <view class="stats-row ui-fade-up ui-d1">
             <view class="stat-item">
                 <text class="stat-num">{{ stats.pending + stats.cooking }}</text>
-                <text class="stat-label">进行中</text>
+                <view class="stat-label-row"><view class="stat-dot stat-dot--active"></view><text class="stat-label">进行中</text></view>
             </view>
             <view class="stat-divider"></view>
             <view class="stat-item">
                 <text class="stat-num done">{{ stats.done }}</text>
-                <text class="stat-label">已完成</text>
+                <view class="stat-label-row"><view class="stat-dot stat-dot--done"></view><text class="stat-label">已完成</text></view>
             </view>
             <view class="stat-divider"></view>
             <view class="stat-item">
                 <text class="stat-num total">{{ dateFilteredOrders.length }}</text>
-                <text class="stat-label">全部</text>
+                <view class="stat-label-row"><view class="stat-dot"></view><text class="stat-label">全部</text></view>
             </view>
         </view>
 
         <!-- 日期分段 -->
-        <view class="segment-row">
+        <view class="segment-row ui-fade-up ui-d2">
             <view
                 class="segment-item"
                 :class="{ active: dateRange === r.key }"
@@ -41,7 +48,7 @@
         </view>
 
         <!-- 状态筛选 -->
-        <view class="filter-row">
+        <view class="filter-row ui-fade-up ui-d3">
             <scroll-view scroll-x class="filter-scroll">
                 <view class="filter-tag" :class="{ active: filter === '' }" @tap="filter = ''">
                     全部 {{ dateFilteredOrders.length }}
@@ -66,40 +73,46 @@
             </view>
         </view>
 
-        <view v-else-if="filteredByStatus.length === 0" class="empty-area">
-            <text class="empty-emoji">🍽️</text>
+        <view v-else-if="filteredByStatus.length === 0" class="empty-area ui-fade-up ui-d3">
+            <view class="empty-bubble"><text class="empty-emoji">🍽️</text></view>
             <text class="empty-text">{{ filter ? '该状态暂无订单' : '还没有订单' }}</text>
             <text class="empty-hint" v-if="!filter">去菜谱页面点一道菜吧</text>
         </view>
 
         <view v-else class="group">
-            <text class="group-label">订单列表</text>
-            <view class="order-row" v-for="order in filteredByStatus" :key="order._id">
+            <view class="section-head ui-fade-up ui-d3">
+                <text class="ui-eyebrow">TICKETS</text>
+                <text class="group-label">订单列表</text>
+            </view>
+            <view
+                class="order-row ui-fade-up"
+                :class="['order-row--' + order.status, idx < 6 ? 'ui-d' + (idx + 1) : 'ui-d6']"
+                v-for="(order, idx) in filteredByStatus"
+                :key="order._id"
+            >
                 <!-- 左侧状态条 -->
                 <view class="status-bar" :class="'bar-' + order.status"></view>
                 <!-- 主体 -->
                 <view class="order-body">
                     <view class="order-top">
-                        <text class="order-name">{{ order.dishName || '未知菜品' }}</text>
+                        <text class="order-time">{{ formatDateTime(order.createTime) }}</text>
                         <view class="status-pill" :class="'pill-' + order.status">
                             <text>{{ ORDER_STATUS_MAP[order.status]?.label || order.status }}</text>
                         </view>
                     </view>
-                    <view class="order-bottom">
-                        <text class="order-time">{{ formatDateTime(order.createTime) }}</text>
-                        <text class="order-note" v-if="order.note">{{ order.note }}</text>
-                    </view>
+                    <text class="order-name">{{ order.dishName || '未知菜品' }}</text>
+                    <text class="order-note" v-if="order.note">“{{ order.note }}”</text>
                 </view>
                 <!-- 操作 -->
                 <view class="order-ops">
                     <view
-                        class="op-next"
+                        class="op-next ui-press"
                         v-if="getNextStatus(order.status)"
                         @tap="handleStatusChange(order._id, getNextStatus(order.status))"
                     >
                         <text>{{ getNextStatus(order.status) === 'cooking' ? '开始' : '完成' }}</text>
                     </view>
-                    <view class="op-more" @tap="showActionSheet(order)">
+                    <view class="op-more ui-press" @tap="showActionSheet(order)">
                         <text>···</text>
                     </view>
                 </view>
@@ -292,162 +305,209 @@ const formatDateTime = t => formatRelativeTime(t)
 <style scoped>
 .page-scroll {
     height: 100vh;
-    background: #f2f2f7;
+    background: transparent;
 }
 .page-scroll--transparent {
     background: transparent;
+}
+
+/* Hero */
+.hero {
+    padding: 48rpx 40rpx 8rpx;
+    display: flex;
+    flex-direction: column;
+}
+.hero-title {
+    display: block;
+    margin-top: 12rpx;
+    font-size: 64rpx;
+    letter-spacing: 0.02em;
+}
+.hero-sub {
+    display: block;
+    margin-top: 12rpx;
+    letter-spacing: 0.06em;
 }
 
 /* Stats */
 .stats-row {
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding: 28rpx 32rpx 24rpx;
-    margin: 24rpx 32rpx 0;
-    background: rgba(255, 255, 255, 0.7);
-    border-radius: 24rpx;
-    box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.05);
-    border: 1rpx solid rgba(142, 142, 147, 0.12);
+    justify-content: space-around;
+    padding: 40rpx 24rpx 36rpx;
+    margin: 32rpx 32rpx 0;
+    background: var(--card);
+    border: 1rpx solid var(--card-border);
+    border-radius: var(--r-xl);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
 }
 .stat-item {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-width: 120rpx;
 }
 .stat-num {
-    font-size: 48rpx;
+    font-family: var(--font-serif);
+    font-size: 72rpx;
     font-weight: 700;
-    color: #1c1c1e;
-    line-height: 1.2;
+    color: var(--ink);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
 }
 .stat-num.done {
-    color: #a8c5a0;
+    color: var(--ink);
 }
 .stat-num.total {
-    color: #3a3a3c;
+    color: var(--ink-2);
+    font-style: italic;
+}
+.stat-label-row {
+    display: flex;
+    align-items: center;
+    gap: 10rpx;
+    margin-top: 12rpx;
+}
+.stat-dot {
+    width: 12rpx;
+    height: 12rpx;
+    border-radius: 50%;
+    background: var(--faint);
+}
+.stat-dot--active {
+    background: var(--peach);
+}
+.stat-dot--done {
+    background: var(--sage);
 }
 .stat-label {
-    font-size: 22rpx;
-    color: #636366;
-    margin-top: 4rpx;
-    letter-spacing: 1rpx;
+    font-size: 20rpx;
+    color: var(--muted);
+    letter-spacing: 0.24em;
+    font-weight: 600;
 }
 .stat-divider {
     width: 1rpx;
-    height: 56rpx;
-    background: rgba(142, 142, 147, 0.12);
-    margin: 0 24rpx;
+    height: 80rpx;
+    background: var(--line);
 }
 
 /* Segment */
 .segment-row {
     display: flex;
     padding: 8rpx;
-    margin: 20rpx 32rpx 0;
-    background: rgba(255, 255, 255, 0.7);
-    border-radius: 20rpx;
-    border: 1rpx solid rgba(142, 142, 147, 0.1);
+    margin: 28rpx 32rpx 0;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 999rpx;
+    border: 1rpx solid var(--card-border);
+    box-shadow: var(--shadow-soft);
 }
 .segment-item {
     flex: 1;
     text-align: center;
     padding: 16rpx 0;
     font-size: 26rpx;
-    color: #636366;
-    position: relative;
-    border-radius: 12rpx;
+    color: var(--muted);
+    border-radius: 999rpx;
+    letter-spacing: 0.08em;
+    transition:
+        background 0.25s,
+        color 0.25s;
 }
 .segment-item text {
     display: block;
 }
 .segment-item.active {
-    color: #5c3d2e;
+    color: #fff;
     font-weight: 600;
-    background: rgba(198, 139, 89, 0.1);
-}
-.segment-item.active::after {
-    content: '';
-    position: absolute;
-    bottom: 4rpx;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 40rpx;
-    height: 4rpx;
-    background: #c68b59;
-    border-radius: 2rpx;
+    background: var(--ink);
+    box-shadow: 0 12rpx 24rpx -12rpx rgba(30, 26, 23, 0.6);
 }
 
 /* Filter */
 .filter-row {
-    padding: 20rpx 32rpx 0;
+    padding: 24rpx 0 0;
 }
 .filter-scroll {
     white-space: nowrap;
+    padding: 0 32rpx;
+    box-sizing: border-box;
 }
 .filter-tag {
     display: inline-block;
-    padding: 14rpx 28rpx;
+    padding: 12rpx 28rpx;
     background: rgba(255, 255, 255, 0.7);
-    border-radius: 24rpx;
+    border-radius: 999rpx;
     font-size: 24rpx;
-    color: #3a3a3c;
-    margin-right: 12rpx;
-    border: 1rpx solid rgba(142, 142, 147, 0.12);
+    color: var(--ink-2);
+    margin-right: 14rpx;
+    border: 1rpx solid var(--line);
+    letter-spacing: 0.04em;
 }
 .filter-tag.active {
-    background: linear-gradient(135deg, #c68b59 0%, #a87342 100%);
+    background: var(--ink);
     color: #fff;
-    border-color: transparent;
+    border-color: var(--ink);
 }
 .filter-tag text {
-    font-size: 20rpx;
+    font-family: var(--font-serif);
+    font-size: 22rpx;
+    font-style: italic;
     opacity: 0.7;
     margin-left: 4rpx;
 }
 
 /* Group */
 .group {
-    padding: 20rpx 32rpx 0;
+    padding: 40rpx 32rpx 0;
+}
+.section-head {
+    display: flex;
+    flex-direction: column;
+    padding: 0 8rpx;
+    margin-bottom: 20rpx;
 }
 .group-label {
-    font-size: 24rpx;
-    color: #636366;
+    font-family: var(--font-serif);
+    font-size: 36rpx;
+    font-weight: 700;
+    color: var(--ink);
     display: block;
-    margin-bottom: 16rpx;
-    margin-left: 8rpx;
-    letter-spacing: 2rpx;
-    font-weight: 500;
+    margin-top: 6rpx;
 }
 
 /* Skeleton */
 .loading-area {
-    padding: 24rpx 32rpx;
+    padding: 32rpx;
 }
 .skeleton-card {
-    background: #fff;
-    border-radius: 24rpx;
-    padding: 28rpx;
-    margin-bottom: 16rpx;
+    background: var(--card);
+    border: 1rpx solid var(--card-border);
+    border-radius: var(--r-l);
+    padding: 32rpx;
+    margin-bottom: 24rpx;
+    box-shadow: var(--shadow-soft);
 }
 .skeleton-bar {
     height: 32rpx;
-    background: linear-gradient(90deg, #e5e5ea 25%, #e5e5ea 50%, #e5e5ea 75%);
+    width: 60%;
+    background: linear-gradient(90deg, var(--bg-2) 25%, var(--bg) 50%, var(--bg-2) 75%);
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
-    border-radius: 8rpx;
-    margin-bottom: 16rpx;
+    border-radius: 999rpx;
+    margin-bottom: 20rpx;
 }
 .skeleton-line {
-    height: 24rpx;
-    background: linear-gradient(90deg, #e5e5ea 25%, #e5e5ea 50%, #e5e5ea 75%);
+    height: 22rpx;
+    background: linear-gradient(90deg, var(--bg-2) 25%, var(--bg) 50%, var(--bg-2) 75%);
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
-    border-radius: 8rpx;
+    border-radius: 999rpx;
 }
 .skeleton-line.short {
-    width: 40%;
+    width: 36%;
 }
 @keyframes shimmer {
     0% {
@@ -460,161 +520,205 @@ const formatDateTime = t => formatRelativeTime(t)
 
 /* Empty */
 .empty-area {
-    text-align: center;
-    padding: 160rpx 0 120rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 140rpx 0 120rpx;
+}
+.empty-bubble {
+    width: 200rpx;
+    height: 200rpx;
+    border-radius: 50%;
+    background: var(--butter);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-soft);
+    margin-bottom: 36rpx;
 }
 .empty-emoji {
-    font-size: 80rpx;
-    display: block;
-    margin-bottom: 20rpx;
+    font-size: 88rpx;
 }
 .empty-text {
-    font-size: 30rpx;
-    color: #1c1c1e;
-    font-weight: 500;
+    font-family: var(--font-serif);
+    font-size: 36rpx;
+    font-weight: 700;
+    color: var(--ink);
     display: block;
 }
 .empty-hint {
     font-size: 24rpx;
-    color: #8e8e93;
+    color: var(--muted);
     display: block;
-    margin-top: 8rpx;
+    margin-top: 12rpx;
+    letter-spacing: 0.06em;
 }
 
-/* Order Row */
+/* Order Ticket */
 .order-row {
+    position: relative;
     display: flex;
     align-items: stretch;
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 20rpx;
-    margin-bottom: 20rpx;
-    box-shadow: 0 2rpx 16rpx rgba(0, 0, 0, 0.05);
-    border: 1rpx solid rgba(142, 142, 147, 0.12);
+    background: var(--card);
+    border: 1rpx solid var(--card-border);
+    border-radius: var(--r-l);
+    margin-bottom: 24rpx;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
     overflow: hidden;
+}
+.order-row--cancelled .order-body,
+.order-row--cancelled .order-ops {
+    opacity: 0.55;
+}
+.order-row--cancelled .order-name {
+    text-decoration: line-through;
+    color: var(--muted);
 }
 
 /* Status Bar */
 .status-bar {
-    width: 6rpx;
+    width: 12rpx;
     flex-shrink: 0;
-    border-radius: 3rpx;
 }
 .bar-pending {
-    background: #d4a574;
+    background: var(--butter);
 }
 .bar-cooking {
-    background: #7ba3c9;
+    background: var(--peach);
 }
 .bar-done {
-    background: #a8c5a0;
+    background: var(--sage);
 }
 .bar-cancelled {
-    background: #d1cdc8;
+    background: var(--faint);
 }
 
 /* Order Body */
 .order-body {
     flex: 1;
-    padding: 24rpx 20rpx;
+    padding: 28rpx 24rpx 28rpx 28rpx;
     min-width: 0;
 }
 .order-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 8rpx;
+    margin-bottom: 10rpx;
+}
+.order-time {
+    font-size: 20rpx;
+    color: var(--muted);
+    letter-spacing: 0.16em;
+}
+.status-pill {
+    padding: 6rpx 20rpx;
+    border-radius: 999rpx;
+    font-size: 20rpx;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    flex-shrink: 0;
+    margin-left: 12rpx;
+}
+.pill-pending {
+    background: var(--butter);
+    color: var(--ink);
+}
+.pill-cooking {
+    background: var(--peach);
+    color: var(--ink);
+}
+.pill-done {
+    background: var(--sage);
+    color: var(--ink);
+}
+.pill-cancelled {
+    background: var(--bg-2);
+    color: var(--muted);
 }
 .order-name {
-    font-size: 30rpx;
-    font-weight: 600;
-    color: #1c1c1e;
+    display: block;
+    font-family: var(--font-serif);
+    font-size: 36rpx;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.3;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    flex: 1;
-    margin-right: 16rpx;
-    letter-spacing: 1rpx;
-}
-.status-pill {
-    padding: 6rpx 18rpx;
-    border-radius: 20rpx;
-    font-size: 20rpx;
-    font-weight: 500;
-    flex-shrink: 0;
-}
-.pill-pending {
-    background: rgba(212, 165, 116, 0.15);
-    color: #9a7540;
-}
-.pill-cooking {
-    background: rgba(123, 163, 201, 0.15);
-    color: #4a6f8f;
-}
-.pill-done {
-    background: rgba(168, 197, 160, 0.15);
-    color: #5a7a52;
-}
-.pill-cancelled {
-    background: rgba(209, 205, 200, 0.15);
-    color: #7a756f;
-}
-.order-bottom {
-    display: flex;
-    align-items: center;
-    gap: 12rpx;
-    flex-wrap: wrap;
-}
-.order-time {
-    font-size: 22rpx;
-    color: #8e8e93;
 }
 .order-note {
-    font-size: 22rpx;
-    color: #636366;
-    background: #f2f2f7;
-    padding: 4rpx 14rpx;
-    border-radius: 10rpx;
-    max-width: 300rpx;
+    display: block;
+    margin-top: 10rpx;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 24rpx;
+    color: var(--ink-2);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-/* Order Ops */
+/* Order Ops (ticket stub) */
 .order-ops {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 20rpx 16rpx;
-    gap: 8rpx;
+    padding: 24rpx 24rpx;
+    gap: 14rpx;
     flex-shrink: 0;
+    min-width: 128rpx;
+    border-left: 2rpx dashed var(--line);
+}
+.order-ops::before,
+.order-ops::after {
+    content: '';
+    position: absolute;
+    left: -16rpx;
+    width: 28rpx;
+    height: 28rpx;
+    border-radius: 50%;
+    background: var(--bg);
+}
+.order-ops::before {
+    top: -14rpx;
+}
+.order-ops::after {
+    bottom: -14rpx;
 }
 .op-next {
-    padding: 10rpx 24rpx;
-    background: #c68b59;
+    height: 60rpx;
+    line-height: 60rpx;
+    padding: 0 28rpx;
+    background: var(--ink);
     color: #fff;
-    border-radius: 24rpx;
-    font-size: 22rpx;
+    border-radius: 999rpx;
+    font-size: 24rpx;
+    font-weight: 600;
     white-space: nowrap;
-    letter-spacing: 1rpx;
+    letter-spacing: 0.12em;
+    box-shadow: 0 12rpx 24rpx -12rpx rgba(30, 26, 23, 0.6);
 }
 .op-more {
-    width: 44rpx;
-    height: 44rpx;
+    width: 56rpx;
+    height: 56rpx;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 22rpx;
-    background: #f2f2f7;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1rpx solid var(--line);
 }
 .op-more text {
     font-size: 24rpx;
-    color: #636366;
+    color: var(--ink-2);
     letter-spacing: -4rpx;
 }
 
 .bottom-space {
-    height: 80rpx;
+    height: 120rpx;
 }
 </style>
