@@ -33,7 +33,15 @@
                 </view>
                 <view class="cell-divider"></view>
                 <view class="cell-v">
-                    <textarea class="cell-textarea" v-model="content" placeholder="记录今天发生的事..." />
+                    <textarea
+                        class="cell-textarea"
+                        v-model="content"
+                        placeholder="记录今天发生的事..."
+                        :maxlength="LONG_TEXT_MAX"
+                    />
+                    <text class="char-count" :class="{ 'char-count--full': content.length >= LONG_TEXT_MAX }"
+                        >{{ content.length }} / {{ LONG_TEXT_MAX }}</text
+                    >
                 </view>
                 <view class="cell-divider"></view>
                 <view class="cell-h">
@@ -176,6 +184,7 @@ import PageBg from '../../components/page-bg/page-bg.vue'
 import { ref, onMounted } from 'vue'
 import {
     fetchAllRecords,
+    getRecord,
     dbUpdate,
     dbAdd,
     formatRelativeTime,
@@ -186,7 +195,7 @@ import {
     setPCache,
     useSharedBg,
 } from '../../utils/cloud'
-import { MOOD_OPTIONS } from '../../utils/constants'
+import { MOOD_OPTIONS, LONG_TEXT_MAX, EXCERPT_LENGTH } from '../../utils/constants'
 import { useInteractions } from '../../utils/useInteractions'
 import { useListDrag, sortByManualOrder } from '../../utils/useDragSort'
 import { confirmDelete, toggleShowOnHome, handleLoadError } from '../../utils/contentActions'
@@ -239,7 +248,8 @@ const onRefresh = async () => {
 
 const fetchData = async () => {
     try {
-        list.value = sortByManualOrder(await fetchAllRecords('journals'))
+        // 列表只需要正文开头一段，长文全文在详情页 / 编辑时再加载
+        list.value = sortByManualOrder(await fetchAllRecords('journals', { truncate: { content: EXCERPT_LENGTH } }))
         setPCache('journals', list.value)
         await loadInteractionsData()
     } catch (e) {
@@ -285,7 +295,12 @@ const handleSubmit = async () => {
         if (isEditing) {
             const idx = list.value.findIndex(j => j._id === savedId)
             if (idx >= 0)
-                list.value[idx] = { ...list.value[idx], title: savedTitle, content: savedContent, mood: savedMood }
+                list.value[idx] = {
+                    ...list.value[idx],
+                    title: savedTitle,
+                    content: savedContent.slice(0, EXCERPT_LENGTH),
+                    mood: savedMood,
+                }
         }
         title.value = ''
         content.value = ''
@@ -316,11 +331,24 @@ const handleSubmit = async () => {
     }
 }
 
-const editJournal = j => {
-    title.value = j.title
-    content.value = j.content
-    mood.value = j.mood || ''
-    editingId.value = j._id
+const editJournal = async j => {
+    let full = j
+    // 列表里的长文只有开头一段，编辑前先取全文
+    if (j._truncated) {
+        uni.showLoading({ title: '加载全文' })
+        try {
+            full = (await getRecord('journals', j._id)) || j
+        } catch (e) {
+            uni.hideLoading()
+            uni.showToast({ title: '加载失败，请重试', icon: 'none' })
+            return
+        }
+        uni.hideLoading()
+    }
+    title.value = full.title
+    content.value = full.content || ''
+    mood.value = full.mood || ''
+    editingId.value = full._id
     showForm.value = true
 }
 
@@ -485,8 +513,20 @@ const moodEmoji = label => (label && MOOD_OPTIONS.find(m => m.label === label)?.
 .cell-v {
     padding: 32rpx 36rpx;
 }
+.char-count {
+    display: block;
+    text-align: right;
+    margin-top: 12rpx;
+    font-size: 22rpx;
+    color: var(--muted);
+}
+.char-count--full {
+    color: var(--coral);
+}
 .cell-textarea {
     width: 100%;
+    /* 固定高度、内部滚动：长文时「保存」按钮也始终在附近 */
+    height: 50vh;
     min-height: 280rpx;
     font-size: 30rpx;
     color: var(--ink);

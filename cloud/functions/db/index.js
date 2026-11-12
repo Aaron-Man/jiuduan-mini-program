@@ -31,6 +31,8 @@ const {
     staleFilesAfterUpdate,
     touchesFiles,
     maskCapsule,
+    EXCERPT_LENGTH,
+    truncateFields,
 } = require('./rules')
 
 // 成员身份缓存：同一个热实例内短时间复用，减少重复查询
@@ -130,6 +132,7 @@ exports.main = async (event, context) => {
         targetIds,
         collections,
         withCount,
+        truncate,
     } = event
 
     try {
@@ -261,8 +264,9 @@ exports.main = async (event, context) => {
                 const pageSize = Math.min(Math.max(parseInt(limit, 10) || MAX_QUERY_LIMIT, 1), MAX_QUERY_LIMIT)
                 const skipCount = Math.max(parseInt(skip, 10) || 0, 0)
                 const dataQuery = orderBy ? query.orderBy(orderBy, orderType === 'asc' ? 'asc' : 'desc') : query
-                // 时光胶囊在开启日期之前不返回正文
-                const present = list => (collection === 'capsules' ? list.map(d => maskCapsule(d)) : list)
+                // 时光胶囊在开启日期之前不返回正文；truncate 指定的长文本字段只返回开头一段
+                const present = list =>
+                    list.map(d => truncateFields(collection === 'capsules' ? maskCapsule(d) : d, truncate))
                 if (withCount === false) {
                     const dataRes = await dataQuery.skip(skipCount).limit(pageSize).get()
                     return { data: present(dataRes.data) }
@@ -334,7 +338,7 @@ exports.main = async (event, context) => {
                                         ? cmd.or({ showOnHome: cmd.eq(true) }, { isPinned: cmd.eq(true) })
                                         : { showOnHome: cmd.eq(true) }
                                 const res = await db.collection(name).where(cond).limit(100).get()
-                                result[name] = res.data || []
+                                result[name] = (res.data || []).map(d => truncateFields(d, { content: EXCERPT_LENGTH }))
                             } catch {
                                 result[name] = []
                             }

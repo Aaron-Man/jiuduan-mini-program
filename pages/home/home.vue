@@ -180,7 +180,7 @@
 
 <script setup>
 import PageBg from '../../components/page-bg/page-bg.vue'
-import { navigateToPage, MOOD_OPTIONS, themeOf } from '../../utils/constants'
+import { navigateToPage, MOOD_OPTIONS, themeOf, EXCERPT_LENGTH } from '../../utils/constants'
 import { ref, computed, onMounted } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import {
@@ -333,7 +333,7 @@ const loadCounters = async () => {
 const loadFeed = async () => {
     const [statuses, journals] = await Promise.all([
         query('statuses', { orderBy: 'createTime', orderType: 'desc', limit: 5 }),
-        query('journals', { orderBy: 'createTime', orderType: 'desc', limit: 3 }),
+        query('journals', { orderBy: 'createTime', orderType: 'desc', limit: 3, truncate: { content: EXCERPT_LENGTH } }),
     ])
     await resolveFileUrls(statuses, 'imageUrl', 'displayImageUrl')
     const who = openid => members.value.find(m => m.openid && m.openid === openid)

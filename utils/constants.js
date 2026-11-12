@@ -162,3 +162,7 @@ export const WISH_CATEGORIES = [
     { key: 'buy', label: '想要的', emoji: '🎁', color: 'lilac' },
     { key: 'other', label: '其他', emoji: '✨', color: 'butter' },
 ]
+
+// 长文：日志、时光胶囊正文的字数上限；列表 / 首页只加载开头这么多字
+export const LONG_TEXT_MAX = 10000
+export const EXCERPT_LENGTH = 120

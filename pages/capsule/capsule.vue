@@ -95,7 +95,10 @@
             <text class="sheet-title ui-serif">写给未来</text>
             <input class="field" v-model="form.to_name" placeholder="写给谁？例如：一年后的我们" maxlength="12" />
             <input class="field" v-model="form.title" placeholder="信的标题" maxlength="20" />
-            <textarea class="field field--area" v-model="form.content" placeholder="想对未来说的话……" maxlength="1000" />
+            <textarea class="field field--area" v-model="form.content" placeholder="想对未来说的话……" :maxlength="LONG_TEXT_MAX" />
+            <text class="char-count" :class="{ 'char-count--full': form.content.length >= LONG_TEXT_MAX }"
+                >{{ form.content.length }} / {{ LONG_TEXT_MAX }}</text
+            >
             <text class="label">什么时候打开</text>
             <view class="quick">
                 <view
@@ -123,7 +126,8 @@
 <script setup>
 import PageBg from '../../components/page-bg/page-bg.vue'
 import { ref, computed, onMounted } from 'vue'
-import { fetchAllRecords, dbAdd, clearPCache, requestSubscribeFor, sendNotificationToAll } from '../../utils/cloud'
+import { fetchAllRecords, getRecord, dbAdd, clearPCache, requestSubscribeFor, sendNotificationToAll } from '../../utils/cloud'
+import { LONG_TEXT_MAX } from '../../utils/constants'
 import { confirmDelete, handleLoadError } from '../../utils/contentActions'
 import { dateToStr } from '../../utils/usePeriodData'
 import { parseDate, diffDays } from '../../utils/anniversary'
@@ -171,7 +175,8 @@ const canSubmit = computed(() => form.value.title.trim() && form.value.content.t
 
 const fetchData = async () => {
     try {
-        capsules.value = await fetchAllRecords('capsules', { orderBy: 'open_date', orderType: 'asc' })
+        // 列表不需要正文，打开信件时再加载全文（一封信可能有上万字）
+        capsules.value = await fetchAllRecords('capsules', { orderBy: 'open_date', orderType: 'asc', truncate: { content: 0 } })
     } catch (e) {
         handleLoadError(e, capsules.value.length > 0)
     } finally {
@@ -180,8 +185,23 @@ const fetchData = async () => {
 }
 onMounted(fetchData)
 
-const openLetter = c => {
-    reading.value = c
+const openLetter = async c => {
+    // 注意：hideLoading 会同时关闭 toast，所以要先关 loading 再提示
+    uni.showLoading({ title: '拆信中' })
+    let full = null
+    try {
+        full = await getRecord('capsules', c._id)
+    } catch (e) {
+        uni.hideLoading()
+        uni.showToast({ title: '加载失败，请重试', icon: 'none' })
+        return
+    }
+    uni.hideLoading()
+    if (!full || full.locked) {
+        uni.showToast({ title: '这封信还不能打开', icon: 'none' })
+        return
+    }
+    reading.value = full
     uni.vibrateShort({ type: 'light' })
 }
 
@@ -411,7 +431,6 @@ const submit = async () => {
     padding: 64rpx 56rpx 48rpx;
     border-radius: 12rpx;
     background-color: #fffaf2;
-    background-image: repeating-linear-gradient(0deg, transparent 0, transparent 63rpx, rgba(180, 150, 120, 0.18) 63rpx, rgba(180, 150, 120, 0.18) 64rpx);
     box-shadow: 0 40rpx 80rpx -30rpx rgba(0, 0, 0, 0.5);
     animation: unfold 0.6s cubic-bezier(0.22, 1, 0.36, 1);
     transform-origin: top center;
@@ -450,6 +469,14 @@ const submit = async () => {
     display: block;
     font-size: 30rpx;
     line-height: 64rpx;
+    /* 信纸横线：与行高相同的周期，画在每一行底部 */
+    background-image: repeating-linear-gradient(
+        180deg,
+        transparent 0,
+        transparent 63rpx,
+        rgba(180, 150, 120, 0.22) 63rpx,
+        rgba(180, 150, 120, 0.22) 64rpx
+    );
     color: var(--ink-2);
     white-space: pre-wrap;
 }
@@ -555,9 +582,19 @@ const submit = async () => {
     box-sizing: border-box;
 }
 .field--area {
-    height: 260rpx;
+    height: 480rpx;
     padding: 24rpx 28rpx;
     line-height: 1.7;
+}
+.char-count {
+    display: block;
+    text-align: right;
+    margin: -8rpx 8rpx 20rpx;
+    font-size: 22rpx;
+    color: var(--muted);
+}
+.char-count--full {
+    color: var(--coral);
 }
 .field--pick {
     display: flex;

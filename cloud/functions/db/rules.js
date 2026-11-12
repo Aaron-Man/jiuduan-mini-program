@@ -137,6 +137,30 @@ function maskCapsule(doc, today = todayInChina()) {
     return { ...doc, content: '', locked: true }
 }
 
+// 列表和首页只需要正文开头一段，默认截取的长度
+const EXCERPT_LENGTH = 120
+
+/**
+ * 截断记录中的长文本字段，减少返回给小程序的数据量（日志、信件可能长达上万字）
+ * @param spec 形如 { content: 120 }：字段名 → 最多保留的字符数；被截断的记录带 _truncated: true
+ */
+function truncateFields(doc, spec) {
+    if (!doc || !isPlainObject(spec)) return doc
+    let out = doc
+    Object.keys(spec)
+        .slice(0, 20)
+        .forEach(field => {
+            const max = Math.max(parseInt(spec[field], 10) || 0, 0)
+            const v = doc[field]
+            if (typeof v === 'string' && v.length > max) {
+                if (out === doc) out = { ...doc }
+                out[field] = v.slice(0, max)
+                out._truncated = true
+            }
+        })
+    return out
+}
+
 /** 本次修改是否涉及需要级联清理的文件字段 */
 function touchesFiles(collection, patch) {
     const cfg = CASCADE[collection]
@@ -165,4 +189,6 @@ module.exports = {
     touchesFiles,
     todayInChina,
     maskCapsule,
+    EXCERPT_LENGTH,
+    truncateFields,
 }

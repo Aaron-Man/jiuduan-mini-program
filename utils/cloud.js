@@ -160,8 +160,9 @@ function unwrapQuery(res, collection) {
 
 /**
  * 获取集合全部记录（经 db 云函数，自动分页，服务端单次最多 100 条）
+ * @param {Object} [options.truncate] 长文本字段只取开头一段，如 { content: 120 }（被截断的记录带 _truncated: true）
  */
-export async function fetchAllRecords(collection, { where = {}, orderBy = 'createTime', orderType = 'desc' } = {}) {
+export async function fetchAllRecords(collection, { where = {}, orderBy = 'createTime', orderType = 'desc', truncate } = {}) {
     const PAGE_SIZE = 100
     let allData = []
     let skip = 0
@@ -176,6 +177,7 @@ export async function fetchAllRecords(collection, { where = {}, orderBy = 'creat
                 limit: PAGE_SIZE,
                 skip,
                 withCount: false,
+                truncate,
             }),
             collection
         )
@@ -184,6 +186,17 @@ export async function fetchAllRecords(collection, { where = {}, orderBy = 'creat
         skip += PAGE_SIZE
     }
     return allData
+}
+
+/**
+ * 按 _id 读取一条完整记录，不存在时返回 null
+ */
+export async function getRecord(collection, id) {
+    const res = unwrapQuery(
+        await callFunction('db', { action: 'query', collection, where: { _id: id }, limit: 1, withCount: false }),
+        collection
+    )
+    return res.data[0] || null
 }
 
 /**
