@@ -10,7 +10,85 @@ const {
     normalizeInviteCode,
     clampMaxUses,
     inviteError,
+    isInviteInvalid,
 } = require('./invite')
+
+/**
+ * 删除失效的邀请码（撤销 / 过期 / 用完），返回删除数量
+ * 过期和撤销的用条件批量删除；「用完」需要比较两个字段，先查出来再按 _id 删
+ */
+async function removeInvalidInvites() {
+    const now = new Date()
+    let removed = 0
+    const byCond = [{ expireTime: _.lt(now) }, { revoked: true }]
+    for (const cond of byCond) {
+        const r = await db.collection('invite_codes').where(cond).remove()
+        removed += (r.stats && r.stats.removed) || 0
+    }
+    const rest = await db.collection('invite_codes').where({ max_uses: _.exists(true) }).limit(1000).get()
+    const exhausted = rest.data.filter(c => isInviteInvalid(c, now)).map(c => c._id)
+    for (let i = 0; i < exhausted.length; i += 100) {
+        const r = await db.collection('invite_codes').where({ _id: _.in(exhausted.slice(i, i + 100)) }).remove()
+        removed += (r.stats && r.stats.removed) || 0
+    }
+    return removed
+}
+
+/**
+ * 移除成员时要清理的、该成员发布的内容（与 db 云函数 rules.js 中的 CASCADE 对应）
+ *  files：记录中的云文件字段；targetType / targetIdField：该记录在 likes / comments 中的目标
+ */
+const MEMBER_OWNED = [
+    { col: 'statuses', files: ['imageUrl'], targetType: 'status' },
+    { col: 'journals', targetType: 'journal' },
+    { col: 'travels', files: ['cover_image'] },
+    { col: 'memos' },
+    { col: 'gallery_photos', files: ['fileID'], targetType: 'photo', targetIdField: 'id' },
+    { col: 'capsules' },
+]
+
+const chunk = (list, size) => {
+    const out = []
+    for (let i = 0; i < list.length; i += size) out.push(list.slice(i, i + size))
+    return out
+}
+
+/** 删除某成员发布的内容，连同其中的云文件和别人对这些内容的点赞、评论 */
+async function removeMemberContent(ownerOpenid) {
+    const files = []
+    for (const cfg of MEMBER_OWNED) {
+        try {
+            const docs = []
+            while (true) {
+                const res = await db.collection(cfg.col).where({ owner_openid: ownerOpenid }).skip(docs.length).limit(100).get()
+                docs.push(...res.data)
+                if (res.data.length < 100) break
+            }
+            if (docs.length === 0) continue
+            docs.forEach(d => (cfg.files || []).forEach(f => files.push(d[f])))
+            await db.collection(cfg.col).where({ owner_openid: ownerOpenid }).remove()
+            if (cfg.targetType) {
+                const ids = docs.map(d => d[cfg.targetIdField || '_id']).filter(Boolean)
+                for (const batch of chunk(ids, 100)) {
+                    for (const col of ['likes', 'comments']) {
+                        await db.collection(col).where({ target_type: cfg.targetType, target_id: _.in(batch) }).remove()
+                    }
+                }
+            }
+        } catch (e) {
+            // 集合可能不存在，忽略错误
+            console.warn(`清理 ${cfg.col} 失败:`, e)
+        }
+    }
+    const cloudFiles = [...new Set(files.filter(f => typeof f === 'string' && f.startsWith('cloud://')))]
+    for (const batch of chunk(cloudFiles, 50)) {
+        try {
+            await cloud.deleteFile({ fileList: batch })
+        } catch (e) {
+            console.warn('删除文件失败:', e)
+        }
+    }
+}
 
 exports.main = async (event, context) => {
     const wxContext = cloud.getWXContext()
@@ -89,7 +167,22 @@ exports.main = async (event, context) => {
                         expireTime: new Date(Date.now() + INVITE_TTL_MS), // 7天有效
                     },
                 })
+                // 顺手清掉失效的邀请码，列表里不会越积越多（失败不影响生成）
+                try {
+                    await removeInvalidInvites()
+                } catch (e) {
+                    console.warn('清理失效邀请码失败:', e)
+                }
                 return { success: true, code, maxUses }
+            }
+
+            // 删除失效的邀请码（仅管理员）：已撤销、已过期、已用完；已加入的成员不受影响
+            case 'cleanInvites': {
+                const adminRes = await db.collection('authorized_users').where({ openid, role: 'admin' }).limit(1).get()
+                if (adminRes.data.length === 0) {
+                    return { success: false, msg: '只有管理员可以清理邀请码' }
+                }
+                return { success: true, removed: await removeInvalidInvites() }
             }
 
             // 撤销邀请码（仅管理员）
@@ -202,12 +295,10 @@ exports.main = async (event, context) => {
                 const targetOpenid = targetRes.data.openid
                 // 清理该用户创建的内容。
                 // 内容记录的创建者保存在 owner_openid 字段（由 db 云函数写入；没有该字段的记录不会被清理）；
-                // 点赞、评论按 user_id 关联到 authorized_users._id
+                // 纪念日、心愿、菜谱、经期等是全家共用的数据，不随成员删除
+                await removeMemberContent(targetOpenid)
+                // 该成员自己的点赞、评论按 user_id 关联到 authorized_users._id
                 const cleanup = [
-                    ...['statuses', 'journals', 'travels', 'memos', 'gallery_photos'].map(col => [
-                        col,
-                        { owner_openid: targetOpenid },
-                    ]),
                     ['likes', { user_id: userId }],
                     ['comments', { user_id: userId }],
                 ]
@@ -267,6 +358,7 @@ exports.main = async (event, context) => {
                     nickname: u.nickname,
                     avatar_url: u.avatar_url,
                     role: u.role,
+                    createTime: u.createTime,
                 }))
                 return { success: true, members }
             }
@@ -276,7 +368,8 @@ exports.main = async (event, context) => {
                 if (res.data.length > 0) {
                     return { success: true, user: res.data[0] }
                 }
-                return { success: false }
+                // notMember：明确不是成员（已被移除），客户端据此退出登录；服务器出错时没有这个字段
+                return { success: false, notMember: true }
             }
 
             // 更新用户信息

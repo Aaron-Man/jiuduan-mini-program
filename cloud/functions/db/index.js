@@ -13,6 +13,8 @@ const db = cloud.database()
  */
 
 const {
+    HIDEABLE_COLLECTIONS,
+    hidesFrom,
     ALLOWED_COLLECTIONS,
     AUTHOR_OWNED_COLLECTIONS,
     CASCADE,
@@ -108,6 +110,35 @@ async function cascadeUpdate(collection, before, patch) {
     await removeFiles(staleFilesAfterUpdate(collection, before, patch))
 }
 
+/** 集合还没在控制台创建时，数据库会报 DATABASE_COLLECTION_NOT_EXIST（-502005） */
+function isMissingCollection(e) {
+    const msg = String((e && (e.errMsg || e.message)) || '')
+    return !!e && (e.errCode === -502005 || /COLLECTION_NOT_EXIST|collection not exist/i.test(msg))
+}
+
+/** 创建集合；已存在时忽略 */
+async function ensureCollection(name) {
+    try {
+        await db.createCollection(name)
+    } catch (e) {
+        if (!/exist/i.test(String(e.errMsg || e.message || ''))) throw e
+    }
+}
+
+/** 非管理员只能看到未隐藏的记录：给查询条件加上 hidden != true */
+function visibleWhere(collection, member, where) {
+    if (!hidesFrom(collection, member)) return where
+    return { ...(where || {}), hidden: db.command.neq(true) }
+}
+
+/** 非管理员不能修改、删除被隐藏的记录（对他们来说这条记录不存在） */
+async function checkHiddenPermission(collection, id, member) {
+    if (!hidesFrom(collection, member)) return null
+    const doc = await getDoc(collection, id)
+    if (doc && doc.hidden === true) return { code: -1, msg: '记录不存在' }
+    return null
+}
+
 async function getDoc(collection, id) {
     try {
         return (await db.collection(collection).doc(id).get()).data || null
@@ -144,9 +175,12 @@ exports.main = async (event, context) => {
                 const err = checkCollection(collection)
                 if (err) return err
                 if (!id || !isPlainObject(data)) return { code: -1, msg: '缺少参数' }
-                const permErr = await checkAuthorPermission(collection, id, member)
+                const permErr =
+                    (await checkAuthorPermission(collection, id, member)) ||
+                    (await checkHiddenPermission(collection, id, member))
                 if (permErr) return permErr
-                const patch = sanitizeData(data)
+                // 只有管理员可以改 hidden；其他成员提交的 hidden 字段直接忽略（编辑表单可能把整条记录带回来）
+                const patch = sanitizeData(data, member.role === 'admin' && HIDEABLE_COLLECTIONS.has(collection))
                 if (AUTHOR_OWNED_COLLECTIONS.has(collection)) {
                     // 作者信息不可修改
                     delete patch.user_id
@@ -168,6 +202,16 @@ exports.main = async (event, context) => {
                 if (updates.length > MAX_BATCH_UPDATES) return { code: -1, msg: `单次最多更新 ${MAX_BATCH_UPDATES} 条` }
                 const valid = updates.filter(u => u && typeof u.id === 'string' && isPlainObject(u.data))
                 const patches = valid.map(u => ({ id: u.id, data: sanitizeData(u.data) }))
+                // 非管理员的排序列表里没有隐藏的记录，不允许改动它们
+                if (hidesFrom(collection, member) && patches.length) {
+                    const hiddenRes = await db
+                        .collection(collection)
+                        .where({ _id: db.command.in(patches.map(p => p.id)), hidden: true })
+                        .field({ _id: true })
+                        .get()
+                    const hiddenIds = new Set((hiddenRes.data || []).map(d => d._id))
+                    for (let i = patches.length - 1; i >= 0; i--) if (hiddenIds.has(patches[i].id)) patches.splice(i, 1)
+                }
                 if (patches.some(p => touchesFiles(collection, p.data)))
                     return { code: -1, msg: '批量更新不支持修改文件字段' }
                 let updated = 0
@@ -239,14 +283,23 @@ exports.main = async (event, context) => {
                     doc.user_id = member._id
                     doc.user_name = member.nickname || '成员'
                 }
-                return await db.collection(collection).add({ data: doc })
+                try {
+                    return await db.collection(collection).add({ data: doc })
+                } catch (e) {
+                    // 新功能的集合尚未创建（如 wishes / anniversaries / capsules）：自动创建后重试
+                    if (!isMissingCollection(e)) throw e
+                    await ensureCollection(collection)
+                    return await db.collection(collection).add({ data: doc })
+                }
             }
 
             case 'remove': {
                 const err = checkCollection(collection)
                 if (err) return err
                 if (!id) return { code: -1, msg: '缺少参数' }
-                const permErr = await checkAuthorPermission(collection, id, member)
+                const permErr =
+                    (await checkAuthorPermission(collection, id, member)) ||
+                    (await checkHiddenPermission(collection, id, member))
                 if (permErr) return permErr
                 const before = CASCADE[collection] || collection === 'categories' ? await getDoc(collection, id) : null
                 const res = await db.collection(collection).doc(id).remove()
@@ -258,8 +311,9 @@ exports.main = async (event, context) => {
                 const err = checkCollection(collection)
                 if (err) return err
                 let query = db.collection(collection)
-                if (isPlainObject(where) && Object.keys(where).length > 0) {
-                    query = query.where(where)
+                const cond = visibleWhere(collection, member, isPlainObject(where) ? where : {})
+                if (Object.keys(cond).length > 0) {
+                    query = query.where(cond)
                 }
                 const pageSize = Math.min(Math.max(parseInt(limit, 10) || MAX_QUERY_LIMIT, 1), MAX_QUERY_LIMIT)
                 const skipCount = Math.max(parseInt(skip, 10) || 0, 0)
@@ -267,35 +321,21 @@ exports.main = async (event, context) => {
                 // 时光胶囊在开启日期之前不返回正文；truncate 指定的长文本字段只返回开头一段
                 const present = list =>
                     list.map(d => truncateFields(collection === 'capsules' ? maskCapsule(d) : d, truncate))
-                if (withCount === false) {
-                    const dataRes = await dataQuery.skip(skipCount).limit(pageSize).get()
-                    return { data: present(dataRes.data) }
+                try {
+                    if (withCount === false) {
+                        const dataRes = await dataQuery.skip(skipCount).limit(pageSize).get()
+                        return { data: present(dataRes.data) }
+                    }
+                    const [countRes, dataRes] = await Promise.all([
+                        query.count(),
+                        dataQuery.skip(skipCount).limit(pageSize).get(),
+                    ])
+                    return { data: present(dataRes.data), total: countRes.total }
+                } catch (e) {
+                    // 集合还没创建：当作空列表，第一次新增时会自动创建
+                    if (isMissingCollection(e)) return withCount === false ? { data: [] } : { data: [], total: 0 }
+                    throw e
                 }
-                const [countRes, dataRes] = await Promise.all([
-                    query.count(),
-                    dataQuery.skip(skipCount).limit(pageSize).get(),
-                ])
-                return { data: present(dataRes.data), total: countRes.total }
-            }
-
-            case 'batchLikeQuery': {
-                // 批量查询点赞/评论数据：一次返回多个 target 的记录
-                if (!AUTHOR_OWNED_COLLECTIONS.has(collection)) return forbidden('仅支持 likes / comments')
-                if (!Array.isArray(targetIds) || targetIds.length === 0) return { data: [] }
-                const targetType = isPlainObject(where) ? where.target_type : undefined
-                if (!targetType) return { code: -1, msg: '缺少 target_type' }
-                const cmd = db.command
-                let allData = []
-                // 分批查询，每批最多 20 个 targetId（云数据库 in 查询限制）
-                for (const batch of chunk(targetIds, 20)) {
-                    const res = await db
-                        .collection(collection)
-                        .where({ target_type: targetType, target_id: cmd.in(batch) })
-                        .limit(1000)
-                        .get()
-                    allData = allData.concat(res.data || [])
-                }
-                return { data: allData }
             }
 
             case 'batchCount': {
@@ -310,7 +350,7 @@ exports.main = async (event, context) => {
                             try {
                                 const res = await db
                                     .collection(name)
-                                    .where({ _id: cmd.exists(true) })
+                                    .where(visibleWhere(name, member, { _id: cmd.exists(true) }))
                                     .count()
                                 result[name] = res.total || 0
                             } catch {
@@ -333,10 +373,13 @@ exports.main = async (event, context) => {
                         .map(async name => {
                             try {
                                 // memos 集合使用 OR 查询：showOnHome=true 或 isPinned=true
-                                const cond =
+                                const marked =
                                     name === 'memos'
                                         ? cmd.or({ showOnHome: cmd.eq(true) }, { isPinned: cmd.eq(true) })
                                         : { showOnHome: cmd.eq(true) }
+                                const cond = hidesFrom(name, member)
+                                    ? cmd.and([marked, { hidden: cmd.neq(true) }])
+                                    : marked
                                 const res = await db.collection(name).where(cond).limit(100).get()
                                 result[name] = (res.data || []).map(d => truncateFields(d, { content: EXCERPT_LENGTH }))
                             } catch {

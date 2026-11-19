@@ -7,10 +7,10 @@
         "skipLibCheck": true,
         "types": ["@dcloudio/types"],
         "paths": {
-            "@/*": ["./*"]
+            "@/*": ["./src/*"]
         },
         "lib": ["esnext", "dom"]
     },
-    "include": ["**/*.js", "**/*.vue"],
+    "include": ["src/**/*.js", "src/**/*.vue", "cloud/**/*.js"],
     "exclude": ["node_modules", "unpackage", "dist"]
 }

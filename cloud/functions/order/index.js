@@ -4,6 +4,7 @@ const db = cloud.database()
 const _ = db.command
 
 const VALID_STATUSES = ['pending', 'cooking', 'done', 'cancelled']
+const VALID_SLOTS = ['breakfast', 'lunch', 'dinner', 'night']
 
 // 成员身份校验：只有 authorized_users 中的成员可以调用
 async function getMember(openid) {
@@ -85,6 +86,58 @@ exports.main = async (event, context) => {
                     }
                 }
                 return result
+            }
+
+            /**
+             * 一次点一餐：items 里每道菜生成一条订单，共用 batch_id / meal_date / meal_slot，方便按餐分组
+             * items: [{ dishId, dishName, servings, note }]，mealDate: YYYY-MM-DD，mealSlot: breakfast/lunch/dinner/night
+             */
+            case 'addOrders': {
+                const items = Array.isArray(event.items) ? event.items.slice(0, 30) : []
+                const valid = items
+                    .map(it => ({
+                        dishId: it.dishId || null,
+                        dishName: String(it.dishName || '').trim().slice(0, 40),
+                        servings: Math.min(Math.max(parseInt(it.servings, 10) || 1, 1), 20),
+                        note: String(it.note || '').trim().slice(0, 60) || null,
+                    }))
+                    .filter(it => it.dishName)
+                if (!valid.length) return { code: -1, msg: '点菜篮是空的' }
+                const mealDate = /^\d{4}-\d{2}-\d{2}$/.test(event.mealDate || '') ? event.mealDate : null
+                const mealSlot = VALID_SLOTS.includes(event.mealSlot) ? event.mealSlot : null
+                const batchId = 'b' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6)
+                const batchNote = String(event.note || '').trim().slice(0, 80) || null
+                const now = new Date()
+                const ids = []
+                for (const it of valid) {
+                    const res = await db.collection('orders').add({
+                        data: {
+                            ...it,
+                            customOrderId: Math.floor(10000000 + Math.random() * 90000000).toString(),
+                            batch_id: batchId,
+                            meal_date: mealDate,
+                            meal_slot: mealSlot,
+                            batch_note: batchNote,
+                            openid: wxContext.OPENID,
+                            status: 'pending',
+                            createTime: now,
+                            updateTime: now,
+                        },
+                    })
+                    ids.push(res._id)
+                }
+                // 点单次数按菜累加（同一道菜点多份也只算一次）
+                const dishIds = [...new Set(valid.map(it => it.dishId).filter(Boolean))]
+                await Promise.all(
+                    dishIds.map(id =>
+                        db
+                            .collection('dishes')
+                            .doc(id)
+                            .update({ data: { order_count: _.inc(1) } })
+                            .catch(e => console.warn('[order] 更新点单次数失败:', e))
+                    )
+                )
+                return { success: true, batchId, ids }
             }
 
             case 'updateOrderStatus': {

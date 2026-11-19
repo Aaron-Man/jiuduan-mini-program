@@ -55,7 +55,11 @@ function inviteError(invite, now = new Date()) {
     return null
 }
 
+/** 已失效（撤销 / 过期 / 用完）的邀请码，可以直接删除 */
+const isInviteInvalid = (invite, now = new Date()) => !!inviteError(invite, now)
+
 module.exports = {
+    isInviteInvalid,
     INVITE_ALPHABET,
     INVITE_CODE_LENGTH,
     DEFAULT_INVITE_MAX_USES,

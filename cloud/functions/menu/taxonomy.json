@@ -1,0 +1,97 @@
+{
+    "regions": [
+        {
+            "key": "cn",
+            "label": "中餐",
+            "emoji": "🥢",
+            "cuisines": [
+                { "key": "cn-home", "label": "家常", "emoji": "🍚", "color": "#f4c7b4" },
+                { "key": "cn-sichuan", "label": "川湘", "emoji": "🌶️", "color": "#f2a99a" },
+                { "key": "cn-canton", "label": "粤港", "emoji": "🦐", "color": "#f5d7a8" },
+                { "key": "cn-jiangzhe", "label": "江浙沪", "emoji": "🦀", "color": "#c9dfcf" },
+                { "key": "cn-north", "label": "北方", "emoji": "🥟", "color": "#e8d5b5" },
+                { "key": "cn-snack", "label": "小吃", "emoji": "🍢", "color": "#f5e3b3" }
+            ]
+        },
+        {
+            "key": "jpkr",
+            "label": "日韩",
+            "emoji": "🍣",
+            "cuisines": [
+                { "key": "jp", "label": "日本", "emoji": "🍱", "color": "#f2c4c9" },
+                { "key": "kr", "label": "韩国", "emoji": "🥘", "color": "#f4b9a8" }
+            ]
+        },
+        {
+            "key": "sea",
+            "label": "东南亚",
+            "emoji": "🍜",
+            "cuisines": [
+                { "key": "th", "label": "泰国", "emoji": "🍤", "color": "#d6e8b8" },
+                { "key": "vn", "label": "越南", "emoji": "🍲", "color": "#c7e3d4" },
+                { "key": "sgmy", "label": "新马印尼", "emoji": "🥥", "color": "#f0dcb0" }
+            ]
+        },
+        {
+            "key": "west",
+            "label": "西餐",
+            "emoji": "🍝",
+            "cuisines": [
+                { "key": "it", "label": "意大利", "emoji": "🍕", "color": "#f3c9b8" },
+                { "key": "fr", "label": "法国", "emoji": "🥐", "color": "#e9dcc6" },
+                { "key": "es", "label": "西班牙", "emoji": "🥘", "color": "#f5cf9f" },
+                { "key": "us", "label": "美式", "emoji": "🍔", "color": "#f2d2a8" },
+                { "key": "eu", "label": "欧陆", "emoji": "🥩", "color": "#dcd0c4" }
+            ]
+        },
+        {
+            "key": "world",
+            "label": "环球",
+            "emoji": "🌍",
+            "cuisines": [
+                { "key": "in", "label": "印度", "emoji": "🍛", "color": "#f5d48f" },
+                { "key": "me", "label": "中东", "emoji": "🧆", "color": "#e8d3a8" },
+                { "key": "latam", "label": "墨西哥 · 拉美", "emoji": "🌮", "color": "#f3c391" },
+                { "key": "other", "label": "其他", "emoji": "🍽️", "color": "#d9d4ce" }
+            ]
+        },
+        {
+            "key": "sweet",
+            "label": "甜品饮品",
+            "emoji": "🍰",
+            "cuisines": [
+                { "key": "dessert", "label": "甜点", "emoji": "🍮", "color": "#f2cfe0" },
+                { "key": "bakery", "label": "烘焙", "emoji": "🍞", "color": "#ecd8bd" },
+                { "key": "drink", "label": "饮品", "emoji": "🧋", "color": "#d4c8f0" }
+            ]
+        }
+    ],
+    "courses": [
+        { "key": "breakfast", "label": "早餐", "emoji": "🌅" },
+        { "key": "main", "label": "主菜", "emoji": "🍖" },
+        { "key": "soup", "label": "汤羹", "emoji": "🥣" },
+        { "key": "staple", "label": "主食", "emoji": "🍜" },
+        { "key": "side", "label": "小菜凉菜", "emoji": "🥗" },
+        { "key": "snack", "label": "小食", "emoji": "🍟" },
+        { "key": "dessert", "label": "甜点", "emoji": "🍮" },
+        { "key": "drink", "label": "饮品", "emoji": "🥤" }
+    ],
+    "tags": [
+        { "key": "spicy", "label": "辣", "emoji": "🌶️" },
+        { "key": "vegetarian", "label": "素食", "emoji": "🥦" },
+        { "key": "quick", "label": "快手", "emoji": "⚡" },
+        { "key": "healthy", "label": "轻食", "emoji": "🥬" },
+        { "key": "kids", "label": "孩子爱吃", "emoji": "🧒" },
+        { "key": "party", "label": "宴客", "emoji": "🎉" },
+        { "key": "airfryer", "label": "空气炸锅", "emoji": "🔥" },
+        { "key": "oven", "label": "烤箱", "emoji": "♨️" },
+        { "key": "onepot", "label": "一锅出", "emoji": "🍲" },
+        { "key": "classic", "label": "经典必吃", "emoji": "⭐" }
+    ],
+    "mealSlots": [
+        { "key": "breakfast", "label": "早餐", "emoji": "🌅" },
+        { "key": "lunch", "label": "午餐", "emoji": "☀️" },
+        { "key": "dinner", "label": "晚餐", "emoji": "🌙" },
+        { "key": "night", "label": "夜宵", "emoji": "🌃" }
+    ]
+}

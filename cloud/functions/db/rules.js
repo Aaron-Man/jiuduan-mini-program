@@ -24,6 +24,22 @@ const ALLOWED_COLLECTIONS = new Set([
 // 归属于具体作者的集合：只有作者本人或管理员可修改、删除
 const AUTHOR_OWNED_COLLECTIONS = new Set(['likes', 'comments'])
 
+// 管理员可以隐藏记录（hidden: true）的集合：隐藏后其他成员查询不到，只有管理员能看到和恢复
+const HIDEABLE_COLLECTIONS = new Set([
+    'statuses',
+    'journals',
+    'travels',
+    'memos',
+    'gallery_photos',
+    'wishes',
+    'anniversaries',
+    'capsules',
+    'dishes',
+])
+
+/** 这个成员在该集合中是否看不到被隐藏的记录 */
+const hidesFrom = (collection, member) => HIDEABLE_COLLECTIONS.has(collection) && (!member || member.role !== 'admin')
+
 // 客户端不能写入的系统字段
 const PROTECTED_FIELDS = ['_id', '_openid', 'owner_openid']
 
@@ -51,12 +67,16 @@ const MAX_FILES_PER_CALL = 50
 const isPlainObject = v => v !== null && typeof v === 'object' && !Array.isArray(v)
 const isCloudFile = v => typeof v === 'string' && v.startsWith('cloud://')
 
-/** 去掉客户端不允许写入的系统字段 */
-function sanitizeData(data) {
+/**
+ * 去掉客户端不允许写入的系统字段
+ * @param canHide 是否允许写入 hidden（只有管理员可以隐藏 / 取消隐藏）
+ */
+function sanitizeData(data, canHide = false) {
     const clean = { ...data }
     PROTECTED_FIELDS.forEach(k => {
         delete clean[k]
     })
+    if (!canHide) delete clean.hidden
     return clean
 }
 
@@ -169,6 +189,8 @@ function touchesFiles(collection, patch) {
 }
 
 module.exports = {
+    HIDEABLE_COLLECTIONS,
+    hidesFrom,
     ALLOWED_COLLECTIONS,
     AUTHOR_OWNED_COLLECTIONS,
     PROTECTED_FIELDS,

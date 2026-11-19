@@ -4,8 +4,8 @@
     "description": "猪猪 - 微信小程序",
     "main": "main.js",
     "scripts": {
-        "dev": "UNI_INPUT_DIR=. uni -p mp-weixin",
-        "build": "UNI_INPUT_DIR=. uni build -p mp-weixin"
+        "dev": "UNI_OUTPUT_DIR=$PWD/dist/mp-weixin uni -p mp-weixin",
+        "build": "UNI_OUTPUT_DIR=$PWD/dist/mp-weixin uni build -p mp-weixin"
     },
     "dependencies": {
         "@dcloudio/uni-app": "3.0.0-5030320261023001",

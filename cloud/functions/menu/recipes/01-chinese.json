@@ -1,0 +1,1297 @@
+[
+  {
+    "key": "cn-home-tomato-egg",
+    "name": "番茄炒蛋",
+    "alias": "Fanqie Chaodan / Tomato Scrambled Eggs",
+    "cuisine": "cn-home",
+    "course": "main",
+    "tags": [
+      "quick",
+      "classic",
+      "kids"
+    ],
+    "time_min": 15,
+    "servings": 2,
+    "difficulty": 1,
+    "spice": 0,
+    "description": "酸甜多汁的番茄裹着嫩滑蛋块，拌饭一绝的国民家常菜。",
+    "ingredients": "番茄 2个, 鸡蛋 3个, 番茄酱 1勺, 白糖 1小勺, 盐 适量, 葱花 少许, 食用油 2勺",
+    "steps": [
+      "番茄顶部划十字，开水烫 30 秒去皮，切滚刀块。",
+      "鸡蛋加少许盐打散，热锅多放油，大火炒到刚凝固就盛出。",
+      "锅留底油，下番茄中火炒 2 分钟出汁，加番茄酱和白糖。",
+      "倒回鸡蛋，加盐翻匀，汤汁略收即撒葱花出锅。"
+    ],
+    "tips": "鸡蛋八分熟就盛出，回锅后才嫩；番茄不够熟时用番茄酱补足酸甜。"
+  },
+  {
+    "key": "cn-home-cola-wings",
+    "name": "可乐鸡翅",
+    "alias": "Coca-Cola Chicken Wings",
+    "cuisine": "cn-home",
+    "course": "main",
+    "tags": [
+      "kids",
+      "classic"
+    ],
+    "time_min": 35,
+    "servings": 2,
+    "difficulty": 1,
+    "spice": 0,
+    "description": "可乐收成焦糖色浓汁，鸡翅甜咸软嫩，小朋友最爱。",
+    "ingredients": "鸡翅中 10个, 可乐 330ml, 姜 3片, 葱 2段, 生抽 2勺, 老抽 半勺, 料酒 1勺, 食用油 1勺",
+    "steps": [
+      "鸡翅两面各划两刀，冷水下锅加料酒，水开后煮 2 分钟捞出洗净。",
+      "锅中少油，鸡翅皮朝下中小火煎至两面金黄。",
+      "下姜片葱段炒香，加生抽、老抽翻匀上色。",
+      "倒入可乐没过鸡翅，大火烧开转中小火炖 15 分钟。",
+      "开大火收汁，不停翻动至汤汁浓稠挂满鸡翅即可。"
+    ],
+    "tips": "用普通可乐别用无糖款，代糖收不出浓汁；收汁最后阶段要守着防糊。"
+  },
+  {
+    "key": "cn-home-braised-pork",
+    "name": "红烧肉",
+    "alias": "Hongshao Rou / Red-Braised Pork Belly",
+    "cuisine": "cn-home",
+    "course": "main",
+    "tags": [
+      "classic",
+      "party"
+    ],
+    "time_min": 90,
+    "servings": 4,
+    "difficulty": 3,
+    "spice": 0,
+    "description": "红亮油润、肥而不腻，入口即化的五花肉配一碗白米饭。",
+    "ingredients": "带皮五花肉 600g, 冰糖 30g, 姜 4片, 葱 3段, 八角 2个, 桂皮 1小段, 香叶 2片, 料酒 2勺, 生抽 2勺, 老抽 1勺, 盐 适量",
+    "steps": [
+      "五花肉切 3cm 方块，冷水下锅加料酒焯 3 分钟，捞出洗净沥干。",
+      "锅中不放油，下肉块中火煸 5 分钟，逼出油脂、表面微黄后盛出。",
+      "留少许油，放冰糖小火炒至枣红色起大泡，立刻倒入肉块翻炒上色。",
+      "加葱姜、八角、桂皮、香叶、生抽、老抽炒香，倒入没过肉的开水。",
+      "大火烧开转小火加盖炖 60 分钟，中途翻动一次防粘锅。",
+      "开盖加盐调味，大火收汁至红亮浓稠即可。"
+    ],
+    "tips": "加水一定用开水，冷水会让肉收紧变柴；怕炒糖色失败可直接用冰糖加老抽。"
+  },
+  {
+    "key": "cn-home-sweet-sour-ribs",
+    "name": "糖醋排骨",
+    "alias": "Tangcu Paigu / Sweet and Sour Ribs",
+    "cuisine": "cn-home",
+    "course": "main",
+    "tags": [
+      "classic",
+      "kids",
+      "party"
+    ],
+    "time_min": 50,
+    "servings": 3,
+    "difficulty": 2,
+    "spice": 0,
+    "description": "酸甜浓郁的糖醋汁裹住每一块排骨，外焦里嫩、红亮诱人。",
+    "ingredients": "猪肋排 500g, 姜 3片, 料酒 1勺, 生抽 2勺, 香醋 3勺, 白糖 4勺, 清水 5勺, 老抽 半勺, 熟白芝麻 少许, 食用油 适量",
+    "steps": [
+      "排骨剁 4cm 段，冷水下锅加姜片料酒焯水，捞出洗净沥干。",
+      "少油中火把排骨煎到两面金黄。",
+      "按 1 料酒、2 生抽、3 醋、4 糖、5 水调好碗汁倒入锅中，加老抽上色。",
+      "补开水没过排骨，大火烧开转小火炖 25 分钟。",
+      "大火收汁，汤汁变稠冒大泡时翻匀，撒白芝麻出锅。"
+    ],
+    "tips": "记住口诀「1 料酒 2 生抽 3 醋 4 糖 5 水」；起锅前再淋半勺醋，酸味更鲜亮。"
+  },
+  {
+    "key": "cn-home-hot-sour-potato",
+    "name": "酸辣土豆丝",
+    "alias": "Suanla Tudousi / Hot and Sour Shredded Potato",
+    "cuisine": "cn-home",
+    "course": "side",
+    "tags": [
+      "spicy",
+      "vegetarian",
+      "quick",
+      "classic"
+    ],
+    "time_min": 20,
+    "servings": 2,
+    "difficulty": 2,
+    "spice": 1,
+    "description": "根根爽脆，醋香和干辣椒香一起冲出来，最下饭的素菜。",
+    "ingredients": "土豆 2个, 青椒 1个, 干辣椒 4个, 花椒 10粒, 蒜 2瓣, 白醋 2勺, 盐 适量, 食用油 2勺",
+    "steps": [
+      "土豆去皮切细丝，泡清水反复冲洗至水清，沥干。",
+      "青椒切丝，干辣椒剪段，蒜切片。",
+      "热锅凉油小火炸花椒至变黑捞出，下干辣椒和蒜片炒香。",
+      "转大火下土豆丝快炒 1 分钟，沿锅边淋 1 勺白醋。",
+      "加青椒丝和盐，再淋 1 勺醋，翻炒 30 秒断生即出锅。"
+    ],
+    "tips": "洗掉淀粉才脆；醋沿热锅边淋下激出香气，分两次放更酸爽。"
+  },
+  {
+    "key": "cn-home-garlic-broccoli",
+    "name": "蒜蓉西兰花",
+    "alias": "Garlic Broccoli",
+    "cuisine": "cn-home",
+    "course": "side",
+    "tags": [
+      "quick",
+      "vegetarian",
+      "healthy"
+    ],
+    "time_min": 15,
+    "servings": 2,
+    "difficulty": 1,
+    "spice": 0,
+    "description": "翠绿脆嫩，满满蒜香，清爽解腻的减脂桌常客。",
+    "ingredients": "西兰花 1颗, 蒜 6瓣, 生抽 1小勺, 盐 适量, 淀粉水 少许, 食用油 1勺",
+    "steps": [
+      "西兰花切小朵，淡盐水泡 10 分钟后冲净。",
+      "开水加少许盐和油，下西兰花焯 1 分钟，捞出过凉水沥干。",
+      "蒜剁成末，热油小火炒一半蒜末至微黄出香。",
+      "下西兰花大火翻炒 1 分钟，加盐、生抽和剩余蒜末。",
+      "淋少许淀粉水勾薄芡，汁亮即出锅。"
+    ],
+    "tips": "焯水加油盐能保持翠绿；蒜末分两次放，熟蒜香和生蒜辛香都有。"
+  },
+  {
+    "key": "cn-home-egg-fried-rice",
+    "name": "蛋炒饭",
+    "alias": "Egg Fried Rice",
+    "cuisine": "cn-home",
+    "course": "staple",
+    "tags": [
+      "quick",
+      "classic",
+      "kids"
+    ],
+    "time_min": 15,
+    "servings": 1,
+    "difficulty": 1,
+    "spice": 0,
+    "description": "粒粒分明、颗颗裹蛋，带着锅气的十分钟快手主食。",
+    "ingredients": "隔夜米饭 1碗, 鸡蛋 2个, 火腿丁 30g, 葱花 2勺, 生抽 半勺, 盐 适量, 白胡椒粉 少许, 食用油 2勺",
+    "steps": [
+      "隔夜饭用手抓散，不留结块。",
+      "鸡蛋打散，热锅多油，倒入蛋液快速划成小块盛出。",
+      "补少许油，下火腿丁炒香，倒入米饭大火翻炒 2 分钟至粒粒分明。",
+      "倒回鸡蛋，沿锅边淋生抽，加盐和白胡椒粉翻匀。",
+      "撒葱花再炒 10 秒出锅。"
+    ],
+    "tips": "用隔夜冷饭水分少才不粘；现煮的饭可摊开晾凉，冷藏 1 小时再炒。"
+  },
+  {
+    "key": "cn-home-steamed-egg",
+    "name": "蒸水蛋",
+    "alias": "Steamed Egg Custard",
+    "cuisine": "cn-home",
+    "course": "side",
+    "tags": [
+      "quick",
+      "kids",
+      "healthy"
+    ],
+    "time_min": 15,
+    "servings": 2,
+    "difficulty": 1,
+    "spice": 0,
+    "description": "表面光滑如镜，入口嫩滑似布丁，老人小孩都爱。",
+    "ingredients": "鸡蛋 2个, 温水 150ml, 盐 1小撮, 生抽 1小勺, 香油 几滴, 葱花 少许",
+    "steps": [
+      "鸡蛋加盐打散，倒入约 1.5 倍蛋液量的温水搅匀。",
+      "用滤网过筛蛋液，撇去表面气泡。",
+      "碗口盖保鲜膜或盘子，保鲜膜上扎几个小孔。",
+      "水开后放入，中小火蒸 10 分钟，关火焖 2 分钟。",
+      "出锅淋生抽、香油，撒葱花。"
+    ],
+    "tips": "蛋水比约 1:1.5，用 40℃ 左右温水；加盖防水汽滴落，表面才平滑无孔。"
+  },
+  {
+    "key": "cn-home-corn-rib-soup",
+    "name": "玉米排骨汤",
+    "alias": "Corn and Pork Rib Soup",
+    "cuisine": "cn-home",
+    "course": "soup",
+    "tags": [
+      "onepot",
+      "healthy",
+      "kids"
+    ],
+    "time_min": 100,
+    "servings": 4,
+    "difficulty": 1,
+    "spice": 0,
+    "description": "玉米的清甜融进排骨汤里，清澈鲜美，一碗暖到心底。",
+    "ingredients": "猪肋排 500g, 甜玉米 2根, 胡萝卜 1根, 姜 3片, 葱 1段, 料酒 1勺, 盐 适量, 清水 2000ml",
+    "steps": [
+      "排骨冷水下锅加料酒焯水，煮出浮沫后捞出，用温水洗净。",
+      "玉米切段，胡萝卜切滚刀块。",
+      "排骨、姜片、葱段放入汤锅，一次加足清水，大火烧开。",
+      "转小火盖盖炖 60 分钟。",
+      "加玉米和胡萝卜再炖 20 分钟，出锅前加盐调味。"
+    ],
+    "tips": "水一次加足，中途加水汤会变淡；盐最后放，排骨不易发柴。"
+  },
+  {
+    "key": "cn-home-seaweed-egg-soup",
+    "name": "紫菜蛋花汤",
+    "alias": "Seaweed Egg Drop Soup",
+    "cuisine": "cn-home",
+    "course": "soup",
+    "tags": [
+      "quick",
+      "healthy"
+    ],
+    "time_min": 10,
+    "servings": 2,
+    "difficulty": 1,
+    "spice": 0,
+    "description": "蛋花大朵飘逸，紫菜虾皮鲜香，五分钟就能上桌。",
+    "ingredients": "紫菜 1小把, 鸡蛋 1个, 虾皮 1小撮, 葱花 少许, 盐 适量, 白胡椒粉 少许, 香油 几滴, 清水 600ml",
+    "steps": [
+      "紫菜撕小块，虾皮冲洗一下，鸡蛋打散。",
+      "水烧开，放入紫菜和虾皮煮 1 分钟。",
+      "转小火，蛋液细细绕圈淋入，静置 10 秒凝固再轻轻推开。",
+      "加盐、白胡椒粉调味，撒葱花，淋香油即可。"
+    ],
+    "tips": "淋蛋液时火要小、别马上搅动，蛋花才大而漂亮。"
+  },
+  {
+    "key": "cn-home-tomato-beef-brisket",
+    "name": "番茄炖牛腩",
+    "alias": "Tomato Braised Beef Brisket",
+    "cuisine": "cn-home",
+    "course": "main",
+    "tags": [
+      "onepot",
+      "kids"
+    ],
+    "time_min": 120,
+    "servings": 4,
+    "difficulty": 2,
+    "spice": 0,
+    "description": "番茄炖成浓郁红汤，牛腩软烂入味，汤汁拌饭停不下来。",
+    "ingredients": "牛腩 600g, 番茄 4个, 洋葱 半个, 土豆 1个, 姜 3片, 番茄酱 2勺, 生抽 2勺, 冰糖 10g, 料酒 1勺, 盐 适量",
+    "steps": [
+      "牛腩切 3cm 块，冷水下锅加料酒焯水，捞出洗净。",
+      "番茄去皮切块，洋葱切丝，土豆切块。",
+      "热油炒香姜片和洋葱，下一半番茄炒成糊，加番茄酱炒出红油。",
+      "放牛腩翻炒，加生抽、冰糖和没过食材的开水，小火炖 80 分钟。",
+      "加土豆和剩余番茄再炖 20 分钟，加盐，大火收至汤汁浓稠。"
+    ],
+    "tips": "番茄分两次放，一次炖化出味、一次保留口感；高压锅压 25 分钟可省时。"
+  },
+  {
+    "key": "cn-home-braised-eggplant",
+    "name": "红烧茄子",
+    "alias": "Braised Eggplant",
+    "cuisine": "cn-home",
+    "course": "main",
+    "tags": [
+      "vegetarian",
+      "quick"
+    ],
+    "time_min": 25,
+    "servings": 2,
+    "difficulty": 2,
+    "spice": 0,
+    "description": "外皮微焦、内里软糯，裹满咸甜酱汁，比肉还下饭。",
+    "ingredients": "长茄子 2根, 青红椒 各半个, 蒜 4瓣, 生抽 2勺, 老抽 半勺, 白糖 1小勺, 香醋 1勺, 淀粉 2勺, 清水 3勺, 盐 少许, 食用油 适量",
+    "steps": [
+      "茄子切滚刀块，撒少许盐腌 10 分钟，挤出水分后拍上薄薄一层淀粉。",
+      "锅中油稍多，中火把茄子煎至表面金黄变软，盛出。",
+      "生抽、老抽、糖、醋、1 小勺淀粉和清水调成碗汁。",
+      "留底油炒香蒜末，下茄子和青红椒块，倒入碗汁大火翻炒至汁浓即可。"
+    ],
+    "tips": "茄子腌盐拍粉后不吸油；空气炸锅 200℃ 烤 12 分钟可代替油煎。"
+  },
+  {
+    "key": "cn-sichuan-kung-pao-chicken",
+    "name": "宫保鸡丁",
+    "alias": "Kung Pao Chicken",
+    "cuisine": "cn-sichuan",
+    "course": "main",
+    "tags": [
+      "spicy",
+      "classic",
+      "quick"
+    ],
+    "time_min": 25,
+    "servings": 2,
+    "difficulty": 2,
+    "spice": 1,
+    "description": "糊辣荔枝味，鸡丁嫩滑、花生酥脆，酸甜微辣超下饭。",
+    "ingredients": "鸡腿肉 300g, 花生米 50g, 干辣椒 8个, 花椒 1小勺, 葱白 2根, 姜蒜末 各1勺, 生抽 2勺, 香醋 2勺, 白糖 1.5勺, 料酒 1勺, 淀粉 2小勺, 食用油 适量",
+    "steps": [
+      "鸡腿去骨切 1.5cm 丁，加料酒、1 勺生抽、1 小勺淀粉抓匀腌 10 分钟。",
+      "剩余生抽、醋、糖、1 小勺淀粉加 3 勺水调成碗汁。",
+      "冷油下花生米小火炸至微响变色，捞出晾凉更脆。",
+      "留底油小火炒花椒、干辣椒段至棕红，转大火下鸡丁炒至变白。",
+      "下葱白段和姜蒜末炒香，倒入碗汁翻匀收汁。",
+      "关火拌入花生米出锅。"
+    ],
+    "tips": "糖醋比例约 1:1 才是酸甜的荔枝口；花生最后放，保持酥脆。"
+  },
+  {
+    "key": "cn-sichuan-boiled-fish",
+    "name": "水煮鱼",
+    "alias": "Shuizhu Yu / Sichuan Boiled Fish",
+    "cuisine": "cn-sichuan",
+    "course": "main",
+    "tags": [
+      "spicy",
+      "party",
+      "classic"
+    ],
+    "time_min": 45,
+    "servings": 3,
+    "difficulty": 3,
+    "spice": 3,
+    "description": "滚油泼出满屋麻辣香，鱼片滑嫩如豆花，下面铺着脆豆芽。",
+    "ingredients": "草鱼 1条, 豆芽 200g, 郫县豆瓣酱 2勺, 干辣椒 15个, 花椒 2勺, 姜蒜末 各1勺, 蛋清 1个, 淀粉 1勺, 料酒 1勺, 盐 适量, 白胡椒粉 少许, 食用油 100ml",
+    "steps": [
+      "鱼片成薄片，加盐、料酒、白胡椒、蛋清抓匀，再拌淀粉腌 15 分钟。",
+      "豆芽焯熟铺在大碗底。",
+      "热油炒香豆瓣酱、姜蒜和一半花椒辣椒，下鱼骨略煎，加开水煮 5 分钟。",
+      "鱼骨捞入碗中，转小火逐片下鱼片，变白即连汤倒入碗里。",
+      "表面铺剩余干辣椒段、花椒和蒜末。",
+      "烧热 100ml 油至冒烟，浇在辣椒上激出香味。"
+    ],
+    "tips": "怕刺可换巴沙鱼或黑鱼片；下鱼片时汤保持微开，鱼片才嫩不散。"
+  },
+  {
+    "key": "cn-sichuan-twice-cooked-pork",
+    "name": "回锅肉",
+    "alias": "Huiguo Rou / Twice-Cooked Pork",
+    "cuisine": "cn-sichuan",
+    "course": "main",
+    "tags": [
+      "spicy",
+      "classic"
+    ],
+    "time_min": 40,
+    "servings": 2,
+    "difficulty": 2,
+    "spice": 2,
+    "description": "肉片煸成灯盏窝，豆瓣酱香浓、蒜苗清香，川菜之首。",
+    "ingredients": "带皮五花肉 400g, 蒜苗 3根, 青椒 1个, 郫县豆瓣酱 1勺, 甜面酱 1小勺, 豆豉 1小勺, 白糖 半勺, 姜 3片, 花椒 10粒, 料酒 1勺",
+    "steps": [
+      "整块肉冷水下锅，加姜片、花椒、料酒煮 20 分钟，筷子能扎透即捞出。",
+      "晾凉后切 2mm 薄片，蒜苗斜切段，青椒切块。",
+      "锅中少油，下肉片中小火煸到出油、肉片卷起成灯盏窝。",
+      "把肉拨到一边，下豆瓣酱炒出红油，加甜面酱和豆豉炒香。",
+      "与肉片翻匀，加糖，下青椒和蒜苗大火炒 30 秒即出锅。"
+    ],
+    "tips": "肉煮好放凉或冷藏后再切，片才薄而不散；没有蒜苗可用蒜苔或洋葱。"
+  },
+  {
+    "key": "cn-sichuan-chongqing-chicken",
+    "name": "辣子鸡",
+    "alias": "Laziji / Chongqing Chili Chicken",
+    "cuisine": "cn-sichuan",
+    "course": "main",
+    "tags": [
+      "spicy",
+      "party",
+      "airfryer"
+    ],
+    "time_min": 45,
+    "servings": 3,
+    "difficulty": 3,
+    "spice": 3,
+    "description": "在辣椒堆里找鸡丁，外酥里嫩、麻辣干香，越嚼越香。",
+    "ingredients": "鸡腿 3个, 干辣椒 60g, 花椒 2勺, 姜蒜片 各1勺, 熟白芝麻 1勺, 料酒 1勺, 生抽 1勺, 盐 半小勺, 白糖 1小勺, 淀粉 1勺, 食用油 适量",
+    "steps": [
+      "鸡腿去骨切 2cm 小块，加料酒、生抽、盐、姜片和淀粉腌 15 分钟。",
+      "干辣椒剪段，抖掉辣椒籽。",
+      "油烧至六成热下鸡块炸 3 分钟捞出，升高油温复炸 1 分钟至表面酥脆。",
+      "留底油小火炒花椒和姜蒜片，下干辣椒炒到棕红酥香。",
+      "倒入鸡块大火翻炒，加糖和芝麻炒匀出锅。"
+    ],
+    "tips": "炒辣椒全程小火，变色立刻下鸡块防糊；空气炸锅 200℃ 烤 15 分钟可代替油炸。"
+  },
+  {
+    "key": "cn-sichuan-stir-fried-beef",
+    "name": "小炒黄牛肉",
+    "alias": "Hunan Stir-Fried Beef",
+    "cuisine": "cn-sichuan",
+    "course": "main",
+    "tags": [
+      "spicy",
+      "quick",
+      "classic"
+    ],
+    "time_min": 20,
+    "servings": 2,
+    "difficulty": 2,
+    "spice": 3,
+    "description": "湘菜招牌，牛肉嫩到滑口，小米辣和芹菜香辣冲鼻。",
+    "ingredients": "牛里脊 300g, 小米辣 6个, 杭椒 3个, 芹菜 2根, 姜蒜末 各1勺, 生抽 1勺, 蚝油 1勺, 料酒 1勺, 淀粉 1小勺, 食用油 适量",
+    "steps": [
+      "牛肉逆纹切薄片，加生抽、料酒、淀粉和 1 勺油抓匀腌 10 分钟。",
+      "小米辣、杭椒切圈，芹菜切段。",
+      "锅烧到冒烟，宽油下牛肉大火滑炒 20 秒至变色，立即盛出。",
+      "留底油炒香姜蒜和辣椒圈，下芹菜炒至断生。",
+      "倒回牛肉，加蚝油大火翻炒 10 秒出锅。"
+    ],
+    "tips": "牛肉逆纹切、大火短炒才嫩；出锅前加一把香菜段更有湘菜味。"
+  },
+  {
+    "key": "cn-sichuan-chopped-chili-fish-head",
+    "name": "剁椒鱼头",
+    "alias": "Duojiao Yutou / Steamed Fish Head with Chopped Chili",
+    "cuisine": "cn-sichuan",
+    "course": "main",
+    "tags": [
+      "spicy",
+      "party",
+      "classic"
+    ],
+    "time_min": 35,
+    "servings": 3,
+    "difficulty": 2,
+    "spice": 3,
+    "description": "红艳剁椒铺满鱼头，鲜辣咸香，汤汁拌面是精华。",
+    "ingredients": "胖头鱼头 1个, 剁椒 4勺, 姜 5片, 葱 3根, 蒜末 2勺, 蒸鱼豉油 2勺, 料酒 1勺, 白糖 1小勺, 盐 少许, 食用油 3勺",
+    "steps": [
+      "鱼头对半劈开洗净，抹料酒和少许盐，盘底铺姜片和葱段。",
+      "剁椒加一半蒜末、糖和 1 勺油拌匀，均匀铺满鱼头表面。",
+      "水开后上锅大火蒸 12 分钟，关火焖 2 分钟。",
+      "倒掉部分蒸出的汤水，淋蒸鱼豉油，撒葱花和剩余蒜末。",
+      "烧热 3 勺油浇上去激香即可。"
+    ],
+    "tips": "剁椒咸度不一，先尝再决定加不加盐；吃完鱼头，下一把面条拌汤汁。"
+  },
+  {
+    "key": "cn-sichuan-mapo-tofu",
+    "name": "麻婆豆腐",
+    "alias": "Mapo Tofu",
+    "cuisine": "cn-sichuan",
+    "course": "main",
+    "tags": [
+      "spicy",
+      "classic",
+      "quick"
+    ],
+    "time_min": 25,
+    "servings": 2,
+    "difficulty": 2,
+    "spice": 2,
+    "description": "麻辣鲜香烫，嫩豆腐裹着牛肉末和红油，下饭神器。",
+    "ingredients": "嫩豆腐 1盒, 牛肉末 100g, 郫县豆瓣酱 1.5勺, 花椒粉 1小勺, 蒜末 1勺, 姜末 1小勺, 生抽 1勺, 淀粉水 适量, 葱花 少许",
+    "steps": [
+      "豆腐切 2cm 小块，放入加了少许盐的开水里焯 1 分钟，捞出备用。",
+      "少油把牛肉末炒散炒干至酥香。",
+      "下豆瓣酱小火炒出红油，加姜蒜末炒香。",
+      "加 200ml 开水和生抽烧开，放入豆腐，轻推煮 3 分钟入味。",
+      "分两次淋淀粉水勾芡，让汤汁挂住豆腐。",
+      "出锅撒花椒粉和葱花。"
+    ],
+    "tips": "豆腐焯盐水能去豆腥味、不易碎；勾芡分两次，汁更挂得住。"
+  },
+  {
+    "key": "cn-sichuan-yuxiang-pork",
+    "name": "鱼香肉丝",
+    "alias": "Yuxiang Rousi / Fish-Fragrant Pork",
+    "cuisine": "cn-sichuan",
+    "course": "main",
+    "tags": [
+      "spicy",
+      "classic",
+      "quick"
+    ],
+    "time_min": 25,
+    "servings": 2,
+    "difficulty": 2,
+    "spice": 1,
+    "description": "没有鱼却有鱼香，酸甜咸辣四味平衡，肉丝滑嫩。",
+    "ingredients": "猪里脊 250g, 泡发木耳 1把, 胡萝卜 半根, 郫县豆瓣酱 1勺, 葱姜蒜末 各1勺, 生抽 1勺, 香醋 2勺, 白糖 2勺, 料酒 1勺, 淀粉 2小勺, 盐 少许, 食用油 适量",
+    "steps": [
+      "里脊切细丝，加料酒、少许盐、1 小勺淀粉和 1 勺油抓匀腌 10 分钟。",
+      "木耳、胡萝卜切丝。",
+      "糖、醋、生抽、1 小勺淀粉加 3 勺水调成鱼香汁。",
+      "热油滑散肉丝至变白盛出。",
+      "留油炒豆瓣酱出红油，下葱姜蒜炒香，加木耳和胡萝卜炒 1 分钟。",
+      "倒回肉丝，淋鱼香汁大火翻匀收汁。"
+    ],
+    "tips": "糖醋 1:1 是鱼香的灵魂；有四川泡椒剁碎代替豆瓣酱更正宗。"
+  },
+  {
+    "key": "cn-sichuan-farmer-pork",
+    "name": "农家小炒肉",
+    "alias": "Hunan Farmhouse Stir-Fried Pork",
+    "cuisine": "cn-sichuan",
+    "course": "main",
+    "tags": [
+      "spicy",
+      "quick",
+      "classic"
+    ],
+    "time_min": 20,
+    "servings": 2,
+    "difficulty": 2,
+    "spice": 3,
+    "description": "虎皮辣椒配焦香肉片，咸鲜香辣，湖南人的米饭杀手。",
+    "ingredients": "五花肉 250g, 螺丝椒 3个, 小米辣 3个, 蒜 4瓣, 豆豉 1小勺, 生抽 1勺, 老抽 少许, 蚝油 1勺, 盐 少许, 食用油 1勺",
+    "steps": [
+      "猪肉切薄片，肥瘦分开；辣椒斜切圈，蒜切片。",
+      "干锅不放油，下辣椒中火煸到起虎皮、变软后盛出。",
+      "锅中少油，先下肥肉煸出油，再下瘦肉炒至边缘微焦。",
+      "加蒜片和豆豉炒香，淋生抽、老抽上色。",
+      "倒回辣椒，加蚝油和盐大火翻炒 30 秒出锅。"
+    ],
+    "tips": "辣椒干煸出虎皮才香；肉要炒到微焦出油，这道菜的香气全靠它。"
+  },
+  {
+    "key": "cn-sichuan-mouthwatering-chicken",
+    "name": "口水鸡",
+    "alias": "Koushui Ji / Mouthwatering Chicken",
+    "cuisine": "cn-sichuan",
+    "course": "side",
+    "tags": [
+      "spicy",
+      "party"
+    ],
+    "time_min": 50,
+    "servings": 3,
+    "difficulty": 2,
+    "spice": 2,
+    "description": "鸡肉皮爽肉嫩，泡在麻辣红油汁里，光听名字就流口水。",
+    "ingredients": "鸡腿 2个, 姜 3片, 葱 2段, 料酒 1勺, 辣椒油 3勺, 花椒粉 1小勺, 生抽 3勺, 香醋 1勺, 白糖 1勺, 蒜末 2勺, 熟花生碎 1勺, 熟白芝麻 1勺, 香菜 少许",
+    "steps": [
+      "鸡腿冷水下锅，加姜葱和料酒，水开后小火煮 15 分钟，关火焖 10 分钟。",
+      "捞出立刻泡进冰水 10 分钟，鸡皮更脆弹。",
+      "生抽、醋、糖、蒜末、辣椒油、花椒粉加 2 勺煮鸡汤调成料汁。",
+      "鸡腿斩块或撕条装盘，淋满料汁，撒花生碎、芝麻和香菜。"
+    ],
+    "tips": "焖熟比一直煮更嫩；料汁里加两勺鸡汤，鲜味翻倍。"
+  },
+  {
+    "key": "cn-canton-white-cut-chicken",
+    "name": "白切鸡",
+    "alias": "Baiqie Ji / Cantonese Poached Chicken",
+    "cuisine": "cn-canton",
+    "course": "main",
+    "tags": [
+      "classic",
+      "party",
+      "healthy"
+    ],
+    "time_min": 50,
+    "servings": 4,
+    "difficulty": 2,
+    "spice": 0,
+    "description": "皮爽肉滑、原汁原味，蘸一口姜葱蓉，吃的就是鸡的鲜。",
+    "ingredients": "三黄鸡 1只, 姜 1块, 葱 4根, 盐 适量, 生抽 2勺, 花生油 3勺, 冰块 1盆",
+    "steps": [
+      "鸡洗净，一大锅水加姜片葱段烧开，转小火保持微沸。",
+      "提着鸡浸入热水 10 秒再提起，重复 3 次，让腔内外受热一致。",
+      "整只放入，小火保持水面冒小泡浸 18 分钟，关火再焖 10 分钟。",
+      "筷子扎腿根无血水即捞出，立刻泡冰水 10 分钟。",
+      "姜葱剁蓉加盐，浇上烧热的花生油做蘸料。",
+      "鸡斩块装盘，配姜葱蓉和生抽食用。"
+    ],
+    "tips": "水不能大滚，「浸」熟皮才不破；冰水急冷让鸡皮爽脆、肉质紧实。"
+  },
+  {
+    "key": "cn-canton-black-bean-ribs",
+    "name": "豉汁蒸排骨",
+    "alias": "Steamed Spare Ribs with Black Bean Sauce",
+    "cuisine": "cn-canton",
+    "course": "main",
+    "tags": [
+      "classic",
+      "healthy"
+    ],
+    "time_min": 55,
+    "servings": 2,
+    "difficulty": 1,
+    "spice": 0,
+    "description": "早茶经典，豉香蒜香浓郁，排骨滑嫩多汁，蒸出来零失败。",
+    "ingredients": "猪肋排 400g, 阳江豆豉 1勺, 蒜末 2勺, 生抽 1勺, 蚝油 1勺, 白糖 1小勺, 淀粉 1勺, 花生油 1勺, 红椒 少许, 葱花 少许",
+    "steps": [
+      "排骨剁小块，清水泡 15 分钟去血水，挤干水分。",
+      "豆豉剁碎，与一半蒜末用少量油小火炒香。",
+      "排骨加炒好的豉蒜、剩余生蒜末、生抽、蚝油、糖抓匀，再拌淀粉和花生油腌 20 分钟。",
+      "平铺在盘里，水开后大火蒸 15 分钟。",
+      "撒葱花和红椒圈即可。"
+    ],
+    "tips": "排骨平铺不叠放才熟得均匀；拌淀粉再封油，蒸出来滑嫩不柴。"
+  },
+  {
+    "key": "cn-canton-claypot-rice",
+    "name": "腊味煲仔饭",
+    "alias": "Claypot Rice with Chinese Sausage",
+    "cuisine": "cn-canton",
+    "course": "staple",
+    "tags": [
+      "classic",
+      "onepot"
+    ],
+    "time_min": 60,
+    "servings": 2,
+    "difficulty": 3,
+    "spice": 0,
+    "description": "腊肠油脂渗进米饭，底下一层焦香锅巴，淋汁拌开香到邻居。",
+    "ingredients": "大米 200g, 广式腊肠 2根, 腊肉 50g, 菜心 4棵, 鸡蛋 1个, 生抽 2勺, 老抽 半勺, 蚝油 1小勺, 白糖 1小勺, 花生油 2勺",
+    "steps": [
+      "大米泡 30 分钟，砂锅内壁刷一层油。",
+      "米和水按 1:1.2 入锅，大火煮开转中小火 8 分钟，至水快收干、表面出小孔。",
+      "铺上腊肠腊肉片，可打一个鸡蛋，盖盖小火焖 10 分钟。",
+      "沿锅边淋一圈油，转动砂锅让四周受热，小火 3 分钟煎出锅巴。",
+      "关火焖 5 分钟，菜心焯熟摆上。",
+      "生抽、老抽、蚝油、糖加 2 勺热水调汁，淋上拌匀。"
+    ],
+    "tips": "听到锅底噼啪声就是锅巴成型；没有砂锅可用铸铁锅，或电饭煲煮好再煎底。"
+  },
+  {
+    "key": "cn-canton-beef-chow-fun",
+    "name": "干炒牛河",
+    "alias": "Beef Chow Fun",
+    "cuisine": "cn-canton",
+    "course": "staple",
+    "tags": [
+      "classic",
+      "quick"
+    ],
+    "time_min": 25,
+    "servings": 2,
+    "difficulty": 3,
+    "spice": 0,
+    "description": "镬气十足，河粉油亮不断、根根分明，牛肉嫩滑。",
+    "ingredients": "新鲜河粉 400g, 牛里脊 150g, 绿豆芽 100g, 韭黄 1把, 洋葱 半个, 生抽 2勺, 老抽 1勺, 蚝油 半勺, 料酒 1勺, 淀粉 1小勺, 白糖 半小勺, 食用油 适量",
+    "steps": [
+      "牛肉切薄片，加 1 勺生抽、料酒、淀粉和油腌 10 分钟。",
+      "河粉用手轻轻撕散，不要硬掰。",
+      "锅烧到冒烟，下牛肉滑炒至七成熟盛出。",
+      "补油炒洋葱和豆芽 30 秒，下河粉，用筷子挑散翻炒。",
+      "加老抽、剩余生抽、蚝油和糖，用锅铲推着翻，至河粉均匀上色。",
+      "倒回牛肉和韭黄段，大火翻匀 30 秒出锅。"
+    ],
+    "tips": "锅要够热、油要够，河粉才不粘有镬气；河粉太硬可微波 30 秒再撕开。"
+  },
+  {
+    "key": "cn-canton-char-siu",
+    "name": "蜜汁叉烧",
+    "alias": "Char Siu / Honey BBQ Pork",
+    "cuisine": "cn-canton",
+    "course": "main",
+    "tags": [
+      "oven",
+      "airfryer",
+      "kids",
+      "classic"
+    ],
+    "time_min": 60,
+    "servings": 4,
+    "difficulty": 2,
+    "spice": 0,
+    "description": "蜜汁红亮带焦边，咸甜软嫩，切片配饭或夹包都完美。",
+    "ingredients": "梅花肉 600g, 叉烧酱 4勺, 生抽 1勺, 蚝油 1勺, 蜂蜜 3勺, 料酒 1勺, 蒜末 1勺, 红腐乳汁 1勺",
+    "steps": [
+      "梅花肉顺纹切成 3cm 厚长条，用叉子扎些小孔。",
+      "叉烧酱、生抽、蚝油、1 勺蜂蜜、料酒、蒜末和腐乳汁拌匀，抹匀肉条。",
+      "装袋冷藏腌制至少 4 小时，最好过夜。",
+      "烤箱 200℃ 烤 20 分钟，翻面刷腌料再烤 15 分钟。",
+      "剩余蜂蜜加少许温水刷满表面，230℃ 烤 5 分钟出焦边。",
+      "静置 5 分钟后切片。"
+    ],
+    "tips": "时间不含腌制；空气炸锅 180℃ 两面各 12 分钟同样可行。"
+  },
+  {
+    "key": "cn-canton-steamed-sea-bass",
+    "name": "清蒸鲈鱼",
+    "alias": "Cantonese Steamed Sea Bass",
+    "cuisine": "cn-canton",
+    "course": "main",
+    "tags": [
+      "healthy",
+      "quick",
+      "classic",
+      "party"
+    ],
+    "time_min": 25,
+    "servings": 2,
+    "difficulty": 2,
+    "spice": 0,
+    "description": "鱼肉雪白细嫩如豆腐，热油激出葱香，鲜到不需要多余调味。",
+    "ingredients": "鲈鱼 1条, 姜 1块, 葱 4根, 蒸鱼豉油 3勺, 料酒 1勺, 红椒丝 少许, 食用油 3勺",
+    "steps": [
+      "鲈鱼去鳞去内脏洗净，背部两侧各划三刀，抹料酒。",
+      "盘底铺姜片和葱段，放上鱼，鱼肚里也塞姜葱，鱼下垫两根筷子透气。",
+      "水大开后放入，大火蒸 8 分钟，关火焖 2 分钟。",
+      "倒掉盘中腥水，取出姜葱，铺上新鲜葱丝、姜丝和红椒丝。",
+      "淋蒸鱼豉油，浇上烧到冒烟的热油即可。"
+    ],
+    "tips": "600g 左右的鱼蒸 8 分钟，每多 100g 加 1 分钟；蒸出的汤水腥，一定倒掉。"
+  },
+  {
+    "key": "cn-canton-blanched-choy-sum",
+    "name": "白灼菜心",
+    "alias": "Blanched Choy Sum",
+    "cuisine": "cn-canton",
+    "course": "side",
+    "tags": [
+      "quick",
+      "vegetarian",
+      "healthy"
+    ],
+    "time_min": 10,
+    "servings": 2,
+    "difficulty": 1,
+    "spice": 0,
+    "description": "翠绿爽脆、清甜多汁，一勺热油蒜香，粤菜桌上的标配青菜。",
+    "ingredients": "菜心 300g, 蒜 3瓣, 生抽 2勺, 白糖 半小勺, 盐 少许, 食用油 2勺",
+    "steps": [
+      "菜心择去老叶，粗茎可从底部切十字。",
+      "一锅水加盐和几滴油烧开，下菜心焯 40 秒到 1 分钟，颜色翠绿即捞出。",
+      "沥干码盘，生抽、糖加 2 勺开水调匀淋上。",
+      "蒜末铺在菜心上，浇烧热的油激香。"
+    ],
+    "tips": "焯水宁短勿长，菜心才脆甜；同样做法也适合生菜和芥蓝。"
+  },
+  {
+    "key": "cn-canton-century-egg-congee",
+    "name": "皮蛋瘦肉粥",
+    "alias": "Century Egg and Pork Congee",
+    "cuisine": "cn-canton",
+    "course": "breakfast",
+    "tags": [
+      "classic",
+      "healthy",
+      "onepot"
+    ],
+    "time_min": 75,
+    "servings": 3,
+    "difficulty": 1,
+    "spice": 0,
+    "description": "米粒熬到开花绵滑，皮蛋鲜香、肉片嫩滑，暖胃的广式早餐。",
+    "ingredients": "大米 100g, 猪里脊 150g, 皮蛋 2个, 姜 3片, 淀粉 1小勺, 葱花 少许, 盐 适量, 白胡椒粉 少许, 香油 几滴, 食用油 1小勺, 清水 1500ml",
+    "steps": [
+      "大米洗净，加食用油和少许盐拌匀浸 30 分钟。",
+      "里脊切片，加盐和淀粉腌 15 分钟；皮蛋切小丁，姜切丝。",
+      "水开后下米和一半皮蛋，大火煮开转小火熬 40 分钟，期间搅拌防粘底。",
+      "粥变绵稠后下肉片、剩余皮蛋和姜丝，煮 3 分钟至肉片变白。",
+      "加盐、白胡椒粉调味，撒葱花，淋香油。"
+    ],
+    "tips": "一半皮蛋早放熬化，粥更鲜滑；洗好的米冷冻一晚再煮，更快开花。"
+  },
+  {
+    "key": "cn-canton-coconut-chicken",
+    "name": "椰子鸡",
+    "alias": "Coconut Chicken Hot Pot",
+    "cuisine": "cn-canton",
+    "course": "main",
+    "tags": [
+      "onepot",
+      "healthy",
+      "party"
+    ],
+    "time_min": 45,
+    "servings": 3,
+    "difficulty": 2,
+    "spice": 0,
+    "description": "纯椰子水煮鸡，汤底清甜，鸡肉嫩滑，蘸小青柑沙姜汁一绝。",
+    "ingredients": "三黄鸡 半只, 椰青 2个, 马蹄 6个, 红枣 4颗, 枸杞 少许, 姜 3片, 盐 适量, 沙姜 1小块, 小青柑 2个, 小米辣 1个, 生抽 3勺",
+    "steps": [
+      "鸡斩块，冷水下锅焯 2 分钟去血水，洗净。",
+      "椰青开口倒出椰子水，椰肉刮出切条。",
+      "椰子水、椰肉、马蹄、红枣、姜片入锅烧开，下鸡块。",
+      "小火煮 15 分钟，撇去浮沫，加枸杞和盐。",
+      "沙姜末、小米辣圈、生抽和小青柑汁调成蘸料，边涮边吃。"
+    ],
+    "tips": "只用椰子水不加清水最甜；吃完鸡可下竹荪、玉米或菜心继续涮。"
+  },
+  {
+    "key": "cn-jiangzhe-dongpo-pork",
+    "name": "东坡肉",
+    "alias": "Dongpo Pork",
+    "cuisine": "cn-jiangzhe",
+    "course": "main",
+    "tags": [
+      "classic",
+      "party",
+      "onepot"
+    ],
+    "time_min": 150,
+    "servings": 4,
+    "difficulty": 3,
+    "spice": 0,
+    "description": "黄酒慢炖出的琥珀色方肉，酥烂而形不散，肥而不腻、酒香醇厚。",
+    "ingredients": "带皮五花肉 800g, 绍兴黄酒 400ml, 冰糖 40g, 生抽 3勺, 老抽 1勺, 葱 1把, 姜 1块, 棉线 适量",
+    "steps": [
+      "五花肉冷水焯 5 分钟，洗净切 5cm 见方的块，用棉线十字捆好。",
+      "砂锅底铺满葱段和姜片，肉块皮朝下码放。",
+      "加冰糖、生抽、老抽，倒入黄酒，不加或少加水。",
+      "大火烧开后转最小火加盖炖 90 分钟。",
+      "翻面皮朝上再炖 30 分钟，开盖大火收汁至浓稠。",
+      "盛入小碗淋汤汁，再上锅蒸 20 分钟更软糯。"
+    ],
+    "tips": "以黄酒代水是东坡肉的灵魂；捆线防止炖散，上桌前剪掉。"
+  },
+  {
+    "key": "cn-jiangzhe-west-lake-fish",
+    "name": "西湖醋鱼",
+    "alias": "West Lake Vinegar Fish",
+    "cuisine": "cn-jiangzhe",
+    "course": "main",
+    "tags": [
+      "classic",
+      "party"
+    ],
+    "time_min": 30,
+    "servings": 3,
+    "difficulty": 3,
+    "spice": 0,
+    "description": "杭帮名菜，鱼肉鲜嫩带蟹味，琥珀色醋汁酸甜透亮。",
+    "ingredients": "草鱼 1条, 姜 1块, 镇江香醋 4勺, 白糖 3勺, 生抽 2勺, 料酒 1勺, 淀粉水 3勺",
+    "steps": [
+      "草鱼从背部剖成两片，鱼身斜划几刀，不要切断。",
+      "锅中水加姜片烧开，转小火放入鱼，保持微沸煮 3 分钟至熟。",
+      "捞出鱼摆盘，留 250ml 鱼汤。",
+      "鱼汤加糖、醋、生抽、料酒和姜末烧开。",
+      "淋入淀粉水勾成亮芡，浇满鱼身即可。"
+    ],
+    "tips": "鱼汆熟就停火，久煮肉会散；起锅前补一点醋，酸香更足。"
+  },
+  {
+    "key": "cn-jiangzhe-yanduxian",
+    "name": "腌笃鲜",
+    "alias": "Yan Du Xian / Bamboo Shoot and Pork Soup",
+    "cuisine": "cn-jiangzhe",
+    "course": "soup",
+    "tags": [
+      "onepot",
+      "classic",
+      "healthy"
+    ],
+    "time_min": 120,
+    "servings": 4,
+    "difficulty": 2,
+    "spice": 0,
+    "description": "咸肉的醇、鲜肉的香、春笋的鲜，熬成一锅奶白春汤。",
+    "ingredients": "咸肉 200g, 鲜五花肉 300g, 春笋 3根, 百叶结 15个, 姜 3片, 葱 1段, 料酒 1勺, 清水 2000ml",
+    "steps": [
+      "咸肉提前泡水 1 小时去咸，切块；鲜肉切块，加料酒焯水。",
+      "春笋去壳切滚刀块，焯水 3 分钟去涩味。",
+      "咸肉、鲜肉、姜葱入砂锅，加足清水大火烧开。",
+      "转小火炖 60 分钟至汤色奶白。",
+      "加春笋再炖 20 分钟，最后下百叶结煮 10 分钟。",
+      "尝味后再决定是否加盐。"
+    ],
+    "tips": "汤保持微滚才会白；没有春笋可用冬笋或冷冻笋，咸肉可换金华火腿。"
+  },
+  {
+    "key": "cn-jiangzhe-scallion-oil-noodles",
+    "name": "葱油拌面",
+    "alias": "Shanghai Scallion Oil Noodles",
+    "cuisine": "cn-jiangzhe",
+    "course": "staple",
+    "tags": [
+      "quick",
+      "classic",
+      "vegetarian"
+    ],
+    "time_min": 25,
+    "servings": 2,
+    "difficulty": 1,
+    "spice": 0,
+    "description": "焦香葱油配酱香面条，简单到极致却香得惊人。",
+    "ingredients": "细面条 200g, 小香葱 1大把, 生抽 3勺, 老抽 1勺, 白糖 1.5勺, 食用油 80ml",
+    "steps": [
+      "小葱洗净晾干，葱白葱绿分开，切 5cm 段。",
+      "冷油下葱白小火慢炸 5 分钟，再下葱绿炸至焦黄卷曲。",
+      "捞出葱，油中加生抽、老抽和糖，小火煮到冒小泡即关火。",
+      "面条煮熟捞出沥干，舀 2 勺葱油拌匀，铺上焦葱。"
+    ],
+    "tips": "全程小火，葱慢慢炸干才香不苦；葱油装瓶冷藏可放两周。"
+  },
+  {
+    "key": "cn-jiangzhe-oil-bursting-shrimp",
+    "name": "油爆虾",
+    "alias": "Shanghai Oil-Bursting Shrimp",
+    "cuisine": "cn-jiangzhe",
+    "course": "main",
+    "tags": [
+      "classic",
+      "party",
+      "quick"
+    ],
+    "time_min": 25,
+    "servings": 2,
+    "difficulty": 2,
+    "spice": 0,
+    "description": "虾壳酥脆可连壳吃，裹着浓油赤酱的甜咸汁，本帮经典。",
+    "ingredients": "基围虾 400g, 姜末 1勺, 葱花 2勺, 生抽 2勺, 白糖 2勺, 香醋 1小勺, 料酒 1勺, 食用油 适量",
+    "steps": [
+      "虾剪去虾须和虾枪，洗净后用厨房纸彻底吸干水分。",
+      "油烧至七成热，下虾炸 40 秒捞出。",
+      "油温再升高，下虾复炸 20 秒至壳酥脆。",
+      "留底油炒香姜末，加生抽、糖、醋、料酒和 1 勺水熬至冒泡。",
+      "倒入虾大火翻匀裹满糖汁，撒葱花出锅。"
+    ],
+    "tips": "复炸让虾壳酥到能连壳吃；虾身一定吸干，下锅才不溅油。"
+  },
+  {
+    "key": "cn-jiangzhe-longjing-shrimp",
+    "name": "龙井虾仁",
+    "alias": "Longjing Tea Shrimp",
+    "cuisine": "cn-jiangzhe",
+    "course": "main",
+    "tags": [
+      "quick",
+      "healthy",
+      "party"
+    ],
+    "time_min": 30,
+    "servings": 2,
+    "difficulty": 2,
+    "spice": 0,
+    "description": "虾仁白嫩晶莹，带着淡淡龙井茶香，清雅鲜甜。",
+    "ingredients": "鲜虾仁 250g, 龙井茶叶 3g, 蛋清 1个, 淀粉 1勺, 盐 半小勺, 料酒 1小勺, 食用油 适量",
+    "steps": [
+      "虾仁去虾线，用少许淀粉抓洗后冲净，吸干水分。",
+      "加盐、蛋清抓到起胶，再拌淀粉，冷藏 15 分钟。",
+      "龙井用 100ml 约 80℃ 的热水泡开，茶汤和茶叶分开。",
+      "油四成热下虾仁滑散，变白立刻捞出。",
+      "留底油下虾仁和茶叶，淋料酒和 2 勺茶汤，翻炒 20 秒出锅。"
+    ],
+    "tips": "油温低一点虾仁才白嫩；茶叶用明前龙井最香，碧螺春也可替代。"
+  },
+  {
+    "key": "cn-jiangzhe-shepherd-purse-wonton",
+    "name": "荠菜鲜肉馄饨",
+    "alias": "Shepherd's Purse and Pork Wontons",
+    "cuisine": "cn-jiangzhe",
+    "course": "staple",
+    "tags": [
+      "kids",
+      "classic"
+    ],
+    "time_min": 60,
+    "servings": 4,
+    "difficulty": 2,
+    "spice": 0,
+    "description": "野菜清香配鲜肉馅，皮薄馅大，一碗下肚满是江南味。",
+    "ingredients": "馄饨皮 400g, 猪肉末 300g, 荠菜 300g, 鸡蛋 1个, 姜末 1勺, 葱花 1勺, 生抽 1勺, 盐 1小勺, 香油 1勺, 紫菜 少许, 虾皮 少许, 猪油 1小勺",
+    "steps": [
+      "荠菜焯水 30 秒，过凉挤干切碎。",
+      "肉末加姜葱、生抽、盐和鸡蛋，分次加 50ml 清水，顺一个方向搅上劲。",
+      "拌入荠菜和香油成馅。",
+      "馄饨皮放一小勺馅，对折后两角捏拢包好。",
+      "碗里放紫菜、虾皮、少许盐和猪油；水开下馄饨，浮起后再煮 1 分钟。",
+      "连汤盛入碗中，撒葱花。"
+    ],
+    "tips": "没有荠菜可换小青菜；包好的馄饨冷冻定型后装袋，随煮随吃。"
+  },
+  {
+    "key": "cn-north-guobaorou",
+    "name": "锅包肉",
+    "alias": "Guobaorou / Dongbei Sweet and Sour Pork",
+    "cuisine": "cn-north",
+    "course": "main",
+    "tags": [
+      "classic",
+      "kids",
+      "party"
+    ],
+    "time_min": 45,
+    "servings": 3,
+    "difficulty": 3,
+    "spice": 0,
+    "description": "东北头牌，外壳咔嚓酥脆、里面肉嫩，酸甜汁挂满不回软。",
+    "ingredients": "猪里脊 400g, 土豆淀粉 150g, 清水 120ml, 胡萝卜 半根, 葱姜 各适量, 香菜 2根, 白糖 4勺, 白醋 3勺, 生抽 1勺, 料酒 1勺, 盐 少许, 食用油 适量",
+    "steps": [
+      "里脊顺纹切 5mm 厚大片，加盐和料酒腌 10 分钟。",
+      "土豆淀粉加清水泡 10 分钟，倒掉上层清水，沉淀的湿淀粉加 1 勺油调成糊。",
+      "肉片裹满糊，油六成热逐片下锅炸 2 分钟定型捞出。",
+      "油温升高复炸 30 秒至金黄酥脆。",
+      "糖、醋、生抽、盐调成汁；留底油炒葱姜和胡萝卜丝，倒入料汁熬至冒大泡。",
+      "倒入肉片和香菜段，快速翻匀出锅。"
+    ],
+    "tips": "一定用土豆淀粉，复炸才够脆；料汁熬到黏稠再下肉，裹得匀、不回软。"
+  },
+  {
+    "key": "cn-north-jingjiang-pork",
+    "name": "京酱肉丝",
+    "alias": "Jingjiang Rousi / Shredded Pork in Sweet Bean Sauce",
+    "cuisine": "cn-north",
+    "course": "main",
+    "tags": [
+      "classic",
+      "quick",
+      "kids"
+    ],
+    "time_min": 25,
+    "servings": 2,
+    "difficulty": 2,
+    "spice": 0,
+    "description": "酱香浓郁的肉丝配爽脆葱丝，用豆腐皮一卷，老北京味儿。",
+    "ingredients": "猪里脊 300g, 大葱 2根, 豆腐皮 2张, 甜面酱 2勺, 白糖 1勺, 料酒 1勺, 生抽 1勺, 淀粉 1小勺, 蛋清 半个, 食用油 适量",
+    "steps": [
+      "里脊切细丝，加料酒、生抽、蛋清和淀粉抓匀，封 1 勺油腌 10 分钟。",
+      "葱白切细丝铺在盘底；豆腐皮切方块，蒸 3 分钟。",
+      "热油滑散肉丝至变白盛出。",
+      "留底油小火炒甜面酱和糖，加 2 勺水炒到酱冒泡发亮。",
+      "倒回肉丝翻匀，盛在葱丝上，用豆腐皮卷着吃。"
+    ],
+    "tips": "甜面酱一定小火炒出酱香再下肉；葱丝泡冰水 5 分钟更脆、辣味更淡。"
+  },
+  {
+    "key": "cn-north-pork-cabbage-dumplings",
+    "name": "猪肉白菜饺子",
+    "alias": "Pork and Napa Cabbage Dumplings",
+    "cuisine": "cn-north",
+    "course": "staple",
+    "tags": [
+      "classic",
+      "kids",
+      "party"
+    ],
+    "time_min": 90,
+    "servings": 4,
+    "difficulty": 3,
+    "spice": 0,
+    "description": "一口爆汁的家常馅，鲜嫩多汁，过年团圆少不了它。",
+    "ingredients": "饺子皮 500g, 猪肉馅 400g, 大白菜 600g, 葱花 3勺, 姜末 1勺, 花椒水 80ml, 生抽 2勺, 蚝油 1勺, 盐 1.5小勺, 香油 1勺",
+    "steps": [
+      "白菜剁碎，撒半小勺盐腌 15 分钟，挤干水分。",
+      "肉馅加姜末、生抽、蚝油，分 3 次加花椒水，顺一个方向搅到黏稠上劲。",
+      "拌入葱花和香油封住，包之前再放白菜和剩余盐拌匀。",
+      "饺子皮中间放馅，对折后边缘捏紧挤出褶子。",
+      "水开下饺子，推一下防粘，煮开后点 3 次凉水，饺子鼓起浮起即熟。"
+    ],
+    "tips": "肉馅选肥三瘦七最香；白菜临包前再拌，馅料不出水。配醋和蒜泥吃。"
+  },
+  {
+    "key": "cn-north-zhajiang-noodles",
+    "name": "老北京炸酱面",
+    "alias": "Zhajiangmian / Beijing Fried Sauce Noodles",
+    "cuisine": "cn-north",
+    "course": "staple",
+    "tags": [
+      "classic"
+    ],
+    "time_min": 40,
+    "servings": 3,
+    "difficulty": 2,
+    "spice": 0,
+    "description": "酱香浓郁、油润咸香，拌上清爽菜码，一碗地道京味儿。",
+    "ingredients": "手擀面 400g, 五花肉 300g, 黄酱 3勺, 甜面酱 2勺, 葱姜末 各1勺, 八角 1个, 白糖 1小勺, 黄瓜 1根, 心里美萝卜 半个, 黄豆芽 100g",
+    "steps": [
+      "五花肉切 5mm 小丁；黄酱和甜面酱加 100ml 水调稀。",
+      "少油小火煸肉丁和八角，至肥肉出油、瘦肉微焦。",
+      "下葱姜末炒香，倒入调稀的酱，小火慢熬 15 分钟，不停搅动。",
+      "酱油分离、表面冒小泡时加糖，撒葱花关火。",
+      "黄瓜、萝卜切丝，豆芽焯熟做菜码。",
+      "面条煮熟过凉水，浇炸酱、配菜码拌匀。"
+    ],
+    "tips": "黄酱和甜面酱约 3:2，咸香带甜；小火熬透是关键，酱要「炸」出油。"
+  },
+  {
+    "key": "cn-north-disanxian",
+    "name": "地三鲜",
+    "alias": "Di San Xian / Potato, Eggplant and Pepper",
+    "cuisine": "cn-north",
+    "course": "main",
+    "tags": [
+      "vegetarian",
+      "classic",
+      "quick"
+    ],
+    "time_min": 30,
+    "servings": 2,
+    "difficulty": 2,
+    "spice": 0,
+    "description": "土豆外焦里糯、茄子软滑、青椒脆香，东北素菜之王。",
+    "ingredients": "土豆 1个, 茄子 1根, 青椒 2个, 蒜 4瓣, 生抽 2勺, 老抽 半勺, 白糖 1小勺, 淀粉 1勺, 清水 4勺, 盐 少许, 食用油 适量",
+    "steps": [
+      "土豆、茄子切滚刀块，茄子拍上薄淀粉，青椒撕小块。",
+      "油烧至六成热，土豆炸 4 分钟至金黄起硬壳，捞出。",
+      "下茄子炸 2 分钟至软，青椒过油 10 秒，一起捞出控油。",
+      "生抽、老抽、糖、1 小勺淀粉加清水调成碗汁。",
+      "留底油炒香蒜末，倒入三样和碗汁，大火翻匀收汁即可。"
+    ],
+    "tips": "想少油可用空气炸锅 200℃ 先烤土豆茄子 15 分钟；出锅前补一点生蒜末更香。"
+  },
+  {
+    "key": "cn-north-chicken-mushroom-stew",
+    "name": "小鸡炖蘑菇",
+    "alias": "Dongbei Chicken and Mushroom Stew",
+    "cuisine": "cn-north",
+    "course": "main",
+    "tags": [
+      "onepot",
+      "classic"
+    ],
+    "time_min": 80,
+    "servings": 4,
+    "difficulty": 2,
+    "spice": 0,
+    "description": "榛蘑的山野鲜香炖进鸡肉里，粉条吸饱汤汁，东北冬天的味道。",
+    "ingredients": "鸡 半只, 干榛蘑 50g, 粉条 1小把, 葱姜 各适量, 八角 2个, 冰糖 10g, 生抽 2勺, 老抽 1勺, 料酒 1勺, 盐 适量, 食用油 1勺",
+    "steps": [
+      "榛蘑温水泡 30 分钟，搓洗干净泥沙，泡蘑菇的水沉淀后留用。",
+      "鸡斩块冷水下锅焯水，捞出洗净。",
+      "少油小火炒冰糖出糖色，下鸡块翻炒上色，加葱姜和八角炒香。",
+      "加料酒、生抽、老抽，倒入蘑菇和泡蘑菇水，补开水没过鸡肉。",
+      "大火烧开转小火炖 40 分钟，下泡软的粉条再炖 10 分钟，加盐收汁。"
+    ],
+    "tips": "没有榛蘑可用干香菇或茶树菇；粉条最后下，避免糊底。"
+  },
+  {
+    "key": "cn-snack-jianbing",
+    "name": "煎饼果子",
+    "alias": "Jianbing Guozi / Chinese Crepe",
+    "cuisine": "cn-snack",
+    "course": "breakfast",
+    "tags": [
+      "quick",
+      "classic"
+    ],
+    "time_min": 20,
+    "servings": 2,
+    "difficulty": 2,
+    "spice": 0,
+    "description": "薄饼裹着蛋香和酥脆薄脆，甜面酱一抹，天津街头早餐。",
+    "ingredients": "绿豆面 50g, 面粉 50g, 清水 160ml, 鸡蛋 2个, 薄脆 2片, 甜面酱 2勺, 辣酱 适量, 葱花 2勺, 香菜 少许, 黑芝麻 少许",
+    "steps": [
+      "绿豆面、面粉加清水搅成无颗粒的稀糊，静置 10 分钟。",
+      "平底锅抹薄油，小火倒一勺面糊，迅速用锅铲摊成薄饼。",
+      "面糊凝固后打一个鸡蛋摊匀，撒葱花、香菜和芝麻。",
+      "鸡蛋凝固后翻面，刷甜面酱和辣酱。",
+      "放上薄脆，两边折起，对切即可。"
+    ],
+    "tips": "没有绿豆面可全用面粉加少许玉米面；薄脆可用油条或炸春卷皮代替。"
+  },
+  {
+    "key": "cn-snack-roujiamo",
+    "name": "肉夹馍",
+    "alias": "Roujiamo / Chinese Hamburger",
+    "cuisine": "cn-snack",
+    "course": "snack",
+    "tags": [
+      "classic",
+      "party"
+    ],
+    "time_min": 150,
+    "servings": 4,
+    "difficulty": 3,
+    "spice": 0,
+    "description": "腊汁肉肥瘦相间、软烂流汁，夹进外酥内软的白吉馍。",
+    "ingredients": "五花肉 600g, 中筋面粉 300g, 酵母 3g, 温水 160ml, 冰糖 20g, 生抽 3勺, 老抽 1勺, 料酒 2勺, 八角 2个, 桂皮 1段, 香叶 2片, 草果 1个, 姜 4片, 青椒 1个, 香菜 少许",
+    "steps": [
+      "五花肉切大块焯水，与香料、姜、冰糖、生抽、老抽和料酒一起，加开水没过肉。",
+      "小火炖 2 小时，至筷子能轻松扎透。",
+      "炖肉时，面粉加酵母和温水揉成面团，发酵至两倍大。",
+      "面团分 8 份，擀成长条卷起，竖起压扁再擀成饼。",
+      "平底锅不放油，小火两面各烙 4 分钟，至两面微黄起「铁圈」。",
+      "肉加青椒剁碎，浇一勺卤汁，夹入横切开的馍中。"
+    ],
+    "tips": "卤汁过滤后冷冻，下次卤肉当老汤更香；馍趁热切开最酥。"
+  },
+  {
+    "key": "cn-snack-shengjian-bao",
+    "name": "生煎包",
+    "alias": "Shengjian Bao / Pan-Fried Pork Buns",
+    "cuisine": "cn-snack",
+    "course": "breakfast",
+    "tags": [
+      "classic",
+      "kids"
+    ],
+    "time_min": 120,
+    "servings": 4,
+    "difficulty": 3,
+    "spice": 0,
+    "description": "底部金黄焦脆，皮软馅鲜，咬开一包热汤，上海早点灵魂。",
+    "ingredients": "中筋面粉 300g, 酵母 3g, 温水 160ml, 猪肉末 300g, 猪皮冻 100g, 姜末 1勺, 葱花 3勺, 生抽 2勺, 白糖 1小勺, 盐 1小勺, 熟白芝麻 少许, 食用油 适量",
+    "steps": [
+      "面粉加酵母和温水揉光滑，室温发酵 40 分钟至 1.5 倍大。",
+      "肉末加姜末、生抽、糖、盐搅上劲，拌入切碎的皮冻，冷藏备用。",
+      "面团分 20 份，擀成中间厚边缘薄的皮，包入馅料捏紧收口。",
+      "平底锅刷油，包子收口朝下摆好，中火煎 2 分钟至底部微黄。",
+      "沿锅边倒入半杯清水，盖盖中小火焖 8 分钟至水干。",
+      "开盖撒葱花芝麻，再煎 1 分钟至底部焦脆即可。"
+    ],
+    "tips": "皮冻遇热化成汤汁；买不到可用浓鸡汤加吉利丁片冷藏凝固代替。"
+  },
+  {
+    "key": "cn-snack-liangpi",
+    "name": "凉皮",
+    "alias": "Liangpi / Shaanxi Cold Noodles",
+    "cuisine": "cn-snack",
+    "course": "snack",
+    "tags": [
+      "spicy",
+      "vegetarian"
+    ],
+    "time_min": 90,
+    "servings": 3,
+    "difficulty": 3,
+    "spice": 2,
+    "description": "筋道滑爽的面皮配蒜汁、香醋和红油，酸辣开胃的夏日小吃。",
+    "ingredients": "高筋面粉 300g, 清水 600ml, 盐 1小勺, 黄瓜 1根, 绿豆芽 1把, 蒜泥 2勺, 辣椒油 3勺, 香醋 3勺, 生抽 2勺, 白糖 1小勺, 芝麻酱 1勺, 食用油 少许",
+    "steps": [
+      "面粉加 180ml 水和盐揉成面团，盖湿布醒 30 分钟。",
+      "分次加清水反复揉洗出面浆，剩下的面筋上锅蒸 20 分钟，切块。",
+      "面浆静置 30 分钟，倒掉上层清水，把下层浆搅匀。",
+      "平盘抹油，舀一层薄浆，水开后上锅大火蒸 2 分钟至鼓起。",
+      "连盘放冷水里降温，揭下凉皮刷油防粘，切条。",
+      "加黄瓜丝、焯熟的豆芽和面筋，淋蒜泥、醋、生抽、糖、芝麻酱和辣油拌匀。"
+    ],
+    "tips": "面浆静置越久越易成形；想省事可买现成凉皮，只调这份料汁。"
+  },
+  {
+    "key": "cn-snack-hot-sour-noodles",
+    "name": "酸辣粉",
+    "alias": "Suanla Fen / Hot and Sour Glass Noodles",
+    "cuisine": "cn-snack",
+    "course": "staple",
+    "tags": [
+      "spicy",
+      "quick"
+    ],
+    "time_min": 30,
+    "servings": 1,
+    "difficulty": 1,
+    "spice": 2,
+    "description": "粉条爽滑弹牙，酸辣鲜香汤底，配酥花生和肉末，越吃越上头。",
+    "ingredients": "红薯粉 100g, 猪肉末 50g, 花生米 1把, 榨菜 1勺, 小青菜 2棵, 蒜末 1勺, 葱花 少许, 香菜 少许, 辣椒油 2勺, 香醋 3勺, 生抽 1勺, 花椒粉 少许, 白糖 少许, 骨汤 400ml",
+    "steps": [
+      "红薯粉用开水泡 20 分钟至软。",
+      "少油小火炸花生米至酥；肉末炒到酥香，加少许生抽盛出。",
+      "碗里放蒜末、辣椒油、醋、生抽、花椒粉、糖和榨菜。",
+      "红薯粉煮 3 分钟至透明，青菜一起烫熟。",
+      "冲入热骨汤搅开调料，放粉和青菜，铺肉末、花生、葱花和香菜。"
+    ],
+    "tips": "醋和辣油约 3:2 最开胃；没有骨汤用开水加少许鸡精也可以。"
+  },
+  {
+    "key": "cn-snack-scallion-pancake",
+    "name": "葱油饼",
+    "alias": "Cong You Bing / Scallion Pancake",
+    "cuisine": "cn-snack",
+    "course": "breakfast",
+    "tags": [
+      "vegetarian",
+      "kids",
+      "classic"
+    ],
+    "time_min": 40,
+    "servings": 3,
+    "difficulty": 2,
+    "spice": 0,
+    "description": "外皮金黄酥脆、内里层层分明，满口葱香的家常面点。",
+    "ingredients": "中筋面粉 300g, 开水 100ml, 凉水 80ml, 葱花 1大碗, 盐 1小勺, 五香粉 半小勺, 食用油 适量",
+    "steps": [
+      "面粉一半用开水烫、一半用凉水和，揉成软面团，醒 20 分钟。",
+      "另取 2 勺面粉加盐和五香粉，浇 3 勺热油调成油酥。",
+      "面团分 4 份，擀成长薄片，抹油酥、撒葱花。",
+      "从长边卷起成条，再盘成螺旋，压扁擀成 5mm 厚的饼。",
+      "平底锅少油中小火，每面煎 3 分钟至金黄起层。",
+      "出锅趁热用锅铲拍松，层次更明显。"
+    ],
+    "tips": "烫面让饼外脆内软；擀好的生饼隔油纸冷冻，随时取出直接煎。"
+  }
+]

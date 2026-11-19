@@ -1,5 +1,8 @@
 {
-    "miniprogramRoot": "",
+    "description": "微信开发者工具打开本目录：小程序读取 dist/mp-weixin/（npm run dev / build 的输出），云函数读取 cloud/functions/",
+    "miniprogramRoot": "dist/mp-weixin/",
+    "srcMiniprogramRoot": "dist/mp-weixin/",
+    "cloudfunctionRoot": "cloud/functions/",
     "setting": {
         "es6": true,
         "postcss": true,
@@ -23,7 +26,6 @@
         "condition": false
     },
     "compileType": "miniprogram",
-    "cloudfunctionRoot": "cloud/functions/",
     "simulatorPluginLibVersion": {},
     "packOptions": {
         "ignore": [],
